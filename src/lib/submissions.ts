@@ -14,8 +14,11 @@ function toSubmission(doc: any): Submission {
 }
 
 const mockSubmissions: Submission[] = [
-    { id: '1', assignmentId: '1', studentId: '2', status: 'Needs Review', submittedAt: new Date(Date.now() - 86400000 * 2) },
-    { id: '2', assignmentId: '2', studentId: '1', status: 'Needs Review', submittedAt: new Date(Date.now() - 86400000) },
+    { id: 'sub1', assignmentId: '1', studentId: '2', status: 'Needs Review', submittedAt: new Date(Date.now() - 86400000 * 2) },
+    { id: 'sub2', assignmentId: '2', studentId: '1', status: 'Needs Review', submittedAt: new Date(Date.now() - 86400000) },
+    { id: 'sub3', assignmentId: '1', studentId: '3', status: 'Completed', submittedAt: new Date(Date.now() - 86400000 * 4), score: 95 },
+    { id: 'sub4', assignmentId: '3', studentId: '4', status: 'In Progress', submittedAt: new Date() },
+    { id: 'sub5', assignmentId: '2', studentId: '5', status: 'Needs Review', submittedAt: new Date(Date.now() - 86400000 * 3) },
 ];
 
 
