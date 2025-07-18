@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, getDocs, query, where, getCountFromServer, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, getCountFromServer, doc, getDoc, addDoc } from 'firebase/firestore';
 import type { Student } from './types';
 
 const studentsCollection = collection(db, 'students');
@@ -23,4 +23,9 @@ export async function getStudentById(id: string): Promise<Student | null> {
 export async function getStudentsCount(): Promise<number> {
     const snapshot = await getCountFromServer(studentsCollection);
     return snapshot.data().count;
+}
+
+export async function addStudent(student: Omit<Student, 'id'>): Promise<string> {
+    const docRef = await addDoc(studentsCollection, student);
+    return docRef.id;
 }
