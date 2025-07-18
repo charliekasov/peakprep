@@ -1,36 +1,19 @@
-import { db } from './firebase';
-import { collection, getDocs, query, where, getCountFromServer, doc, getDoc, Timestamp } from 'firebase/firestore';
-import type { Assignment, FirebaseAssignment } from './types';
+'use server';
 
-const assignmentsCollection = collection(db, 'assignments');
-
-function toAssignment(doc: any): Assignment {
-    const data = doc.data() as FirebaseAssignment;
-    return {
-        id: doc.id,
-        ...data,
-        dueDate: data.dueDate?.toDate(),
-    };
-}
+import type { Assignment } from './types';
+import { mockAssignments } from './mock-data/assignments';
 
 export async function getAssignments(): Promise<Assignment[]> {
-    const snapshot = await getDocs(assignmentsCollection);
-    return snapshot.docs.map(toAssignment);
+    // Return mock data for now
+    return Promise.resolve(mockAssignments);
 }
 
 export async function getAssignmentById(id: string): Promise<Assignment | null> {
-    const docRef = doc(db, 'assignments', id);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-        return toAssignment(docSnap);
-    } else {
-        return null;
-    }
+    const assignment = mockAssignments.find((a) => a.id === id);
+    return Promise.resolve(assignment || null);
 }
 
 
 export async function getAssignmentsCount(): Promise<number> {
-    const snapshot = await getCountFromServer(assignmentsCollection);
-    return snapshot.data().count;
+    return Promise.resolve(mockAssignments.length);
 }
