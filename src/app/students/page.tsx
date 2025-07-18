@@ -41,9 +41,14 @@ export default async function StudentsPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Parent Email 1</TableHead>
+                <TableHead>Parent Email 2</TableHead>
                 <TableHead>Test Type</TableHead>
                 <TableHead>Target Score</TableHead>
-                <TableHead>Parent Email</TableHead>
+                <TableHead>Rate</TableHead>
+                <TableHead>Frequency</TableHead>
+                <TableHead>Start Date</TableHead>
+                <TableHead>Projected End Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -51,9 +56,14 @@ export default async function StudentsPage() {
                 <TableRow key={student.id}>
                   <TableCell className="font-medium">{student.name}</TableCell>
                   <TableCell>{student.email}</TableCell>
+                  <TableCell>{student.parentEmail1 || 'N/A'}</TableCell>
+                  <TableCell>{student.parentEmail2 || 'N/A'}</TableCell>
                   <TableCell>{student.testType || 'N/A'}</TableCell>
                   <TableCell>{student.targetScore || 'N/A'}</TableCell>
-                  <TableCell>{student.parentEmail1 || 'N/A'}</TableCell>
+                  <TableCell>{student.rate || 'N/A'}</TableCell>
+                  <TableCell>{student.frequency || 'N/A'}</TableCell>
+                  <TableCell>{student.startDate || 'N/A'}</TableCell>
+                  <TableCell>{student.projectedEndDate || 'N/A'}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
