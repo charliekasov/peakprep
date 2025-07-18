@@ -11,13 +11,17 @@ export interface Student {
 export interface FirebaseAssignment {
   id: string;
   title: string;
+  link: string;
   subject: string;
-  content: string;
-  dueDate: Timestamp;
+  broadCategory: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  testType?: string;
+  source?: string;
+  dueDate?: Timestamp;
 }
 
 export type Assignment = Omit<FirebaseAssignment, 'dueDate'> & {
-  dueDate: Date;
+  dueDate?: Date;
 }
 
 export interface FirebaseSubmission {

@@ -1,7 +1,6 @@
 import { db, validConfig } from './firebase';
 import { collection, getDocs, query, where, getCountFromServer, doc, getDoc, Timestamp } from 'firebase/firestore';
 import type { Assignment, FirebaseAssignment } from './types';
-import { chartData } from './mock-data';
 
 const assignmentsCollection = validConfig ? collection(db, 'assignments') : null;
 
@@ -10,15 +9,61 @@ function toAssignment(doc: any): Assignment {
     return {
         id: doc.id,
         ...data,
-        dueDate: data.dueDate.toDate(),
+        dueDate: data.dueDate?.toDate(),
     };
 }
 
 const mockAssignments: Assignment[] = [
-    { id: '1', title: 'Algebra I: Chapter 5 Homework', subject: 'Math', content: 'Complete exercises 1-20 on page 150. Show all your work.', dueDate: new Date(Date.now() + 86400000 * 5) },
-    { id: '2', title: 'The Great Gatsby: Symbolism Essay', subject: 'English', content: 'Write a 500-word essay on the use of symbolism for the theme of the American Dream in The Great Gatsby.', dueDate: new Date(Date.now() + 86400000 * 7) },
-    { id: '3', title: 'Cellular Respiration Lab Report', subject: 'Science', content: 'Write a full lab report on our experiment with yeast and sugar. Include a hypothesis, materials, method, results, and conclusion.', dueDate: new Date(Date.now() + 86400000 * 10) },
-    { id: '4', title: 'World War II: Causes and Effects', subject: 'History', content: 'Create a presentation outlining the primary causes and long-term effects of World War II.', dueDate: new Date(Date.now() + 86400000 * 14) },
+    { 
+        id: '1', 
+        title: 'Linear Functions Medium 1-14.pdf', 
+        link: 'https://drive.google.com/file/d/1E32xGIJsB4qvbq_8SH9a5cu0prfvC654/view?usp=drivesdk', 
+        subject: 'Algebra', 
+        broadCategory: 'Math', 
+        difficulty: 'Medium', 
+        testType: 'SAT',
+        source: 'Google Drive'
+    },
+    { 
+        id: '2', 
+        title: 'Linear Functions Difficult 1-9.pdf', 
+        link: 'https://drive.google.com/file/d/1pWpjArmL9x7Et7koGkHou4A2O-6C7pIP/view?usp=drivesdk', 
+        subject: 'Algebra', 
+        broadCategory: 'Math', 
+        difficulty: 'Hard', 
+        testType: 'SAT',
+        source: 'Google Drive'
+    },
+    { 
+        id: '3', 
+        title: 'Linear Functions Medium 1-14 Answers.pdf', 
+        link: 'https://drive.google.com/file/d/1gkgZHiypBK_TuA-8NJdk8UBx0t-B9vXK/view?usp=drivesdk', 
+        subject: 'Algebra - Answer', 
+        broadCategory: 'Math', 
+        difficulty: 'Medium', 
+        testType: 'SAT',
+        source: 'Google Drive'
+    },
+    { 
+        id: '4', 
+        title: 'Linear inequalities in one or two variables Medium 1-10.pdf', 
+        link: 'https://drive.google.com/file/d/1XA0cRE7hS1rgOilwE2bQB4naKF0pZndX/view?usp=drivesdk', 
+        subject: 'Algebra', 
+        broadCategory: 'Math', 
+        difficulty: 'Medium', 
+        testType: 'SAT',
+        source: 'Google Drive'
+    },
+    { 
+        id: '5', 
+        title: 'Systems of two linear equations in two variables Medium 1-9.pdf', 
+        link: 'https://drive.google.com/file/d/1Z94leibGckVUQC59h3l4eP3LzaTvpc--/view?usp=drivesdk', 
+        subject: 'Algebra', 
+        broadCategory: 'Math', 
+        difficulty: 'Medium', 
+        testType: 'SAT',
+        source: 'Google Drive'
+    }
 ];
 
 
