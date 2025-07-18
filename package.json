@@ -9,7 +9,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "import-data": "tsx ./scripts/import-data.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.13.0",
@@ -59,9 +60,13 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/papaparse": "^5.3.14",
+    "firebase-admin": "^12.1.0",
     "genkit-cli": "^1.13.0",
+    "papaparse": "^5.4.1",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.15.5",
     "typescript": "^5"
   }
 }
