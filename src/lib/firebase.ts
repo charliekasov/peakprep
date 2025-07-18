@@ -3,7 +3,7 @@ import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/a
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig: FirebaseOptions = {
-  apiKey: "YOUR_API_KEY", // <--- PASTE YOUR API KEY HERE
+  apiKey: "AIzaSyCOmZZITPwGwIlyMcwHS-6vHNnt1qNEm_M", // <--- PASTE YOUR API KEY HERE
   authDomain: "tutorflow-ivaba.firebaseapp.com",
   projectId: "tutorflow-ivaba",
   storageBucket: "tutorflow-ivaba.appspot.com",

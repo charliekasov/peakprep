@@ -43,6 +43,7 @@ export default async function AssignmentsPage() {
                 <TableHead>Category</TableHead>
                 <TableHead>Difficulty</TableHead>
                 <TableHead>Test Type</TableHead>
+                <TableHead>Source</TableHead>
                 <TableHead>Link</TableHead>
               </TableRow>
             </TableHeader>
@@ -56,6 +57,7 @@ export default async function AssignmentsPage() {
                     <Badge variant={assignment.difficulty === 'Hard' ? 'destructive' : (assignment.difficulty === 'Medium' ? 'secondary' : 'default')}>{assignment.difficulty}</Badge>
                   </TableCell>
                   <TableCell>{assignment.testType}</TableCell>
+                  <TableCell>{assignment.source}</TableCell>
                   <TableCell>
                     <Link href={assignment.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-primary hover:underline">
                       View <ExternalLink className="h-4 w-4" />

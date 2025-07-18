@@ -20,7 +20,8 @@ export interface FirebaseAssignment {
   dueDate?: Timestamp;
 }
 
-export type Assignment = Omit<FirebaseAssignment, 'dueDate'> & {
+export type Assignment = Omit<FirebaseAssignment, 'dueDate' | 'id'> & {
+  id: string;
   dueDate?: Date;
 }
 
