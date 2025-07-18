@@ -17,15 +17,23 @@ const studentSchema = z.object({
   }),
 });
 
-export async function handleAddStudent(data: z.infer<typeof studentSchema>) {
+export async function handleAddStudent(data: unknown) {
   const validatedFields = studentSchema.safeParse(data);
 
   if (!validatedFields.success) {
+    // We can be more specific with errors in a real app
     throw new Error('Invalid student data.');
   }
   
+  const studentData = validatedFields.data;
+
   try {
-    await addStudent(validatedFields.data);
+    // If parentEmail is an empty string, remove it before saving
+    if (studentData.parentEmail === '') {
+      delete studentData.parentEmail;
+    }
+    
+    await addStudent(studentData);
     revalidatePath('/students');
   } catch (error) {
     console.error('Error adding student:', error);
