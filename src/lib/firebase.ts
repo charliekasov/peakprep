@@ -13,10 +13,10 @@ const firebaseConfig = {
 
 // Function to check if the provided Firebase config is valid
 function isConfigValid(config: FirebaseOptions): boolean {
-    return !!(config.apiKey && config.projectId && config.projectId !== 'your-project-id' && config.projectId !== 'put-your-project-id-here');
+    return !!(config.apiKey && config.projectId && config.projectId !== 'your-project-id-here' && config.projectId !== 'your-project-id');
 }
 
-// Initialize Firebase only if the config is valid
+// Initialize Firebase
 let db;
 const validConfig = isConfigValid(firebaseConfig);
 
@@ -24,7 +24,9 @@ if (validConfig) {
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
   db = getFirestore(app);
 } else {
-  console.warn("Firebase configuration is missing or invalid. Using mock data instead. Please update your .env file with your project's credentials.");
+  // When running in a real environment, we want to use mock data if config is not provided.
+  // This is useful for local development or CI/CD environments.
+  console.warn("Firebase configuration is not available. Running in mock mode.");
 }
 
 export { db, validConfig };
