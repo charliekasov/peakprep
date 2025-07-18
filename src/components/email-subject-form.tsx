@@ -83,7 +83,7 @@ export function EmailSubjectForm() {
                   />
                 </FormControl>
                 <FormDescription>
-                  Describe the student&apos;s interests, learning style, and performance.
+                  Describe the student's interests, learning style, and performance.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
