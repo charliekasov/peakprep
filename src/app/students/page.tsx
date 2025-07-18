@@ -41,7 +41,9 @@ export default async function StudentsPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Parent&apos;s Email</TableHead>
+                <TableHead>Test Type</TableHead>
+                <TableHead>Target Score</TableHead>
+                <TableHead>Parent Email</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -49,7 +51,9 @@ export default async function StudentsPage() {
                 <TableRow key={student.id}>
                   <TableCell className="font-medium">{student.name}</TableCell>
                   <TableCell>{student.email}</TableCell>
-                  <TableCell>{student.parentEmail || 'N/A'}</TableCell>
+                  <TableCell>{student.testType || 'N/A'}</TableCell>
+                  <TableCell>{student.targetScore || 'N/A'}</TableCell>
+                  <TableCell>{student.parentEmail1 || 'N/A'}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

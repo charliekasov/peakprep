@@ -4,8 +4,15 @@ export interface Student {
   id: string;
   name: string;
   email: string;
-  parentEmail?: string;
-  profile: string;
+  parentEmail1?: string;
+  parentEmail2?: string;
+  testType?: string;
+  targetScore?: string;
+  rate?: number;
+  frequency?: string;
+  startDate?: string;
+  projectedEndDate?: string;
+  profile?: string;
 }
 
 export interface FirebaseAssignment {
@@ -22,8 +29,9 @@ export interface FirebaseAssignment {
 
 export type Assignment = Omit<FirebaseAssignment, 'dueDate' | 'id'> & {
   id: string;
+  title: string;
   dueDate?: Date;
-}
+};
 
 export interface FirebaseSubmission {
   id:string;
