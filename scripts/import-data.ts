@@ -103,9 +103,10 @@ async function importCollection(collectionName: string) {
 
   console.log(`Found ${data.length} records to import.`);
   const collectionRef = db.collection(collectionName);
-  const batch = db.batch();
+  
 
-  data.forEach((item: any, index) => {
+  for (const item of data as any[]) {
+     const batch = db.batch();
     // Firestore needs string IDs for documents. If an ID is provided in the CSV, use it.
     // Otherwise, let Firestore generate a unique ID.
     let docRef;
@@ -123,7 +124,8 @@ async function importCollection(collectionName: string) {
       if (!isNaN(date.getTime())) {
         processedItem.submittedAt = admin.firestore.Timestamp.fromDate(date);
       } else {
-        console.warn(`Invalid date format for 'submittedAt' in row ${index + 1}: ${processedItem.submittedAt}. Skipping conversion.`);
+        console.warn(`Invalid date format for 'submittedAt'. Skipping conversion.`);
+        delete processedItem.submittedAt;
       }
     }
      if (processedItem.dueDate) {
@@ -131,20 +133,26 @@ async function importCollection(collectionName: string) {
        if (!isNaN(date.getTime())) {
         processedItem.dueDate = admin.firestore.Timestamp.fromDate(date);
       } else {
-        console.warn(`Invalid date format for 'dueDate' in row ${index + 1}: ${processedItem.dueDate}. Skipping conversion.`);
+        console.warn(`Invalid date format for 'dueDate'. Skipping conversion.`);
+        delete processedItem.dueDate;
       }
+    }
+    if (processedItem.score) {
+        const score = Number(processedItem.score);
+        if (!isNaN(score)) {
+            processedItem.score = score;
+        } else {
+            delete processedItem.score;
+        }
     }
 
 
     batch.set(docRef, processedItem);
-  });
-
-  try {
     await batch.commit();
-    console.log(`Successfully imported ${data.length} documents into '${collectionName}'.`);
-  } catch (error) {
-    console.error(`Error committing batch for '${collectionName}':`, error);
   }
+
+  console.log(`Successfully imported ${data.length} documents into '${collectionName}'.`);
+
 }
 
 async function main() {
