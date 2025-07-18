@@ -19,15 +19,22 @@ import {
   AlertCircle,
   GraduationCap,
 } from 'lucide-react';
-import { submissions, students, assignments } from '@/lib/mock-data';
+import { getNeedsReviewSubmissions } from '@/lib/submissions';
+import { getStudents, getStudentsCount } from '@/lib/students';
+import { getAssignments, getAssignmentsCount } from '@/lib/assignments';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { StudentPerformanceChart } from '@/components/student-performance-chart';
+import type { Submission, Student, Assignment } from '@/lib/types';
 
-export default function Dashboard() {
-  const needsReview = submissions.filter(
-    (s) => s.status === 'Needs Review'
-  );
+export default async function Dashboard() {
+  const needsReviewCount = (await getNeedsReviewSubmissions()).length;
+  const needsReview = await getNeedsReviewSubmissions();
+  const students = await getStudents();
+  const assignments = await getAssignments();
+  const studentsCount = await getStudentsCount();
+  const assignmentsCount = await getAssignmentsCount();
+
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -43,7 +50,7 @@ export default function Dashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{students.length}</div>
+            <div className="text-2xl font-bold">{studentsCount}</div>
             <p className="text-xs text-muted-foreground">
               Actively managed students
             </p>
@@ -57,7 +64,7 @@ export default function Dashboard() {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{assignments.length}</div>
+            <div className="text-2xl font-bold">{assignmentsCount}</div>
             <p className="text-xs text-muted-foreground">
               Across all subjects
             </p>
@@ -69,7 +76,7 @@ export default function Dashboard() {
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{needsReview.length}</div>
+            <div className="text-2xl font-bold">{needsReviewCount}</div>
             <p className="text-xs text-muted-foreground">
               Assignments awaiting feedback
             </p>
@@ -112,10 +119,10 @@ export default function Dashboard() {
               <TableBody>
                 {needsReview.slice(0, 5).map((submission) => {
                   const student = students.find(
-                    (s) => s.id === submission.studentId
+                    (s: Student) => s.id === submission.studentId
                   );
                   const assignment = assignments.find(
-                    (a) => a.id === submission.assignmentId
+                    (a: Assignment) => a.id === submission.assignmentId
                   );
                   return (
                     <TableRow key={submission.id}>
