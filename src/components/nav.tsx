@@ -31,12 +31,6 @@ const navItems = [
     icon: FileText,
     label: 'Assignments',
   },
-  {
-    href: '/email-subject-generator',
-    icon: GraduationCap,
-    label: 'AI Subject Generator',
-    
-  },
 ];
 
 export function Nav() {

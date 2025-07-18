@@ -1,10 +1,7 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -14,8 +11,22 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore(app);
+// Function to check if the provided Firebase config is valid
+function isConfigValid(config: FirebaseOptions): boolean {
+    return !!(config.apiKey && config.projectId && config.projectId !== 'your-project-id');
+}
 
-export { app, db };
+// Initialize Firebase only if the config is valid
+const
+let db;
+
+const validConfig = isConfigValid(firebaseConfig);
+
+if (validConfig) {
+  const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  db = getFirestore(app);
+} else {
+  console.warn("Firebase configuration is missing or invalid. Using mock data instead. Please update your .env file.");
+}
+
+export { db, validConfig };
