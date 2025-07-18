@@ -2,20 +2,19 @@
  * @fileoverview A script to import data from CSV files into Firestore.
  * 
  * This script reads CSV files from a 'data' directory, parses them, and uploads
- * the data to the specified Firestore collections. It uses service account
- * credentials for authentication, which is the recommended approach for
- * server-side scripts.
+ * the data to the specified Firestore collections. It uses Application Default
+ * Credentials, which means it can use your logged-in gcloud user credentials
+ * in a local development environment.
  * 
  * To use this script:
- * 1.  Set up a service account in your Firebase project and download the
- *     JSON key file.
- * 2.  Create a '.env' file in the root of the project and add the following line:
- *     GOOGLE_APPLICATION_CREDENTIALS="path/to/your/service-account-key.json"
- * 3.  Create a 'data' directory in the root of your project.
- * 4.  Place your CSV files in the 'data' directory, naming them
+ * 1.  Make sure you are authenticated with Google Cloud. If you have the gcloud
+ *     CLI installed, you can run `gcloud auth application-default login`. In many
+ *     cloud environments, this is handled automatically.
+ * 2.  Create a 'data' directory in the root of your project.
+ * 3.  Place your CSV files in the 'data' directory, naming them
  *     'students.csv', 'assignments.csv', and 'submissions.csv'.
- * 5.  Ensure the CSV files have headers that match the fields in your data types.
- * 6.  Run the script from your terminal using: `npm run import-data`
+ * 4.  Ensure the CSV files have headers that match the fields in your data types.
+ * 5.  Run the script from your terminal using: `npm run import-data`
  */
 import * as admin from 'firebase-admin';
 import * as fs from 'fs';
@@ -27,8 +26,7 @@ import { config } from 'dotenv';
 config();
 
 // --- Configuration ---
-const
-  DATA_DIR = path.join(process.cwd(), 'data');
+const DATA_DIR = path.join(process.cwd(), 'data');
 const COLLECTIONS_TO_IMPORT = [
   'students',
   'assignments',
@@ -37,37 +35,16 @@ const COLLECTIONS_TO_IMPORT = [
 
 // --- Firebase Initialization ---
 
-// Check if the service account key path is set
-if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-  console.error(
-    'ERROR: GOOGLE_APPLICATION_CREDENTIALS environment variable not set.'
-  );
-  console.error(
-    'Please create a service account and set the path to the key file in your .env file.'
-  );
-  process.exit(1);
-}
-
-// Check if the service account key file exists
-if (!fs.existsSync(process.env.GOOGLE_APPLICATION_CREDENTIALS)) {
-    console.error(`ERROR: Service account key file not found at path: ${process.env.GOOGLE_APPLICATION_CREDENTIALS}`);
-    console.error('Please ensure the path in your .env file is correct.');
-    process.exit(1);
-}
-
-
 try {
+  // Use application default credentials
   admin.initializeApp({
     credential: admin.credential.applicationDefault(),
-    databaseURL: `https://${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.firebaseio.com`,
+    projectId: 'tutorflow-ivaba', 
   });
 } catch (error: any) {
   console.error('ERROR: Firebase Admin initialization failed.');
-  if (error.code === 'invalid-credential') {
-    console.error('The service account credentials are not valid. Please check the JSON key file.');
-  } else {
-    console.error(error);
-  }
+  console.error('Please ensure you are authenticated. If running locally, you might need to run "gcloud auth application-default login".');
+  console.error(error);
   process.exit(1);
 }
 
@@ -104,9 +81,8 @@ async function importCollection(collectionName: string) {
   console.log(`Found ${data.length} records to import.`);
   const collectionRef = db.collection(collectionName);
   
-
+  const batch = db.batch();
   for (const item of data as any[]) {
-     const batch = db.batch();
     // Firestore needs string IDs for documents. If an ID is provided in the CSV, use it.
     // Otherwise, let Firestore generate a unique ID.
     let docRef;
@@ -124,7 +100,7 @@ async function importCollection(collectionName: string) {
       if (!isNaN(date.getTime())) {
         processedItem.submittedAt = admin.firestore.Timestamp.fromDate(date);
       } else {
-        console.warn(`Invalid date format for 'submittedAt'. Skipping conversion.`);
+        console.warn(`Invalid date format for 'submittedAt' in row: ${JSON.stringify(item)}. Skipping conversion.`);
         delete processedItem.submittedAt;
       }
     }
@@ -133,7 +109,7 @@ async function importCollection(collectionName: string) {
        if (!isNaN(date.getTime())) {
         processedItem.dueDate = admin.firestore.Timestamp.fromDate(date);
       } else {
-        console.warn(`Invalid date format for 'dueDate'. Skipping conversion.`);
+        console.warn(`Invalid date format for 'dueDate' in row: ${JSON.stringify(item)}. Skipping conversion.`);
         delete processedItem.dueDate;
       }
     }
@@ -148,8 +124,8 @@ async function importCollection(collectionName: string) {
 
 
     batch.set(docRef, processedItem);
-    await batch.commit();
   }
+  await batch.commit();
 
   console.log(`Successfully imported ${data.length} documents into '${collectionName}'.`);
 
