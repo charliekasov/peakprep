@@ -2,19 +2,21 @@
  * @fileoverview A script to import data from CSV files into Firestore.
  * 
  * This script reads CSV files from a 'data' directory, parses them, and uploads
- * the data to the specified Firestore collections. It uses Application Default
- * Credentials, which means it can use your logged-in gcloud user credentials
- * in a local development environment.
+ * the data to the specified Firestore collections. It uses a service account key
+ * for authentication.
  * 
  * To use this script:
- * 1.  Make sure you are authenticated with Google Cloud. If you have the gcloud
- *     CLI installed, you can run `gcloud auth application-default login`. In many
- *     cloud environments, this is handled automatically.
- * 2.  Create a 'data' directory in the root of your project.
- * 3.  Place your CSV files in the 'data' directory, naming them
+ * 1.  Enable the Cloud Firestore API in your Google Cloud project.
+ * 2.  Create a Firebase service account and download the private key JSON file.
+ *     Go to Project Settings -> Service accounts -> Generate new private key.
+ * 3.  Place the downloaded JSON key file in the root directory of your project.
+ * 4.  Update the .env file with the path to your key file:
+ *     GOOGLE_APPLICATION_CREDENTIALS="your-service-account-key.json"
+ * 5.  Create a 'data' directory in the root of your project.
+ * 6.  Place your CSV files in the 'data' directory, naming them
  *     'students.csv', 'assignments.csv', and 'submissions.csv'.
- * 4.  Ensure the CSV files have headers that match the fields in your data types.
- * 5.  Run the script from your terminal using: `npm run import-data`
+ * 7.  Ensure the CSV files have headers that match the fields in your data types.
+ * 8.  Run the script from your terminal using: `npm run import-data`
  */
 import * as admin from 'firebase-admin';
 import * as fs from 'fs';
@@ -32,18 +34,31 @@ const COLLECTIONS_TO_IMPORT = [
   'assignments',
   'submissions',
 ];
+const SERVICE_ACCOUNT_PATH = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
 // --- Firebase Initialization ---
 
+if (!SERVICE_ACCOUNT_PATH) {
+    console.error('ERROR: GOOGLE_APPLICATION_CREDENTIALS environment variable is not set.');
+    console.error('Please point it to your service account key file in your .env file.');
+    process.exit(1);
+}
+
+if (!fs.existsSync(SERVICE_ACCOUNT_PATH)) {
+    console.error(`ERROR: Service account key file not found at: ${SERVICE_ACCOUNT_PATH}`);
+    process.exit(1);
+}
+
 try {
-  // Use application default credentials
+  const serviceAccount = JSON.parse(fs.readFileSync(SERVICE_ACCOUNT_PATH, 'utf8'));
+
   admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    projectId: 'tutorflow-ivaba', 
+    credential: admin.credential.cert(serviceAccount),
+    projectId: serviceAccount.project_id,
   });
 } catch (error: any) {
   console.error('ERROR: Firebase Admin initialization failed.');
-  console.error('Please ensure you are authenticated. If running locally, you might need to run "gcloud auth application-default login".');
+  console.error('Please ensure your service account key file is valid.');
   console.error(error);
   process.exit(1);
 }
