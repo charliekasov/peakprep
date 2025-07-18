@@ -13,31 +13,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import {
   FileText,
   Users,
   AlertCircle,
-  TrendingUp,
   GraduationCap,
 } from 'lucide-react';
-import { submissions, students, assignments, chartData } from '@/lib/mock-data';
-import type { ChartConfig } from '@/components/ui/chart';
+import { submissions, students, assignments } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-
-const chartConfig = {
-  score: {
-    label: 'Avg. Score',
-    color: 'hsl(var(--primary))',
-  },
-} satisfies ChartConfig;
+import { StudentPerformanceChart } from '@/components/student-performance-chart';
 
 export default function Dashboard() {
   const needsReview = submissions.filter(
@@ -147,40 +132,8 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" /> Student Performance
-            </CardTitle>
-            <CardDescription>
-              Average assignment scores over the last few months.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[250px] w-full">
-              <BarChart accessibilityLayer data={chartData}>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={10}
-                  domain={[60, 100]}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                />
-                <Bar dataKey="score" fill="var(--color-score)" radius={8} />
-              </BarChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+        <StudentPerformanceChart />
+
       </div>
     </div>
   );
