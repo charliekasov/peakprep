@@ -152,7 +152,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
         if (worksheetSearchQuery.trim() === '') return true;
         return a.title.toLowerCase().includes(worksheetSearchQuery.toLowerCase());
       });
-  }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources, practiceTests]);
+  }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources]);
 
   const studentSubmissions = useMemo(() => {
     if (!selectedStudentId) return [];
@@ -418,7 +418,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                             <Label>Sources:</Label>
                               {worksheetSources.map(source => (
-                                <div key={source} className="flex items-center space-x-2 pt-2">
+                                <div key={source} className="flex items-start space-x-2 pt-2">
                                   <Checkbox 
                                     id={`source-${source}`} 
                                     checked={selectedWorksheetSources.has(source)}
