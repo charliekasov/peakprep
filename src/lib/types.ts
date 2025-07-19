@@ -42,6 +42,7 @@ export interface FirebaseSubmission {
   score?: number;
 }
 
-export type Submission = Omit<FirebaseSubmission, 'submittedAt'> & {
+export type Submission = Omit<FirebaseSubmission, 'submittedAt' | 'id'> & {
+    id: string;
     submittedAt: Date;
 }

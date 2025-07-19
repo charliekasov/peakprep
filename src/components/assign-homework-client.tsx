@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import type { Student, Assignment } from '@/lib/types';
+import type { Student, Assignment, Submission } from '@/lib/types';
 import {
   Select,
   SelectContent,
@@ -27,12 +27,13 @@ import { handleAssignHomework } from '@/app/assign-homework/actions';
 interface AssignHomeworkClientProps {
   students: Student[];
   assignments: Assignment[];
+  submissions: Submission[];
 }
 
 const SAT_WORKSHEET_SOURCES = ['Question Bank', 'Test Innovators'];
 const SSAT_WORKSHEET_SOURCES = ['Tutorverse', 'Test Innovators'];
 
-export function AssignHomeworkClient({ students, assignments }: AssignHomeworkClientProps) {
+export function AssignHomeworkClient({ students, assignments, submissions }: AssignHomeworkClientProps) {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [selectedAssignments, setSelectedAssignments] = useState<Set<string>>(new Set());
   const [worksheetSearchQuery, setWorksheetSearchQuery] = useState('');
@@ -70,10 +71,10 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
       .filter(Boolean) as Assignment[];
 
     const assignmentList = assignedItems.map(a => {
-      if (a.link) {
-        return `${a.title}:\n${a.link}`;
-      }
-      return a.title;
+        if (a.link) {
+            return `${a.title}: ${a.link}`;
+        }
+        return a.title;
     }).join('\n\n');
 
     const firstName = selectedStudent.name.split(' ')[0];
@@ -93,7 +94,8 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
   }, [selectedStudent, assignments]);
 
   const practiceTests = useMemo(() => {
-     return relevantAssignments.filter(a => a.source === 'Bluebook');
+     const practiceTestSources = ['Bluebook', 'Test Innovators'];
+     return relevantAssignments.filter(a => practiceTestSources.includes(a.source || ''));
   }, [relevantAssignments]);
 
   const worksheets = useMemo(() => {
@@ -110,6 +112,11 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
         return a.title.toLowerCase().includes(worksheetSearchQuery.toLowerCase());
       });
   }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources, selectedStudent]);
+
+  const studentSubmissions = useMemo(() => {
+    if (!selectedStudentId) return [];
+    return submissions.filter(sub => sub.studentId === selectedStudentId);
+  }, [selectedStudentId, submissions]);
 
 
   const handleStudentChange = (studentId: string) => {
@@ -246,11 +253,11 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
                           </div>
                          )}
                       </CardHeader>
-                      <AssignmentTable assignments={worksheets} selectedAssignments={selectedAssignments} onToggle={handleAssignmentToggle} />
+                      <AssignmentTable assignments={worksheets} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
                     </Card>
                  </TabsContent>
                  <TabsContent value="practice-tests">
-                  <AssignmentTable assignments={practiceTests} selectedAssignments={selectedAssignments} onToggle={handleAssignmentToggle} />
+                  <AssignmentTable assignments={practiceTests} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
                  </TabsContent>
                </Tabs>
               )}
@@ -312,7 +319,16 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
 }
 
 
-function AssignmentTable({ assignments, selectedAssignments, onToggle }: { assignments: Assignment[], selectedAssignments: Set<string>, onToggle: (id: string) => void }) {
+function AssignmentTable({ assignments, selectedAssignments, studentSubmissions, onToggle }: { assignments: Assignment[], selectedAssignments: Set<string>, studentSubmissions: Submission[], onToggle: (id: string) => void }) {
+  
+  const getLatestSubmissionDate = (assignmentId: string) => {
+    const submissionsForAssignment = studentSubmissions
+      .filter(sub => sub.assignmentId === assignmentId)
+      .sort((a, b) => b.submittedAt.getTime() - a.submittedAt.getTime());
+    
+    return submissionsForAssignment.length > 0 ? submissionsForAssignment[0].submittedAt : null;
+  }
+  
   return (
       <ScrollArea className="h-96">
         <CardContent className="p-0">
@@ -323,25 +339,32 @@ function AssignmentTable({ assignments, selectedAssignments, onToggle }: { assig
                 <TableHead>Title</TableHead>
                 <TableHead>Subject</TableHead>
                 <TableHead>Difficulty</TableHead>
+                <TableHead>Last Assigned</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {assignments.map((assignment) => (
-                <TableRow key={assignment.id} 
-                          onClick={() => onToggle(assignment.id)} 
-                          className="cursor-pointer"
-                          data-state={selectedAssignments.has(assignment.id) ? 'selected' : ''}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedAssignments.has(assignment.id)}
-                      onCheckedChange={() => onToggle(assignment.id)}
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">{assignment.title}</TableCell>
-                  <TableCell>{assignment.subject}</TableCell>
-                  <TableCell>{assignment.difficulty}</TableCell>
-                </TableRow>
-              ))}
+              {assignments.map((assignment) => {
+                const lastSubmitted = getLatestSubmissionDate(assignment.id);
+                return (
+                  <TableRow 
+                    key={assignment.id} 
+                    onClick={() => onToggle(assignment.id)} 
+                    className="cursor-pointer"
+                    data-state={selectedAssignments.has(assignment.id) ? 'selected' : ''}
+                  >
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedAssignments.has(assignment.id)}
+                        onCheckedChange={() => onToggle(assignment.id)}
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium">{assignment.title}</TableCell>
+                    <TableCell>{assignment.subject}</TableCell>
+                    <TableCell>{assignment.difficulty}</TableCell>
+                    <TableCell>{lastSubmitted ? lastSubmitted.toLocaleDateString() : 'N/A'}</TableCell>
+                  </TableRow>
+                )
+              })}
             </TableBody>
           </Table>
         </CardContent>

@@ -1,37 +1,16 @@
 'use server';
 
-import type { Submission, FirebaseSubmission } from './types';
-import { db } from './firebase';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import type { Submission } from './types';
+import { mockSubmissions } from './mock-data/submissions';
 
 export async function getSubmissions(): Promise<Submission[]> {
-    const submissionsCollection = collection(db, 'submissions');
-    const submissionSnapshot = await getDocs(submissionsCollection);
-    const submissions = submissionSnapshot.docs.map(doc => {
-        const data = doc.data() as FirebaseSubmission;
-        return {
-            ...data,
-            id: doc.id,
-            submittedAt: data.submittedAt.toDate(),
-        };
-    });
-    return submissions;
+    // In a real app, you would fetch from Firestore here.
+    // For now, we're returning the mock data.
+    return Promise.resolve(mockSubmissions);
 }
 
+
 export async function getNeedsReviewSubmissions(): Promise<Submission[]> {
-    const submissionsCollection = collection(db, 'submissions');
-    const q = query(
-        submissionsCollection, 
-        where('status', '==', 'Needs Review')
-    );
-    const submissionSnapshot = await getDocs(q);
-    const submissions = submissionSnapshot.docs.map(doc => {
-        const data = doc.data() as FirebaseSubmission;
-        return {
-            ...data,
-            id: doc.id,
-            submittedAt: data.submittedAt.toDate(),
-        };
-    });
-    return submissions;
+    const needsReview = mockSubmissions.filter(s => s.status === 'Needs Review');
+    return Promise.resolve(needsReview);
 }
