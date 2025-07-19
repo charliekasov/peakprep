@@ -2833,7 +2833,7 @@ export const mockAssignments: Assignment[] = [
   },
   {
     id: '284',
-    title: 'Lines, angle, and triangles Easy 1-10',
+    title: 'Lines, angles, and triangles Easy 1-10',
     link: 'https://testinnovators.com/sat/web-app/#!/question-banks/1#78',
     subject: 'Lines, angles, and triangles',
     broadCategory: 'Math',
@@ -2843,7 +2843,7 @@ export const mockAssignments: Assignment[] = [
   },
   {
     id: '285',
-    title: 'Lines, angle, and triangles Hard 1-15',
+    title: 'Lines, angles, and triangles Hard 1-15',
     link: 'https://testinnovators.com/sat/web-app/#!/question-banks/1#79',
     subject: 'Lines, angles, and triangles',
     broadCategory: 'Math',
@@ -4324,7 +4324,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '433',
     title: 'Poetry #1',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Poetry',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4334,7 +4334,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '434',
     title: 'Poetry #2',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Poetry',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4344,7 +4344,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '435',
     title: 'Poetry #3',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Poetry',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4354,7 +4354,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '436',
     title: 'Poetry #4',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Poetry',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4364,7 +4364,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '437',
     title: 'Poetry #5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Poetry',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4374,7 +4374,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '438',
     title: 'Poetry #6',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Poetry',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4384,7 +4384,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '439',
     title: 'Poetry #7',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Poetry',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4394,7 +4394,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '440',
     title: 'Science #1',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4404,7 +4404,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '441',
     title: 'Science #2',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4414,7 +4414,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '442',
     title: 'Science #3',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4424,7 +4424,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '443',
     title: 'Science #4',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4434,7 +4434,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '444',
     title: 'Science #5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4444,7 +4444,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '445',
     title: 'Science #6',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4454,7 +4454,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '446',
     title: 'Science #7',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4464,7 +4464,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '447',
     title: 'Science #8',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4474,7 +4474,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '448',
     title: 'Science #9',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4484,7 +4484,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '449',
     title: 'Science #10',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4494,7 +4494,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '450',
     title: 'Science #11',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4504,7 +4504,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '451',
     title: 'Science #12',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4514,7 +4514,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '452',
     title: 'Science #13',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4524,7 +4524,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '453',
     title: 'Science #14',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4534,7 +4534,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '454',
     title: 'Science #15',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4544,7 +4544,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '455',
     title: 'Science #16',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Science',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4554,7 +4554,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '456',
     title: 'Social Studies #1',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4564,7 +4564,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '457',
     title: 'Social Studies #2',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4574,7 +4574,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '458',
     title: 'Social Studies #3',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4584,7 +4584,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '459',
     title: 'Social Studies #4',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4594,7 +4594,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '460',
     title: 'Social Studies #5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4604,7 +4604,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '461',
     title: 'Social Studies #6',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4614,7 +4614,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '462',
     title: 'Social Studies #7',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4624,7 +4624,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '463',
     title: 'Social Studies #8',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4634,7 +4634,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '464',
     title: 'Social Studies #9',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4644,7 +4644,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '465',
     title: 'Social Studies #10',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4654,7 +4654,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '466',
     title: 'Social Studies #11',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4664,7 +4664,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '467',
     title: 'Social Studies #12',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4674,7 +4674,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '468',
     title: 'Social Studies #13',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4684,7 +4684,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '469',
     title: 'Social Studies #14',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4694,7 +4694,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '470',
     title: 'Social Studies #15',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4704,7 +4704,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '471',
     title: 'Social Studies #16',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4714,7 +4714,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '472',
     title: 'Social Studies #17',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4724,7 +4724,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '473',
     title: 'Social Studies #18',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4734,7 +4734,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '474',
     title: 'Social Studies #19',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4744,7 +4744,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '475',
     title: 'Social Studies #20',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Social Studies',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4754,7 +4754,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '476',
     title: 'Main Idea Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Main Idea',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Medium',
@@ -4764,7 +4764,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '477',
     title: 'Organization/Logic Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Organization/Logic',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Medium',
@@ -4774,7 +4774,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '478',
     title: 'Supporting Ideas Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Supporting Ideas',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Medium',
@@ -4784,7 +4784,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '479',
     title: 'Tone/Style/Figurative Language Medium 1-10',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Tone/Style/Figurative Language',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Medium',
@@ -4794,7 +4794,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '480',
     title: 'Vocabulary in Context Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Vocabulary in Context',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Medium',
@@ -4804,7 +4804,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '481',
     title: 'Inference Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Inference',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Medium',
@@ -4814,7 +4814,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '482',
     title: 'Fiction #1',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4824,7 +4824,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '483',
     title: 'Fiction #2',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4834,7 +4834,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '484',
     title: 'Fiction #3',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4844,7 +4844,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '485',
     title: 'Fiction #4',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4854,7 +4854,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '486',
     title: 'Fiction #5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4864,7 +4864,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '487',
     title: 'Fiction #6',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4874,7 +4874,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '488',
     title: 'Fiction #7',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4884,7 +4884,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '489',
     title: 'Fiction #8',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4894,7 +4894,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '490',
     title: 'Fiction #9',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4904,7 +4904,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '491',
     title: 'Fiction #10',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4914,7 +4914,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '492',
     title: 'Fiction #11',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4924,7 +4924,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '493',
     title: 'Fiction #12',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4934,7 +4934,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '494',
     title: 'Fiction #13',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Fiction',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4944,7 +4944,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '495',
     title: 'Humanities #1',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Humanities',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4954,7 +4954,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '496',
     title: 'Humanities #2',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Humanities',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4964,7 +4964,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '497',
     title: 'Humanities #3',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Humanities',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4974,7 +4974,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '498',
     title: 'Humanities #4',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Humanities',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4984,7 +4984,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '499',
     title: 'Humanities #5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Humanities',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -4994,7 +4994,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '500',
     title: 'Humanities #6',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Humanities',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -5004,7 +5004,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '501',
     title: 'Humanities #7',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Humanities',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -5014,7 +5014,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '502',
     title: 'Humanities #8',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Humanities',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -5024,7 +5024,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '503',
     title: 'Humanities #9',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Humanities',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -5034,7 +5034,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '504',
     title: 'Humanities #10',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Humanities',
     broadCategory: 'Reading Comprehension',
     difficulty: 'Easy',
@@ -5044,7 +5044,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '505',
     title: 'Analogies #1',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5054,7 +5054,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '506',
     title: 'Analogies #2',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5064,7 +5064,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '507',
     title: 'Analogies #3',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5074,7 +5074,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '508',
     title: 'Analogies #4',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5084,7 +5084,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '509',
     title: 'Analogies #5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5094,7 +5094,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '510',
     title: 'Analogies #6',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5104,7 +5104,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '511',
     title: 'Analogies #7',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5114,7 +5114,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '512',
     title: 'Analogies #8',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5124,7 +5124,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '513',
     title: 'Analogies #9',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5134,7 +5134,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '514',
     title: 'Analogies #10',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5144,7 +5144,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '515',
     title: 'Analogies #11',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5154,7 +5154,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '516',
     title: 'Analogies #12',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5164,7 +5164,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '517',
     title: 'Analogies #13',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5174,7 +5174,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '518',
     title: 'Analogies #14',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5184,7 +5184,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '519',
     title: 'Analogies #15',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5194,7 +5194,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '520',
     title: 'Analogies #16',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5204,7 +5204,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '521',
     title: 'Analogies #17',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5214,7 +5214,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '522',
     title: 'Analogies #18',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5224,7 +5224,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '523',
     title: 'Analogies #19',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5234,7 +5234,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '524',
     title: 'Analogies #20',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5244,7 +5244,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '525',
     title: 'Analogies #21',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5254,7 +5254,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '526',
     title: 'Analogies #22',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5264,7 +5264,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '527',
     title: 'Analogies #23',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5274,7 +5274,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '528',
     title: 'Analogies #24',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5284,7 +5284,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '529',
     title: 'Analogies #25',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5294,7 +5294,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '530',
     title: 'Analogies #26',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5304,7 +5304,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '531',
     title: 'Analogies #27',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5314,7 +5314,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '532',
     title: 'Analogies #28',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5324,7 +5324,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '533',
     title: 'Analogies #29',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5334,7 +5334,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '534',
     title: 'Analogies #30',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5344,7 +5344,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '535',
     title: 'Analogies #31',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5354,7 +5354,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '536',
     title: 'Analogies #32',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5364,7 +5364,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '537',
     title: 'Analogies #33',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5374,7 +5374,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '538',
     title: 'Analogies #34',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5384,7 +5384,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '539',
     title: 'Analogies #35',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5394,7 +5394,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '540',
     title: 'Analogies: Antonyms Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies: Antonyms',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5404,7 +5404,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '541',
     title: 'Analogies: Association Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies: Association',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5414,7 +5414,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '542',
     title: 'Analogies: Cause-and-Effect Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies: Cause-and-Effect',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5424,7 +5424,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '543',
     title: 'Analogies: Characteristic Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies: Characteristic',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5434,7 +5434,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '544',
     title: 'Analogies: Degree Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies: Degree',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5444,7 +5444,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '545',
     title: 'Analogies: Noun-Verb Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies: Noun-Verb',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5454,7 +5454,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '546',
     title: 'Analogies: Synonyms Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies: Synonyms',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5464,7 +5464,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '547',
     title: 'Analogies: Type/Kind Medium 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies: Type/Kind',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5474,7 +5474,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '548',
     title: 'Analogies: Definition/Purpose Medium 1-10',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies: Definition/Purpose',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5484,7 +5484,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '549',
     title: 'Analogies: Part-Whole Easy 1-5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Analogies: Part-Whole',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Easy',
@@ -5494,7 +5494,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '550',
     title: 'Synonym Bank: Medium #1',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Medium',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5504,7 +5504,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '551',
     title: 'Synonym Bank: Medium #2',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Medium',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5514,7 +5514,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '552',
     title: 'Synonym Bank: Medium #3',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Medium',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5524,7 +5524,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '553',
     title: 'Synonym Bank: Medium #4',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Medium',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5534,7 +5534,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '554',
     title: 'Synonym Bank: Medium #5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Medium',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5544,7 +5544,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '555',
     title: 'Synonym Bank: Medium #6',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Medium',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5554,7 +5554,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '556',
     title: 'Synonym Bank: Medium #7',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Medium',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5564,7 +5564,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '557',
     title: 'Synonym Bank: Medium #8',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Medium',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5574,7 +5574,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '558',
     title: 'Synonym Bank: Medium #9',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Medium',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5584,7 +5584,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '559',
     title: 'Synonym Bank: Medium #10',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Medium',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5594,7 +5594,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '560',
     title: 'Synonym Bank: Medium #11',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Medium',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Medium',
@@ -5604,7 +5604,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '561',
     title: 'Synonym Bank: Hard #1',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Hard',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Hard',
@@ -5614,7 +5614,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '562',
     title: 'Synonym Bank: Hard #2',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Hard',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Hard',
@@ -5624,7 +5624,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '563',
     title: 'Synonym Bank: Hard #3',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Hard',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Hard',
@@ -5634,7 +5634,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '564',
     title: 'Synonym Bank: Hard #4',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Hard',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Hard',
@@ -5644,7 +5644,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '565',
     title: 'Synonym Bank: Hard #5',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Hard',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Hard',
@@ -5654,7 +5654,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '566',
     title: 'Synonym Bank: Hard #6',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Hard',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Hard',
@@ -5664,7 +5664,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '567',
     title: 'Synonym Bank: Hard #7',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Hard',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Hard',
@@ -5674,7 +5674,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '568',
     title: 'Synonym Bank: Hard #8',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Hard',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Hard',
@@ -5684,7 +5684,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '569',
     title: 'Synonym Bank: Hard #9',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Hard',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Hard',
@@ -5694,7 +5694,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '570',
     title: 'Synonym Bank: Hard #10',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Hard',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Hard',
@@ -5704,7 +5704,7 @@ export const mockAssignments: Assignment[] = [
   {
     id: '571',
     title: 'Synonym Bank: Hard #11',
-    link: '',
+    link: 'https://ssatpracticetest.com/web-app/#!/question-banks/3',
     subject: 'Synonym Bank: Hard',
     broadCategory: 'Verbal Reasoning',
     difficulty: 'Hard',
