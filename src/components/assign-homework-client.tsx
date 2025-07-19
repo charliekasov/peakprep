@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { Student, Assignment, Submission } from '@/lib/types';
 import {
   Select,
@@ -95,11 +95,13 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
 
   const practiceTests = useMemo(() => {
      const practiceTestSources = ['Bluebook'];
-     const ssatPracticeTests = relevantAssignments.filter(a => a.testType === 'Upper Level SSAT' && practiceTestSources.includes(a.source || ''));
-     const satPracticeTests = relevantAssignments.filter(a => a.testType === 'SAT' && practiceTestSources.includes(a.source || ''));
      
-     if (selectedStudent?.testType === 'Upper Level SSAT') return ssatPracticeTests;
-     if (selectedStudent?.testType === 'SAT') return satPracticeTests;
+     if (selectedStudent?.testType === 'Upper Level SSAT') {
+       return relevantAssignments.filter(a => a.testType === 'Upper Level SSAT' && practiceTestSources.includes(a.source || ''));
+     }
+     if (selectedStudent?.testType === 'SAT') {
+       return relevantAssignments.filter(a => a.testType === 'SAT' && practiceTestSources.includes(a.source || ''));
+     }
      
      return [];
   }, [relevantAssignments, selectedStudent]);
@@ -245,13 +247,19 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                           <div className="flex flex-wrap items-center gap-4">
                             <Label>Sources:</Label>
                               {worksheetSources.map(source => (
-                                <div key={source} className="flex items-center space-x-2">
+                                <div key={source} className="flex items-start space-x-2">
                                   <Checkbox 
                                     id={`source-${source}`} 
                                     checked={selectedWorksheetSources.has(source)}
                                     onCheckedChange={() => handleSourceToggle(source)}
+                                    className="mt-1"
                                   />
-                                  <Label htmlFor={`source-${source}`} className="font-normal">{source}</Label>
+                                  <div className="grid gap-1.5 leading-none">
+                                    <Label htmlFor={`source-${source}`} className="font-normal">{source}</Label>
+                                    {source === 'Question Bank' && (
+                                       <p className="text-xs text-muted-foreground">(Google Drive)</p>
+                                    )}
+                                  </div>
                                 </div>
                               ))}
                           </div>
