@@ -23,7 +23,6 @@ import { Search, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { handleAssignHomework } from '@/app/assign-homework/actions';
 
-
 interface AssignHomeworkClientProps {
   students: Student[];
   assignments: Assignment[];
@@ -192,9 +191,9 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Assign Homework</h1>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div className="grid flex-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
         {/* Left Column: Student and Assignments */}
-        <div className="lg:col-span-2">
+        <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
           <Card>
             <CardHeader>
               <CardTitle>Select Student and Assignments</CardTitle>
@@ -238,7 +237,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                            />
                         </div>
                          {worksheetSources.length > 0 && (
-                          <div className="mt-4 flex items-center space-x-4">
+                          <div className="mt-4 flex flex-wrap items-center gap-4">
                             <Label>Sources:</Label>
                               {worksheetSources.map(source => (
                                 <div key={source} className="flex items-center space-x-2">
@@ -266,7 +265,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
         </div>
 
         {/* Right Column: Email Composition */}
-        <div>
+        <div className="sticky top-20">
           <Card>
             <CardHeader>
               <CardTitle>Compose Email</CardTitle>
@@ -274,7 +273,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                 Draft the email to send to the student.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <div>
                 <Label htmlFor="subject">Email Subject</Label>
                 <Input 
@@ -330,13 +329,13 @@ function AssignmentTable({ assignments, selectedAssignments, studentSubmissions,
   }
   
   return (
-      <ScrollArea className="h-96">
+      <ScrollArea className="h-96 w-full">
         <CardContent className="p-0">
           <Table>
-            <TableHeader className="sticky top-0 bg-background">
+            <TableHeader className="sticky top-0 z-10 bg-background">
               <TableRow>
                 <TableHead className="w-[50px]"></TableHead>
-                <TableHead>Title</TableHead>
+                <TableHead className="min-w-[200px]">Title</TableHead>
                 <TableHead>Subject</TableHead>
                 <TableHead>Difficulty</TableHead>
                 <TableHead>Last Assigned</TableHead>
