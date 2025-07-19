@@ -12,7 +12,6 @@ import {
   Users,
   FileText,
   Mail,
-  GraduationCap,
 } from 'lucide-react';
 
 const navItems = [
@@ -31,6 +30,11 @@ const navItems = [
     icon: FileText,
     label: 'Assignments',
   },
+  {
+    href: '/assign-homework',
+    icon: Mail,
+    label: 'Assign Homework',
+  },
 ];
 
 export function Nav() {
@@ -42,7 +46,7 @@ export function Nav() {
         <SidebarMenuItem key={item.href}>
           <Link href={item.href}>
             <SidebarMenuButton
-              isActive={pathname === item.href}
+              isActive={pathname.startsWith(item.href) && (item.href !== '/' || pathname === '/')}
               tooltip={{ children: item.label }}
             >
               <item.icon />
