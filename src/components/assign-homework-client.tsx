@@ -18,42 +18,58 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from './ui/scroll-area';
+import { Search } from 'lucide-react';
 
 interface AssignHomeworkClientProps {
   students: Student[];
   assignments: Assignment[];
 }
 
+const WORKSHEET_SOURCES = ['Google Drive', 'Test Innovators'];
+
 export function AssignHomeworkClient({ students, assignments }: AssignHomeworkClientProps) {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [selectedAssignments, setSelectedAssignments] = useState<Set<string>>(new Set());
+  const [worksheetSearchQuery, setWorksheetSearchQuery] = useState('');
+  const [selectedWorksheetSources, setSelectedWorksheetSources] = useState<Set<string>>(new Set(WORKSHEET_SOURCES));
 
   const selectedStudent = useMemo(
     () => students.find((s) => s.id === selectedStudentId) || null,
     [selectedStudentId, students]
   );
 
-  const filteredAssignments = useMemo(() => {
+  const relevantAssignments = useMemo(() => {
     if (!selectedStudent || !selectedStudent.testType) {
       return [];
     }
     return assignments.filter(
-      (a) => a.testType === selectedStudent.testType || !a.testType // Show assignments that match test type or have no test type
+      (a) => a.testType === selectedStudent.testType || !a.testType
     );
   }, [selectedStudent, assignments]);
 
-  const worksheets = useMemo(() => {
-    return filteredAssignments.filter(a => a.source !== 'Test Innovators' && a.source !== 'Tutorverse' && a.source !== 'Bluebook');
-  }, [filteredAssignments]);
-
   const practiceTests = useMemo(() => {
-    return filteredAssignments.filter(a => a.source === 'Test Innovators' || a.source === 'Tutorverse' || a.source === 'Bluebook');
-  }, [filteredAssignments]);
-  
+     return relevantAssignments.filter(a => a.source === 'Bluebook' || a.source === 'Tutorverse');
+  }, [relevantAssignments]);
+
+  const worksheets = useMemo(() => {
+    return relevantAssignments
+      .filter(a => a.source === 'Google Drive' || (a.source === 'Test Innovators' && a.subject !== 'Analogies' && a.subject !== 'Synonym Bank: Medium' && a.subject !== 'Synonym Bank: Hard'))
+      .filter(a => {
+        // Source filter
+        if (selectedWorksheetSources.size > 0 && a.source && !selectedWorksheetSources.has(a.source)) {
+          return false;
+        }
+        // Search query filter
+        if (worksheetSearchQuery.trim() === '') {
+          return true;
+        }
+        return a.title.toLowerCase().includes(worksheetSearchQuery.toLowerCase());
+      });
+  }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources]);
 
   const handleStudentChange = (studentId: string) => {
     setSelectedStudentId(studentId);
-    setSelectedAssignments(new Set()); // Reset selections when student changes
+    setSelectedAssignments(new Set()); 
   };
 
   const handleAssignmentToggle = (assignmentId: string) => {
@@ -67,6 +83,18 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
       return newSet;
     });
   };
+
+  const handleSourceToggle = (source: string) => {
+    setSelectedWorksheetSources(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(source)) {
+        newSet.delete(source);
+      } else {
+        newSet.add(source);
+      }
+      return newSet;
+    })
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -108,7 +136,33 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
                    <TabsTrigger value="practice-tests">Practice Tests ({practiceTests.length})</TabsTrigger>
                  </TabsList>
                  <TabsContent value="worksheets">
-                   <AssignmentTable assignments={worksheets} selectedAssignments={selectedAssignments} onToggle={handleAssignmentToggle} />
+                    <Card>
+                      <CardHeader>
+                        <div className="relative">
+                           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                           <Input 
+                            placeholder="Search worksheets..." 
+                            className="pl-8"
+                            value={worksheetSearchQuery}
+                            onChange={e => setWorksheetSearchQuery(e.target.value)}
+                           />
+                        </div>
+                         <div className="mt-4 flex items-center space-x-4">
+                           <Label>Sources:</Label>
+                            {WORKSHEET_SOURCES.map(source => (
+                              <div key={source} className="flex items-center space-x-2">
+                                <Checkbox 
+                                  id={`source-${source}`} 
+                                  checked={selectedWorksheetSources.has(source)}
+                                  onCheckedChange={() => handleSourceToggle(source)}
+                                />
+                                <Label htmlFor={`source-${source}`}>{source}</Label>
+                              </div>
+                            ))}
+                         </div>
+                      </CardHeader>
+                      <AssignmentTable assignments={worksheets} selectedAssignments={selectedAssignments} onToggle={handleAssignmentToggle} />
+                    </Card>
                  </TabsContent>
                  <TabsContent value="practice-tests">
                   <AssignmentTable assignments={practiceTests} selectedAssignments={selectedAssignments} onToggle={handleAssignmentToggle} />
@@ -157,7 +211,6 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
 
 function AssignmentTable({ assignments, selectedAssignments, onToggle }: { assignments: Assignment[], selectedAssignments: Set<string>, onToggle: (id: string) => void }) {
   return (
-    <Card>
       <ScrollArea className="h-96">
         <CardContent className="p-0">
           <Table>
@@ -190,6 +243,5 @@ function AssignmentTable({ assignments, selectedAssignments, onToggle }: { assig
           </Table>
         </CardContent>
       </ScrollArea>
-    </Card>
   )
 }
