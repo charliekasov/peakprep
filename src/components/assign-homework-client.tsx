@@ -202,10 +202,21 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       {view === 'assignments' && (
         <Card>
           <CardHeader>
-            <CardTitle>Select Student and Assignments</CardTitle>
-            <CardDescription>
-              Choose a student to see a filtered list of relevant assignments.
-            </CardDescription>
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
+              <div>
+                <CardTitle>Select Student and Assignments</CardTitle>
+                <CardDescription>
+                  Choose a student to see a filtered list of relevant assignments.
+                </CardDescription>
+              </div>
+               <Button
+                disabled={selectedAssignments.size === 0}
+                onClick={() => setView('email')}
+                className="w-full sm:w-auto"
+              >
+                Compose Email ({selectedAssignments.size})
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
@@ -274,14 +285,6 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
              </Tabs>
             )}
           </CardContent>
-           <div className="flex justify-end p-6 pt-0">
-              <Button
-                disabled={selectedAssignments.size === 0}
-                onClick={() => setView('email')}
-              >
-                Compose Email ({selectedAssignments.size})
-              </Button>
-            </div>
         </Card>
       )}
 
