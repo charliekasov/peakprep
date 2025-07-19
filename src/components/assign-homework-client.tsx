@@ -265,8 +265,8 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
         </div>
 
         {/* Right Column: Email Composition */}
-        <div className="sticky top-20">
-          <Card>
+        <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
+          <Card className="lg:sticky lg:top-20">
             <CardHeader>
               <CardTitle>Compose Email</CardTitle>
               <CardDescription>
