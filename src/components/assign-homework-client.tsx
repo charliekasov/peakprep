@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { Student, Assignment } from '@/lib/types';
 import {
   Select,
@@ -18,7 +18,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from './ui/scroll-area';
-import { Search } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { handleAssignHomework } from '@/app/assign-homework/actions';
+
 
 interface AssignHomeworkClientProps {
   students: Student[];
@@ -32,7 +35,11 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [selectedAssignments, setSelectedAssignments] = useState<Set<string>>(new Set());
   const [worksheetSearchQuery, setWorksheetSearchQuery] = useState('');
-  
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
   const selectedStudent = useMemo(
     () => students.find((s) => s.id === selectedStudentId) || null,
     [selectedStudentId, students]
@@ -46,10 +53,26 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
 
   const [selectedWorksheetSources, setSelectedWorksheetSources] = useState<Set<string>>(new Set(worksheetSources));
 
-  // Update selected sources when student changes
-  React.useEffect(() => {
+  useEffect(() => {
     setSelectedWorksheetSources(new Set(worksheetSources));
   }, [worksheetSources]);
+
+  useEffect(() => {
+    if (!selectedStudent) {
+      setEmailMessage('');
+      return;
+    }
+
+    const assignedItems = Array.from(selectedAssignments)
+      .map(id => assignments.find(a => a.id === id))
+      .filter(Boolean) as Assignment[];
+
+    const assignmentLinks = assignedItems.map(a => `${a.title}:\n${a.link}`).join('\n\n');
+
+    const message = `Hi ${selectedStudent.name},\n\nHere is your homework for the week:\n\n${assignmentLinks}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
+    setEmailMessage(message);
+
+  }, [selectedStudent, selectedAssignments, assignments]);
 
 
   const relevantAssignments = useMemo(() => {
@@ -68,28 +91,23 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
   const worksheets = useMemo(() => {
     return relevantAssignments
       .filter(a => {
-        // Filter out practice tests
         if (a.source === 'Bluebook') return false;
 
-        // Determine if it's a worksheet based on source
-        const isSatWorksheet = selectedStudent?.testType === 'SAT' && (a.source === 'Google Drive' || a.source === 'Test Innovators');
-        const isSsatWorksheet = selectedStudent?.testType === 'Upper Level SSAT' && (a.source === 'Tutorverse' || a.source === 'Test Innovators');
-        return isSatWorksheet || isSsatWorksheet;
+        const isWorksheet = selectedStudent?.testType === 'SAT' 
+          ? (a.source === 'Google Drive' || a.source === 'Test Innovators')
+          : selectedStudent?.testType === 'Upper Level SSAT' 
+            ? (a.source === 'Tutorverse' || a.source === 'Test Innovators')
+            : false;
+        
+        return isWorksheet;
       })
       .filter(a => {
-        // Source filter
         if (selectedWorksheetSources.size === 0) return true;
-        
-        // Map 'Google Drive' to 'Question Bank' for filtering
-        const source = a.source === 'Google Drive' ? 'Question Bank' : a.source;
-        
-        return source && selectedWorksheetSources.has(source);
+        const sourceForFilter = a.source === 'Google Drive' ? 'Question Bank' : a.source;
+        return sourceForFilter && selectedWorksheetSources.has(sourceForFilter);
       })
       .filter(a => {
-        // Search query filter
-        if (worksheetSearchQuery.trim() === '') {
-          return true;
-        }
+        if (worksheetSearchQuery.trim() === '') return true;
         return a.title.toLowerCase().includes(worksheetSearchQuery.toLowerCase());
       });
   }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources, selectedStudent]);
@@ -123,9 +141,42 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
     })
   }
   
-  const satWorksheetDisplaySources = useMemo(() => {
-    return SAT_WORKSHEET_SOURCES.map(source => source === 'Google Drive' ? 'Question Bank' : source);
-  }, []);
+  const handleSubmit = async () => {
+    if (!selectedStudentId || selectedAssignments.size === 0) {
+      toast({
+        title: 'Missing Information',
+        description: 'Please select a student and at least one assignment.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await handleAssignHomework({
+        studentId: selectedStudentId,
+        assignmentIds: Array.from(selectedAssignments),
+        emailSubject,
+        emailMessage,
+      });
+      toast({
+        title: 'Homework Assigned!',
+        description: `Email draft for ${selectedStudent?.name} has been logged.`,
+      });
+      // Reset form
+      setSelectedAssignments(new Set());
+      setEmailSubject('');
+
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to assign homework. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -218,19 +269,37 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="subject">Email Subject</Label>
-                <Input id="subject" placeholder="Homework for..." />
+                <Input 
+                  id="subject" 
+                  placeholder="Homework for..." 
+                  value={emailSubject}
+                  onChange={e => setEmailSubject(e.target.value)}
+                  disabled={!selectedStudentId}
+                />
               </div>
               <div>
                 <Label htmlFor="message">Email Message</Label>
-                <Textarea id="message" placeholder="Hi [Student Name], here is your homework..." rows={10} />
+                <Textarea 
+                  id="message" 
+                  placeholder="Hi [Student Name], here is your homework..." 
+                  rows={15}
+                  value={emailMessage}
+                  onChange={e => setEmailMessage(e.target.value)}
+                  disabled={!selectedStudentId}
+                />
               </div>
                <div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="cc-parents" />
+                  <Checkbox id="cc-parents" disabled={!selectedStudentId} />
                   <Label htmlFor="cc-parents">CC Parents</Label>
                 </div>
               </div>
-              <Button className="w-full" disabled={!selectedStudentId || selectedAssignments.size === 0}>
+              <Button 
+                className="w-full" 
+                disabled={!selectedStudentId || selectedAssignments.size === 0 || isSubmitting}
+                onClick={handleSubmit}
+              >
+                {isSubmitting && <Loader2 className="mr-2 animate-spin" />}
                 Assign Homework ({selectedAssignments.size})
               </Button>
             </CardContent>
