@@ -436,11 +436,11 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                          )}
                       </div>
                     </CardHeader>
-                    <AssignmentTable assignments={worksheets} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
+                    <WorksheetTable assignments={worksheets} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
                   </Card>
                </TabsContent>
                <TabsContent value="practice-tests">
-                <AssignmentTable assignments={practiceTests} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
+                  <PracticeTestTable assignments={practiceTests} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
                </TabsContent>
              </Tabs>
             )}
@@ -503,17 +503,15 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   );
 }
 
+function getLatestSubmissionDate(assignmentId: string, studentSubmissions: Submission[]) {
+  const submissionsForAssignment = studentSubmissions
+    .filter(sub => sub.assignmentId === assignmentId)
+    .sort((a, b) => b.submittedAt.getTime() - a.submittedAt.getTime());
+  
+  return submissionsForAssignment.length > 0 ? submissionsForAssignment[0].submittedAt : null;
+}
 
-function AssignmentTable({ assignments, selectedAssignments, studentSubmissions, onToggle }: { assignments: Assignment[], selectedAssignments: Map<string, AssignmentOptions>, studentSubmissions: Submission[], onToggle: (assignment: Assignment) => void }) {
-  
-  const getLatestSubmissionDate = (assignmentId: string) => {
-    const submissionsForAssignment = studentSubmissions
-      .filter(sub => sub.assignmentId === assignmentId)
-      .sort((a, b) => b.submittedAt.getTime() - a.submittedAt.getTime());
-    
-    return submissionsForAssignment.length > 0 ? submissionsForAssignment[0].submittedAt : null;
-  }
-  
+function WorksheetTable({ assignments, selectedAssignments, studentSubmissions, onToggle }: { assignments: Assignment[], selectedAssignments: Map<string, AssignmentOptions>, studentSubmissions: Submission[], onToggle: (assignment: Assignment) => void }) {
   return (
       <ScrollArea className="h-96 w-full">
         <CardContent className="p-0">
@@ -530,7 +528,7 @@ function AssignmentTable({ assignments, selectedAssignments, studentSubmissions,
             </TableHeader>
             <TableBody>
               {assignments.map((assignment) => {
-                const lastSubmitted = getLatestSubmissionDate(assignment.id);
+                const lastSubmitted = getLatestSubmissionDate(assignment.id, studentSubmissions);
                 const isSelected = selectedAssignments.has(assignment.id);
                 return (
                   <TableRow 
@@ -559,3 +557,55 @@ function AssignmentTable({ assignments, selectedAssignments, studentSubmissions,
       </ScrollArea>
   )
 }
+
+function PracticeTestTable({ assignments, selectedAssignments, studentSubmissions, onToggle }: { assignments: Assignment[], selectedAssignments: Map<string, AssignmentOptions>, studentSubmissions: Submission[], onToggle: (assignment: Assignment) => void }) {
+  
+  // Helper to extract test name from title
+  const getTestName = (title: string) => {
+    // This is a simple implementation, can be made more robust
+    return title.replace(/(Bluebook|Test Innovators|Test Innovators Official Upper Level)\s*/, '');
+  };
+
+  return (
+      <ScrollArea className="h-96 w-full">
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[50px]"></TableHead>
+                <TableHead>Source</TableHead>
+                <TableHead>Test Name</TableHead>
+                <TableHead>Last Assigned</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {assignments.map((assignment) => {
+                const lastSubmitted = getLatestSubmissionDate(assignment.id, studentSubmissions);
+                const isSelected = selectedAssignments.has(assignment.id);
+                return (
+                  <TableRow 
+                    key={assignment.id} 
+                    onClick={() => onToggle(assignment)} 
+                    className="cursor-pointer"
+                    data-state={isSelected ? 'selected' : ''}
+                  >
+                    <TableCell>
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={() => onToggle(assignment)}
+                      />
+                    </TableCell>
+                    <TableCell>{assignment.source}</TableCell>
+                    <TableCell className="font-medium">{getTestName(assignment.title)}</TableCell>
+                    <TableCell>{lastSubmitted ? lastSubmitted.toLocaleDateString() : 'N/A'}</TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </ScrollArea>
+  )
+}
+
+    
