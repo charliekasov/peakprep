@@ -25,18 +25,32 @@ interface AssignHomeworkClientProps {
   assignments: Assignment[];
 }
 
-const WORKSHEET_SOURCES = ['Google Drive', 'Test Innovators'];
+const SAT_WORKSHEET_SOURCES = ['Question Bank', 'Test Innovators'];
+const SSAT_WORKSHEET_SOURCES = ['Tutorverse', 'Test Innovators'];
 
 export function AssignHomeworkClient({ students, assignments }: AssignHomeworkClientProps) {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [selectedAssignments, setSelectedAssignments] = useState<Set<string>>(new Set());
   const [worksheetSearchQuery, setWorksheetSearchQuery] = useState('');
-  const [selectedWorksheetSources, setSelectedWorksheetSources] = useState<Set<string>>(new Set(WORKSHEET_SOURCES));
-
+  
   const selectedStudent = useMemo(
     () => students.find((s) => s.id === selectedStudentId) || null,
     [selectedStudentId, students]
   );
+  
+  const worksheetSources = useMemo(() => {
+    if (selectedStudent?.testType === 'Upper Level SSAT') return SSAT_WORKSHEET_SOURCES;
+    if (selectedStudent?.testType === 'SAT') return SAT_WORKSHEET_SOURCES;
+    return [];
+  }, [selectedStudent]);
+
+  const [selectedWorksheetSources, setSelectedWorksheetSources] = useState<Set<string>>(new Set(worksheetSources));
+
+  // Update selected sources when student changes
+  React.useEffect(() => {
+    setSelectedWorksheetSources(new Set(worksheetSources));
+  }, [worksheetSources]);
+
 
   const relevantAssignments = useMemo(() => {
     if (!selectedStudent || !selectedStudent.testType) {
@@ -48,24 +62,37 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
   }, [selectedStudent, assignments]);
 
   const practiceTests = useMemo(() => {
-     return relevantAssignments.filter(a => a.source === 'Bluebook' || a.source === 'Tutorverse');
+     return relevantAssignments.filter(a => a.source === 'Bluebook');
   }, [relevantAssignments]);
 
   const worksheets = useMemo(() => {
     return relevantAssignments
-      .filter(a => a.source === 'Google Drive' || (a.source === 'Test Innovators' && a.subject !== 'Analogies' && a.subject !== 'Synonym Bank: Medium' && a.subject !== 'Synonym Bank: Hard'))
+      .filter(a => {
+        // Filter out practice tests
+        if (a.source === 'Bluebook') return false;
+
+        // Determine if it's a worksheet based on source
+        const isSatWorksheet = selectedStudent?.testType === 'SAT' && (a.source === 'Google Drive' || a.source === 'Test Innovators');
+        const isSsatWorksheet = selectedStudent?.testType === 'Upper Level SSAT' && (a.source === 'Tutorverse' || a.source === 'Test Innovators');
+        return isSatWorksheet || isSsatWorksheet;
+      })
       .filter(a => {
         // Source filter
-        if (selectedWorksheetSources.size > 0 && a.source && !selectedWorksheetSources.has(a.source)) {
-          return false;
-        }
+        if (selectedWorksheetSources.size === 0) return true;
+        
+        // Map 'Google Drive' to 'Question Bank' for filtering
+        const source = a.source === 'Google Drive' ? 'Question Bank' : a.source;
+        
+        return source && selectedWorksheetSources.has(source);
+      })
+      .filter(a => {
         // Search query filter
         if (worksheetSearchQuery.trim() === '') {
           return true;
         }
         return a.title.toLowerCase().includes(worksheetSearchQuery.toLowerCase());
       });
-  }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources]);
+  }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources, selectedStudent]);
 
   const handleStudentChange = (studentId: string) => {
     setSelectedStudentId(studentId);
@@ -147,19 +174,21 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
                             onChange={e => setWorksheetSearchQuery(e.target.value)}
                            />
                         </div>
-                         <div className="mt-4 flex items-center space-x-4">
-                           <Label>Sources:</Label>
-                            {WORKSHEET_SOURCES.map(source => (
-                              <div key={source} className="flex items-center space-x-2">
-                                <Checkbox 
-                                  id={`source-${source}`} 
-                                  checked={selectedWorksheetSources.has(source)}
-                                  onCheckedChange={() => handleSourceToggle(source)}
-                                />
-                                <Label htmlFor={`source-${source}`}>{source}</Label>
-                              </div>
-                            ))}
-                         </div>
+                         {worksheetSources.length > 0 && (
+                          <div className="mt-4 flex items-center space-x-4">
+                            <Label>Sources:</Label>
+                              {worksheetSources.map(source => (
+                                <div key={source} className="flex items-center space-x-2">
+                                  <Checkbox 
+                                    id={`source-${source}`} 
+                                    checked={selectedWorksheetSources.has(source)}
+                                    onCheckedChange={() => handleSourceToggle(source)}
+                                  />
+                                  <Label htmlFor={`source-${source}`}>{source}</Label>
+                                </div>
+                              ))}
+                          </div>
+                         )}
                       </CardHeader>
                       <AssignmentTable assignments={worksheets} selectedAssignments={selectedAssignments} onToggle={handleAssignmentToggle} />
                     </Card>
