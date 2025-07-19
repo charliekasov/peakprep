@@ -2,9 +2,15 @@
 
 import { z } from 'zod';
 
+const assignmentDetailsSchema = z.object({
+  id: z.string(),
+  sections: z.array(z.string()).optional(),
+  timing: z.enum(['timed', 'untimed']).optional(),
+});
+
 const assignHomeworkSchema = z.object({
   studentId: z.string(),
-  assignmentIds: z.array(z.string()),
+  assignments: z.array(assignmentDetailsSchema),
   emailSubject: z.string(),
   emailMessage: z.string(),
 });
@@ -17,13 +23,13 @@ export async function handleAssignHomework(input: unknown) {
     throw new Error('Invalid input');
   }
 
-  const { studentId, assignmentIds, emailSubject, emailMessage } = validatedInput.data;
+  const { studentId, assignments, emailSubject, emailMessage } = validatedInput.data;
 
   // For now, we'll just log the details to the console.
   // In a future step, we can integrate an email service here.
   console.log('--- NEW HOMEWORK ASSIGNMENT ---');
   console.log('Student ID:', studentId);
-  console.log('Assignment IDs:', assignmentIds);
+  console.log('Assignments:', JSON.stringify(assignments, null, 2));
   console.log('Email Subject:', emailSubject);
   console.log('Email Message:', emailMessage);
   console.log('---------------------------------');

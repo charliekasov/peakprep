@@ -22,6 +22,17 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, Loader2, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { handleAssignHomework } from '@/app/assign-homework/actions';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 
 interface AssignHomeworkClientProps {
   students: Student[];
@@ -29,20 +40,32 @@ interface AssignHomeworkClientProps {
   submissions: Submission[];
 }
 
+interface AssignmentOptions {
+  sections?: string[] | string;
+  timing?: 'timed' | 'untimed';
+}
+
 const SAT_WORKSHEET_SOURCES = ['Question Bank', 'Test Innovators'];
 const SSAT_WORKSHEET_SOURCES = ['Tutorverse', 'Test Innovators'];
-const PRACTICE_TEST_SOURCES = ['Bluebook', 'Test Innovators Official Upper Level', 'Test Innovators'];
+const PRACTICE_TEST_SOURCES = ['Bluebook', 'Test Innovators', 'Test Innovators Official Upper Level'];
+
+const SAT_SECTIONS = ['Reading + Writing', 'Math'];
+const SSAT_SECTIONS = ['Verbal', 'Quantitative 1', 'Reading', 'Quantitative 2'];
 
 
 export function AssignHomeworkClient({ students, assignments, submissions }: AssignHomeworkClientProps) {
   const [view, setView] = useState<'assignments' | 'email'>('assignments');
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
-  const [selectedAssignments, setSelectedAssignments] = useState<Set<string>>(new Set());
+  const [selectedAssignments, setSelectedAssignments] = useState<Map<string, AssignmentOptions>>(new Map());
   const [worksheetSearchQuery, setWorksheetSearchQuery] = useState('');
   const [emailSubject, setEmailSubject] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+
+  const [configuringAssignment, setConfiguringAssignment] = useState<Assignment | null>(null);
+  const [tempOptions, setTempOptions] = useState<AssignmentOptions>({});
+
 
   const selectedStudent = useMemo(
     () => students.find((s) => s.id === selectedStudentId) || null,
@@ -68,19 +91,37 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       return;
     }
 
-    const assignedItems = Array.from(selectedAssignments)
-      .map(id => assignments.find(a => a.id === id))
-      .filter(Boolean) as Assignment[];
+    const assignedItems = Array.from(selectedAssignments.entries())
+      .map(([id, options]) => {
+        const assignment = assignments.find(a => a.id === id);
+        if (!assignment) return null;
 
-    const assignmentList = assignedItems.map(a => {
-        if (a.link) {
-            return `${a.title}: ${a.link}`;
+        let title = assignment.title;
+        if (assignment.source && PRACTICE_TEST_SOURCES.includes(assignment.source)) {
+          let details = [];
+          if (options.sections) {
+            if (Array.isArray(options.sections)) {
+              details.push(options.sections.join(', '));
+            } else {
+              details.push(options.sections);
+            }
+          }
+          if (options.timing) {
+            details.push(options.timing.charAt(0).toUpperCase() + options.timing.slice(1));
+          }
+          if (details.length > 0) {
+            title += ` (${details.join(', ')})`;
+          }
         }
-        return a.title;
-    }).join('\n\n');
+        
+        if (assignment.link) {
+            return `${title}: ${assignment.link}`;
+        }
+        return title;
+    }).filter(Boolean).join('\n\n');
 
     const firstName = selectedStudent.name.split(' ')[0];
-    const message = `Hi ${firstName},\n\n${assignmentList}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
+    const message = `Hi ${firstName},\n\n${assignedItems}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
     setEmailMessage(message);
 
   }, [selectedStudent, selectedAssignments, assignments]);
@@ -96,19 +137,12 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   }, [selectedStudent, assignments]);
 
   const practiceTests = useMemo(() => {
-     if (selectedStudent?.testType === 'Upper Level SSAT') {
-       return relevantAssignments.filter(a => PRACTICE_TEST_SOURCES.includes(a.source || '') && a.title.includes('Test'));
-     }
-     if (selectedStudent?.testType === 'SAT') {
-       return relevantAssignments.filter(a => PRACTICE_TEST_SOURCES.includes(a.source || '') && a.title.includes('Test'));
-     }
-     
-     return [];
-  }, [relevantAssignments, selectedStudent]);
+     return relevantAssignments.filter(a => a.source && PRACTICE_TEST_SOURCES.includes(a.source));
+  }, [relevantAssignments]);
 
   const worksheets = useMemo(() => {
     return relevantAssignments
-      .filter(a => !practiceTests.some(pt => pt.id === a.id))
+      .filter(a => !a.source || !PRACTICE_TEST_SOURCES.includes(a.source))
       .filter(a => {
         if (selectedWorksheetSources.size === 0) return true;
         const sourceForFilter = a.source === 'Google Drive' ? 'Question Bank' : a.source;
@@ -128,20 +162,39 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
 
   const handleStudentChange = (studentId: string) => {
     setSelectedStudentId(studentId);
-    setSelectedAssignments(new Set()); 
+    setSelectedAssignments(new Map()); 
     setEmailSubject('');
   };
 
-  const handleAssignmentToggle = (assignmentId: string) => {
-    setSelectedAssignments((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(assignmentId)) {
-        newSet.delete(assignmentId);
+  const handleAssignmentToggle = (assignment: Assignment) => {
+    const newSet = new Map(selectedAssignments);
+    if (newSet.has(assignment.id)) {
+      newSet.delete(assignment.id);
+      setSelectedAssignments(newSet);
+    } else {
+      if (assignment.source && PRACTICE_TEST_SOURCES.includes(assignment.source)) {
+        setConfiguringAssignment(assignment);
+        setTempOptions({ timing: 'timed' }); // Default to timed
       } else {
-        newSet.add(assignmentId);
+        newSet.set(assignment.id, {});
+        setSelectedAssignments(newSet);
       }
-      return newSet;
-    });
+    }
+  };
+
+  const handleSaveConfiguration = () => {
+    if (configuringAssignment) {
+      const newSet = new Map(selectedAssignments);
+      newSet.set(configuringAssignment.id, tempOptions);
+      setSelectedAssignments(newSet);
+      setConfiguringAssignment(null);
+      setTempOptions({});
+    }
+  };
+  
+  const handleCancelConfiguration = () => {
+      setConfiguringAssignment(null);
+      setTempOptions({});
   };
 
   const handleSourceToggle = (source: string) => {
@@ -168,9 +221,29 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
 
     setIsSubmitting(true);
     try {
+      const assignmentsPayload = Array.from(selectedAssignments.entries()).map(([id, options]) => {
+        const assignment = assignments.find(a => a.id === id)!;
+        const isPracticeTest = assignment.source && PRACTICE_TEST_SOURCES.includes(assignment.source);
+        let sections: string[] = [];
+
+        if(isPracticeTest) {
+          if (Array.isArray(options.sections)) {
+            sections = options.sections;
+          } else if (typeof options.sections === 'string') {
+            sections = [options.sections];
+          }
+        }
+        
+        return {
+          id,
+          sections: sections.length > 0 ? sections : undefined,
+          timing: options.timing,
+        };
+      });
+      
       await handleAssignHomework({
         studentId: selectedStudentId,
-        assignmentIds: Array.from(selectedAssignments),
+        assignments: assignmentsPayload,
         emailSubject,
         emailMessage,
       });
@@ -179,7 +252,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
         description: `Email draft for ${selectedStudent?.name} has been logged.`,
       });
       // Reset form
-      setSelectedAssignments(new Set());
+      setSelectedAssignments(new Map());
       setEmailSubject('');
       setView('assignments');
 
@@ -193,10 +266,99 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       setIsSubmitting(false);
     }
   }
+  
+  const renderConfigurationDialog = () => {
+    if (!configuringAssignment || !selectedStudent) return null;
+    const isSAT = selectedStudent.testType === 'SAT';
+    const isSSAT = selectedStudent.testType === 'Upper Level SSAT';
+    
+    return (
+       <Dialog open={!!configuringAssignment} onOpenChange={(isOpen) => !isOpen && handleCancelConfiguration()}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Configure: {configuringAssignment.title}</DialogTitle>
+              <DialogDescription>Select sections and timing for this practice test.</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-6 py-4">
+              {isSAT && (
+                 <div className="space-y-2">
+                   <Label>Sections</Label>
+                    <RadioGroup
+                        value={typeof tempOptions.sections === 'string' ? tempOptions.sections : 'Whole Test'}
+                        onValueChange={(value) => setTempOptions(prev => ({ ...prev, sections: value }))}
+                    >
+                      <div className="flex items-center space-x-2">
+                         <RadioGroupItem value="Whole Test" id="sat-whole" />
+                         <Label htmlFor="sat-whole">Whole Test</Label>
+                      </div>
+                      {SAT_SECTIONS.map(section => (
+                         <div key={section} className="flex items-center space-x-2">
+                             <RadioGroupItem value={section} id={`sat-${section}`} />
+                             <Label htmlFor={`sat-${section}`}>{section}</Label>
+                         </div>
+                      ))}
+                    </RadioGroup>
+                 </div>
+              )}
+              {isSSAT && (
+                  <div className="space-y-2">
+                      <Label>Sections (select all that apply)</Label>
+                      <div className="space-y-2">
+                          {SSAT_SECTIONS.map(section => (
+                              <div key={section} className="flex items-center space-x-2">
+                                <Checkbox
+                                    id={`ssat-${section}`}
+                                    checked={(Array.isArray(tempOptions.sections) && tempOptions.sections.includes(section))}
+                                    onCheckedChange={(checked) => {
+                                      setTempOptions(prev => {
+                                        const currentSections = Array.isArray(prev.sections) ? prev.sections : [];
+                                        if (checked) {
+                                          return { ...prev, sections: [...currentSections, section] };
+                                        } else {
+                                          return { ...prev, sections: currentSections.filter(s => s !== section) };
+                                        }
+                                      })
+                                    }}
+                                />
+                                <Label htmlFor={`ssat-${section}`}>{section}</Label>
+                              </div>
+                          ))}
+                      </div>
+                  </div>
+              )}
+              <div className="space-y-2">
+                  <Label>Timing</Label>
+                   <RadioGroup
+                        value={tempOptions.timing}
+                        defaultValue="timed"
+                        onValueChange={(value: 'timed' | 'untimed') => setTempOptions(prev => ({ ...prev, timing: value }))}
+                    >
+                      <div className="flex items-center space-x-2">
+                         <RadioGroupItem value="timed" id="timed" />
+                         <Label htmlFor="timed">Timed</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                         <RadioGroupItem value="untimed" id="untimed" />
+                         <Label htmlFor="untimed">Untimed</Label>
+                      </div>
+                  </RadioGroup>
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                 <Button variant="ghost" onClick={handleCancelConfiguration}>Cancel</Button>
+              </DialogClose>
+              <Button onClick={handleSaveConfiguration}>Save</Button>
+            </DialogFooter>
+          </DialogContent>
+       </Dialog>
+    )
+  }
 
   return (
     <div className="mx-auto w-full max-w-6xl">
        <h1 className="text-2xl font-bold tracking-tight md:text-3xl mb-6">Assign Homework</h1>
+       {renderConfigurationDialog()}
 
       {view === 'assignments' && (
         <Card>
@@ -342,7 +504,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
 }
 
 
-function AssignmentTable({ assignments, selectedAssignments, studentSubmissions, onToggle }: { assignments: Assignment[], selectedAssignments: Set<string>, studentSubmissions: Submission[], onToggle: (id: string) => void }) {
+function AssignmentTable({ assignments, selectedAssignments, studentSubmissions, onToggle }: { assignments: Assignment[], selectedAssignments: Map<string, AssignmentOptions>, studentSubmissions: Submission[], onToggle: (assignment: Assignment) => void }) {
   
   const getLatestSubmissionDate = (assignmentId: string) => {
     const submissionsForAssignment = studentSubmissions
@@ -369,17 +531,18 @@ function AssignmentTable({ assignments, selectedAssignments, studentSubmissions,
             <TableBody>
               {assignments.map((assignment) => {
                 const lastSubmitted = getLatestSubmissionDate(assignment.id);
+                const isSelected = selectedAssignments.has(assignment.id);
                 return (
                   <TableRow 
                     key={assignment.id} 
-                    onClick={() => onToggle(assignment.id)} 
+                    onClick={() => onToggle(assignment)} 
                     className="cursor-pointer"
-                    data-state={selectedAssignments.has(assignment.id) ? 'selected' : ''}
+                    data-state={isSelected ? 'selected' : ''}
                   >
                     <TableCell>
                       <Checkbox
-                        checked={selectedAssignments.has(assignment.id)}
-                        onCheckedChange={() => onToggle(assignment.id)}
+                        checked={isSelected}
+                        onCheckedChange={() => onToggle(assignment)}
                       />
                     </TableCell>
                     <TableCell className="font-medium">{assignment.title}</TableCell>
