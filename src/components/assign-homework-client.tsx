@@ -76,14 +76,11 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
       return a.title;
     }).join('\n\n');
 
-    const message = `Hi ${selectedStudent.name},\n\nHere is your homework for the week:\n\n${assignmentList}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
+    const firstName = selectedStudent.name.split(' ')[0];
+    const message = `Hi ${firstName},\n\n${assignmentList}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
     setEmailMessage(message);
 
-    if (!emailSubject) {
-      setEmailSubject(`Homework for ${selectedStudent.name}`);
-    }
-
-  }, [selectedStudent, selectedAssignments, assignments, emailSubject]);
+  }, [selectedStudent, selectedAssignments, assignments]);
 
 
   const relevantAssignments = useMemo(() => {
@@ -100,18 +97,9 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
   }, [relevantAssignments]);
 
   const worksheets = useMemo(() => {
+    const practiceTestSources = ['Bluebook'];
     return relevantAssignments
-      .filter(a => {
-        if (a.source === 'Bluebook') return false;
-
-        const isWorksheet = selectedStudent?.testType === 'SAT' 
-          ? (a.source === 'Google Drive' || a.source === 'Test Innovators')
-          : selectedStudent?.testType === 'Upper Level SSAT' 
-            ? (a.source === 'Tutorverse' || a.source === 'Test Innovators')
-            : false;
-        
-        return isWorksheet;
-      })
+      .filter(a => !practiceTestSources.includes(a.source || ''))
       .filter(a => {
         if (selectedWorksheetSources.size === 0) return true;
         const sourceForFilter = a.source === 'Google Drive' ? 'Question Bank' : a.source;
@@ -122,6 +110,7 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
         return a.title.toLowerCase().includes(worksheetSearchQuery.toLowerCase());
       });
   }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources, selectedStudent]);
+
 
   const handleStudentChange = (studentId: string) => {
     setSelectedStudentId(studentId);
@@ -251,7 +240,7 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
                                     checked={selectedWorksheetSources.has(source)}
                                     onCheckedChange={() => handleSourceToggle(source)}
                                   />
-                                  <Label htmlFor={`source-${source}`}>{source === 'Google Drive' ? 'Question Bank' : source}</Label>
+                                  <Label htmlFor={`source-${source}`}>{source}</Label>
                                 </div>
                               ))}
                           </div>
@@ -283,7 +272,7 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
                 <Label htmlFor="subject">Email Subject</Label>
                 <Input 
                   id="subject" 
-                  placeholder="Homework for..." 
+                  placeholder="Your subject line..." 
                   value={emailSubject}
                   onChange={e => setEmailSubject(e.target.value)}
                   disabled={!selectedStudentId}
