@@ -45,13 +45,8 @@ interface AssignmentOptions {
   timing?: 'timed' | 'untimed';
 }
 
-const SAT_WORKSHEET_SOURCES = ['Question Bank', 'Test Innovators'];
-const SSAT_WORKSHEET_SOURCES = ['Tutorverse', 'Test Innovators'];
-const PRACTICE_TEST_SOURCES = ['Bluebook', 'Test Innovators', 'Test Innovators Official Upper Level'];
-
 const SAT_SECTIONS = ['Reading + Writing', 'Math'];
 const SSAT_SECTIONS = ['Verbal', 'Quantitative 1', 'Reading', 'Quantitative 2'];
-
 
 export function AssignHomeworkClient({ students, assignments, submissions }: AssignHomeworkClientProps) {
   const [view, setView] = useState<'assignments' | 'email'>('assignments');
@@ -73,10 +68,21 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   );
   
   const worksheetSources = useMemo(() => {
-    if (selectedStudent?.testType === 'Upper Level SSAT') return SSAT_WORKSHEET_SOURCES;
-    if (selectedStudent?.testType === 'SAT') return SAT_WORKSHEET_SOURCES;
-    return [];
-  }, [selectedStudent]);
+    const sources = new Set<string>();
+    assignments
+      .filter(a => !a.isPracticeTest)
+      .forEach(a => {
+        if (a.source) {
+            const sourceName = a.source === 'Google Drive' ? 'Question Bank' : a.source;
+            if (selectedStudent?.testType === 'Upper Level SSAT' && ['Tutorverse', 'Test Innovators'].includes(a.source)) {
+                 sources.add(sourceName);
+            } else if (selectedStudent?.testType === 'SAT' && ['Question Bank', 'Test Innovators'].includes(sourceName)){
+                 sources.add(sourceName);
+            }
+        }
+      });
+    return Array.from(sources);
+  }, [selectedStudent, assignments]);
 
   const [selectedWorksheetSources, setSelectedWorksheetSources] = useState<Set<string>>(new Set(worksheetSources));
 
@@ -97,7 +103,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
         if (!assignment) return null;
 
         let title = assignment.title;
-        if (assignment.source && PRACTICE_TEST_SOURCES.includes(assignment.source)) {
+        if (assignment.isPracticeTest) {
           let details = [];
           if (options.sections) {
             if (Array.isArray(options.sections)) {
@@ -137,12 +143,12 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   }, [selectedStudent, assignments]);
 
   const practiceTests = useMemo(() => {
-     return relevantAssignments.filter(a => a.source && PRACTICE_TEST_SOURCES.includes(a.source));
+     return relevantAssignments.filter(a => a.isPracticeTest);
   }, [relevantAssignments]);
 
   const worksheets = useMemo(() => {
     return relevantAssignments
-      .filter(a => !a.source || !PRACTICE_TEST_SOURCES.includes(a.source))
+      .filter(a => !a.isPracticeTest)
       .filter(a => {
         if (selectedWorksheetSources.size === 0) return true;
         const sourceForFilter = a.source === 'Google Drive' ? 'Question Bank' : a.source;
@@ -172,9 +178,9 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       newSet.delete(assignment.id);
       setSelectedAssignments(newSet);
     } else {
-      if (assignment.source && PRACTICE_TEST_SOURCES.includes(assignment.source)) {
+      if (assignment.isPracticeTest) {
         setConfiguringAssignment(assignment);
-        setTempOptions({ timing: 'timed' }); // Default to timed
+        setTempOptions({ timing: 'timed' }); 
       } else {
         newSet.set(assignment.id, {});
         setSelectedAssignments(newSet);
@@ -223,10 +229,9 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     try {
       const assignmentsPayload = Array.from(selectedAssignments.entries()).map(([id, options]) => {
         const assignment = assignments.find(a => a.id === id)!;
-        const isPracticeTest = assignment.source && PRACTICE_TEST_SOURCES.includes(assignment.source);
         let sections: string[] = [];
 
-        if(isPracticeTest) {
+        if(assignment.isPracticeTest) {
           if (Array.isArray(options.sections)) {
             sections = options.sections;
           } else if (typeof options.sections === 'string') {
@@ -607,5 +612,3 @@ function PracticeTestTable({ assignments, selectedAssignments, studentSubmission
       </ScrollArea>
   )
 }
-
-    

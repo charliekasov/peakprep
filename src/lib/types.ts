@@ -25,6 +25,7 @@ export interface FirebaseAssignment {
   testType?: string;
   source?: string;
   dueDate?: Timestamp;
+  isPracticeTest?: boolean;
 }
 
 export type Assignment = Omit<FirebaseAssignment, 'dueDate' | 'id'> & {

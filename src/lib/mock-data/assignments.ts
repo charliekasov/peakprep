@@ -10,6 +10,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '2',
@@ -20,6 +21,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '3',
@@ -30,6 +32,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '4',
@@ -40,6 +43,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '5',
@@ -50,6 +54,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '6',
@@ -60,6 +65,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '7',
@@ -70,6 +76,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '8',
@@ -80,6 +87,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '9',
@@ -90,6 +98,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '10',
@@ -100,6 +109,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '11',
@@ -110,6 +120,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '12',
@@ -120,6 +131,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '13',
@@ -130,6 +142,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '14',
@@ -140,6 +153,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '15',
@@ -150,6 +164,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '16',
@@ -160,6 +175,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '17',
@@ -170,6 +186,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '18',
@@ -180,6 +197,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '19',
@@ -190,6 +208,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '20',
@@ -200,6 +219,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '21',
@@ -210,6 +230,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '22',
@@ -220,6 +241,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '23',
@@ -230,6 +252,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '24',
@@ -240,6 +263,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '25',
@@ -250,6 +274,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '26',
@@ -260,6 +285,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '27',
@@ -270,6 +296,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '28',
@@ -280,6 +307,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '29',
@@ -290,6 +318,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '30',
@@ -300,6 +329,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '31',
@@ -310,6 +340,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '32',
@@ -320,6 +351,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '33',
@@ -330,6 +362,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '34',
@@ -340,6 +373,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '35',
@@ -350,6 +384,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '36',
@@ -360,6 +395,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '37',
@@ -370,6 +406,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '38',
@@ -380,6 +417,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '39',
@@ -390,6 +428,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '40',
@@ -400,6 +439,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '41',
@@ -410,6 +450,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '42',
@@ -420,6 +461,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '43',
@@ -430,6 +472,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '44',
@@ -440,6 +483,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '45',
@@ -450,6 +494,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '46',
@@ -460,6 +505,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '47',
@@ -470,6 +516,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '48',
@@ -480,6 +527,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '49',
@@ -490,6 +538,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '50',
@@ -500,6 +549,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '51',
@@ -510,6 +560,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '52',
@@ -520,6 +571,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '53',
@@ -530,6 +582,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '54',
@@ -540,6 +593,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '55',
@@ -550,6 +604,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '56',
@@ -560,6 +615,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '57',
@@ -570,6 +626,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '58',
@@ -580,6 +637,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '59',
@@ -590,6 +648,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '60',
@@ -600,6 +659,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '61',
@@ -610,6 +670,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '62',
@@ -620,6 +681,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '63',
@@ -630,6 +692,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '64',
@@ -640,6 +703,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '65',
@@ -650,6 +714,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '66',
@@ -660,6 +725,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '67',
@@ -670,6 +736,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '68',
@@ -680,6 +747,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '69',
@@ -690,6 +758,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '70',
@@ -700,6 +769,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '71',
@@ -710,6 +780,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '72',
@@ -720,6 +791,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '73',
@@ -730,6 +802,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '74',
@@ -740,6 +813,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '75',
@@ -750,6 +824,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '76',
@@ -760,6 +835,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '77',
@@ -770,6 +846,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '78',
@@ -780,6 +857,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '79',
@@ -790,6 +868,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '80',
@@ -800,6 +879,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '81',
@@ -810,6 +890,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '82',
@@ -820,6 +901,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '83',
@@ -830,6 +912,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '84',
@@ -840,6 +923,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '85',
@@ -850,6 +934,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '86',
@@ -860,6 +945,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '87',
@@ -870,6 +956,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '88',
@@ -880,6 +967,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '89',
@@ -890,6 +978,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '90',
@@ -900,6 +989,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '91',
@@ -910,6 +1000,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '92',
@@ -920,6 +1011,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '93',
@@ -930,6 +1022,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '94',
@@ -940,6 +1033,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '95',
@@ -950,6 +1044,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '96',
@@ -960,6 +1055,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '97',
@@ -970,6 +1066,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '98',
@@ -980,6 +1077,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '99',
@@ -990,6 +1088,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '100',
@@ -1000,6 +1099,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '101',
@@ -1010,6 +1110,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '102',
@@ -1020,6 +1121,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '103',
@@ -1030,6 +1132,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '104',
@@ -1040,6 +1143,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '105',
@@ -1050,6 +1154,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '106',
@@ -1060,6 +1165,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '107',
@@ -1070,6 +1176,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '108',
@@ -1080,6 +1187,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '109',
@@ -1090,6 +1198,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '110',
@@ -1100,6 +1209,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '111',
@@ -1110,6 +1220,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '112',
@@ -1120,6 +1231,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '113',
@@ -1130,6 +1242,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '114',
@@ -1140,6 +1253,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '115',
@@ -1150,6 +1264,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '116',
@@ -1160,6 +1275,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '117',
@@ -1170,6 +1286,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '118',
@@ -1180,6 +1297,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '119',
@@ -1190,6 +1308,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '120',
@@ -1200,6 +1319,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '121',
@@ -1210,6 +1330,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '122',
@@ -1220,6 +1341,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '123',
@@ -1230,6 +1352,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '124',
@@ -1240,6 +1363,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '125',
@@ -1250,6 +1374,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '126',
@@ -1260,6 +1385,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '127',
@@ -1270,6 +1396,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '128',
@@ -1280,6 +1407,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '129',
@@ -1290,6 +1418,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '130',
@@ -1300,6 +1429,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '131',
@@ -1310,6 +1440,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '132',
@@ -1320,6 +1451,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '133',
@@ -1330,6 +1462,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '134',
@@ -1340,6 +1473,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '135',
@@ -1350,6 +1484,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '136',
@@ -1360,6 +1495,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '137',
@@ -1370,6 +1506,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '138',
@@ -1380,6 +1517,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '139',
@@ -1390,6 +1528,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '140',
@@ -1400,6 +1539,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '141',
@@ -1410,6 +1550,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '142',
@@ -1420,6 +1561,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '143',
@@ -1430,6 +1572,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '144',
@@ -1440,6 +1583,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '145',
@@ -1450,6 +1594,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '146',
@@ -1460,6 +1605,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '147',
@@ -1470,6 +1616,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '148',
@@ -1480,6 +1627,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '149',
@@ -1490,6 +1638,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '150',
@@ -1500,6 +1649,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '151',
@@ -1510,6 +1660,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '152',
@@ -1520,6 +1671,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '153',
@@ -1530,6 +1682,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '154',
@@ -1540,6 +1693,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '155',
@@ -1550,6 +1704,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '156',
@@ -1560,6 +1715,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '157',
@@ -1570,6 +1726,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '158',
@@ -1580,6 +1737,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '159',
@@ -1590,6 +1748,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '160',
@@ -1600,6 +1759,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '161',
@@ -1610,6 +1770,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '162',
@@ -1620,6 +1781,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '163',
@@ -1630,6 +1792,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '164',
@@ -1640,6 +1803,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '165',
@@ -1650,6 +1814,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '166',
@@ -1660,6 +1825,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '167',
@@ -1670,6 +1836,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '168',
@@ -1680,6 +1847,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '169',
@@ -1690,6 +1858,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '170',
@@ -1700,6 +1869,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '171',
@@ -1710,6 +1880,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '172',
@@ -1720,6 +1891,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '173',
@@ -1730,6 +1902,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '174',
@@ -1740,6 +1913,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '175',
@@ -1750,6 +1924,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '176',
@@ -1760,6 +1935,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '177',
@@ -1770,6 +1946,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '178',
@@ -1780,6 +1957,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '179',
@@ -1790,6 +1968,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '180',
@@ -1800,6 +1979,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '181',
@@ -1810,6 +1990,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '182',
@@ -1820,6 +2001,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '183',
@@ -1830,6 +2012,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '184',
@@ -1840,6 +2023,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '185',
@@ -1850,6 +2034,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '186',
@@ -1860,6 +2045,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '187',
@@ -1870,6 +2056,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '188',
@@ -1880,6 +2067,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '189',
@@ -1890,6 +2078,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '190',
@@ -1900,6 +2089,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '191',
@@ -1910,6 +2100,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '192',
@@ -1920,6 +2111,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '193',
@@ -1930,6 +2122,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '194',
@@ -1940,6 +2133,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '195',
@@ -1950,6 +2144,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '196',
@@ -1960,6 +2155,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '197',
@@ -1970,6 +2166,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '198',
@@ -1980,6 +2177,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '199',
@@ -1990,6 +2188,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '200',
@@ -2000,6 +2199,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '201',
@@ -2010,6 +2210,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '202',
@@ -2020,6 +2221,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '203',
@@ -2030,6 +2232,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '204',
@@ -2040,6 +2243,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '205',
@@ -2050,6 +2254,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Google Drive',
+    isPracticeTest: false,
   },
   {
     id: '206',
@@ -2060,6 +2265,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '207',
@@ -2070,6 +2276,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '208',
@@ -2080,6 +2287,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '209',
@@ -2090,6 +2298,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '210',
@@ -2100,6 +2309,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '211',
@@ -2110,6 +2320,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '212',
@@ -2120,6 +2331,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '213',
@@ -2130,6 +2342,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '214',
@@ -2140,6 +2353,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '215',
@@ -2150,6 +2364,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '216',
@@ -2160,6 +2375,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '217',
@@ -2170,6 +2386,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '218',
@@ -2180,6 +2397,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '219',
@@ -2190,6 +2408,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '220',
@@ -2200,6 +2419,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '221',
@@ -2210,6 +2430,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '222',
@@ -2220,6 +2441,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '223',
@@ -2230,6 +2452,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '224',
@@ -2240,6 +2463,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '225',
@@ -2250,6 +2474,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '226',
@@ -2260,6 +2485,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '227',
@@ -2270,6 +2496,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '228',
@@ -2280,6 +2507,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '229',
@@ -2290,6 +2518,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '230',
@@ -2300,6 +2529,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '231',
@@ -2310,6 +2540,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '232',
@@ -2320,6 +2551,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '233',
@@ -2330,6 +2562,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '234',
@@ -2340,6 +2573,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '235',
@@ -2350,6 +2584,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '236',
@@ -2360,6 +2595,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '237',
@@ -2370,6 +2606,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '238',
@@ -2380,6 +2617,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '239',
@@ -2390,6 +2628,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '240',
@@ -2400,6 +2639,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '241',
@@ -2410,6 +2650,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '242',
@@ -2420,6 +2661,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '243',
@@ -2430,6 +2672,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '244',
@@ -2440,6 +2683,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '245',
@@ -2450,6 +2694,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '246',
@@ -2460,6 +2705,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '247',
@@ -2470,6 +2716,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '248',
@@ -2480,6 +2727,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '249',
@@ -2490,6 +2738,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '250',
@@ -2500,6 +2749,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '251',
@@ -2510,6 +2760,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '252',
@@ -2520,6 +2771,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '253',
@@ -2530,6 +2782,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '254',
@@ -2540,6 +2793,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '255',
@@ -2550,6 +2804,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '256',
@@ -2560,6 +2815,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '257',
@@ -2570,6 +2826,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '258',
@@ -2580,6 +2837,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '259',
@@ -2590,6 +2848,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '260',
@@ -2600,6 +2859,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '261',
@@ -2610,6 +2870,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '262',
@@ -2620,6 +2881,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '263',
@@ -2630,6 +2892,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '264',
@@ -2640,6 +2903,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '265',
@@ -2650,6 +2914,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '266',
@@ -2660,6 +2925,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '267',
@@ -2670,6 +2936,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '268',
@@ -2680,6 +2947,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '269',
@@ -2690,6 +2958,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '270',
@@ -2700,6 +2969,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '271',
@@ -2710,6 +2980,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '272',
@@ -2720,6 +2991,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '273',
@@ -2730,6 +3002,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '274',
@@ -2740,6 +3013,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '275',
@@ -2750,6 +3024,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '276',
@@ -2760,6 +3035,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '277',
@@ -2770,6 +3046,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '278',
@@ -2780,6 +3057,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '279',
@@ -2790,6 +3068,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '280',
@@ -2800,6 +3079,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '281',
@@ -2810,6 +3090,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '282',
@@ -2820,6 +3101,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '283',
@@ -2830,6 +3112,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '284',
@@ -2840,6 +3123,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '285',
@@ -2850,6 +3134,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '286',
@@ -2860,6 +3145,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '287',
@@ -2870,6 +3156,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '288',
@@ -2880,6 +3167,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '289',
@@ -2890,6 +3178,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '290',
@@ -2900,6 +3189,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '291',
@@ -2910,6 +3200,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '292',
@@ -2920,6 +3211,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '293',
@@ -2930,6 +3222,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '294',
@@ -2940,6 +3233,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '295',
@@ -2950,6 +3244,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '296',
@@ -2960,6 +3255,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '297',
@@ -2970,6 +3266,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '298',
@@ -2980,6 +3277,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '299',
@@ -2990,6 +3288,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '300',
@@ -3000,6 +3299,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '301',
@@ -3010,6 +3310,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '302',
@@ -3020,6 +3321,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '303',
@@ -3030,6 +3332,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '304',
@@ -3040,6 +3343,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '305',
@@ -3050,6 +3354,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '306',
@@ -3060,6 +3365,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '307',
@@ -3070,6 +3376,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '308',
@@ -3080,6 +3387,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '309',
@@ -3090,6 +3398,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '310',
@@ -3100,6 +3409,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '311',
@@ -3110,6 +3420,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '312',
@@ -3120,6 +3431,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '313',
@@ -3130,6 +3442,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'SAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '314',
@@ -3140,6 +3453,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '315',
@@ -3150,6 +3464,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '316',
@@ -3160,6 +3475,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '317',
@@ -3170,6 +3486,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '318',
@@ -3180,6 +3497,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '319',
@@ -3190,6 +3508,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '320',
@@ -3200,6 +3519,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '321',
@@ -3210,6 +3530,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '322',
@@ -3220,6 +3541,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '323',
@@ -3230,6 +3552,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '324',
@@ -3240,6 +3563,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '325',
@@ -3250,6 +3574,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '326',
@@ -3260,6 +3585,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '327',
@@ -3270,6 +3596,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '328',
@@ -3280,6 +3607,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '329',
@@ -3290,6 +3618,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '330',
@@ -3300,6 +3629,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '331',
@@ -3310,6 +3640,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '332',
@@ -3320,6 +3651,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '333',
@@ -3330,6 +3662,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '334',
@@ -3340,6 +3673,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '335',
@@ -3350,6 +3684,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '336',
@@ -3360,6 +3695,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '337',
@@ -3370,6 +3706,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '338',
@@ -3380,6 +3717,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '339',
@@ -3390,6 +3728,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '340',
@@ -3400,6 +3739,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '341',
@@ -3410,6 +3750,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '342',
@@ -3420,6 +3761,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '343',
@@ -3430,6 +3772,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '344',
@@ -3440,6 +3783,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '345',
@@ -3450,6 +3794,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '346',
@@ -3460,6 +3805,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '347',
@@ -3470,6 +3816,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '348',
@@ -3480,6 +3827,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '349',
@@ -3490,6 +3838,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '350',
@@ -3500,6 +3849,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '351',
@@ -3510,6 +3860,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '352',
@@ -3520,6 +3871,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '353',
@@ -3530,6 +3882,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '354',
@@ -3540,6 +3893,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '355',
@@ -3550,6 +3904,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '356',
@@ -3560,6 +3915,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '357',
@@ -3570,6 +3926,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '358',
@@ -3580,6 +3937,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '359',
@@ -3590,6 +3948,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '360',
@@ -3600,6 +3959,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '361',
@@ -3610,6 +3970,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '362',
@@ -3620,6 +3981,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '363',
@@ -3630,6 +3992,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '364',
@@ -3640,6 +4003,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '365',
@@ -3650,6 +4014,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '366',
@@ -3660,6 +4025,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '367',
@@ -3670,6 +4036,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '368',
@@ -3680,6 +4047,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '369',
@@ -3690,6 +4058,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '370',
@@ -3700,6 +4069,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '371',
@@ -3710,6 +4080,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '372',
@@ -3720,6 +4091,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '373',
@@ -3730,6 +4102,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '374',
@@ -3740,6 +4113,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '375',
@@ -3750,6 +4124,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '376',
@@ -3760,6 +4135,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '377',
@@ -3770,6 +4146,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '378',
@@ -3780,6 +4157,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '379',
@@ -3790,6 +4168,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '380',
@@ -3800,6 +4179,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '381',
@@ -3810,6 +4190,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level ISEE',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '382',
@@ -3820,6 +4201,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '383',
@@ -3830,6 +4212,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '384',
@@ -3840,6 +4223,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '385',
@@ -3850,6 +4234,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '386',
@@ -3860,6 +4245,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '387',
@@ -3870,6 +4256,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '388',
@@ -3880,6 +4267,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '389',
@@ -3890,6 +4278,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '390',
@@ -3900,6 +4289,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '391',
@@ -3910,6 +4300,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '392',
@@ -3920,6 +4311,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '393',
@@ -3930,6 +4322,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '394',
@@ -3940,6 +4333,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '395',
@@ -3950,6 +4344,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '396',
@@ -3960,6 +4355,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '397',
@@ -3970,6 +4366,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '398',
@@ -3980,6 +4377,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '399',
@@ -3990,6 +4388,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '400',
@@ -4000,6 +4399,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '401',
@@ -4010,6 +4410,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '402',
@@ -4020,6 +4421,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '403',
@@ -4030,6 +4432,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '404',
@@ -4040,6 +4443,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '405',
@@ -4050,6 +4454,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '406',
@@ -4060,6 +4465,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '407',
@@ -4070,6 +4476,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '408',
@@ -4080,6 +4487,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '409',
@@ -4090,6 +4498,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '410',
@@ -4100,6 +4509,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '411',
@@ -4110,6 +4520,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '412',
@@ -4120,6 +4531,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '413',
@@ -4130,6 +4542,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '414',
@@ -4140,6 +4553,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '415',
@@ -4150,6 +4564,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '416',
@@ -4160,6 +4575,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '417',
@@ -4170,6 +4586,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '418',
@@ -4180,6 +4597,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '419',
@@ -4190,6 +4608,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '420',
@@ -4200,6 +4619,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '421',
@@ -4210,6 +4630,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '422',
@@ -4220,6 +4641,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '423',
@@ -4230,6 +4652,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '424',
@@ -4240,6 +4663,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '425',
@@ -4250,6 +4674,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '426',
@@ -4260,6 +4685,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '427',
@@ -4270,6 +4696,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '428',
@@ -4280,6 +4707,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '429',
@@ -4290,6 +4718,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '430',
@@ -4300,6 +4729,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '431',
@@ -4310,6 +4740,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '432',
@@ -4320,6 +4751,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Tutorverse',
+    isPracticeTest: false,
   },
   {
     id: '433',
@@ -4330,6 +4762,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '434',
@@ -4340,6 +4773,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '435',
@@ -4350,6 +4784,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '436',
@@ -4360,6 +4795,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '437',
@@ -4370,6 +4806,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '438',
@@ -4380,6 +4817,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '439',
@@ -4390,6 +4828,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '440',
@@ -4400,6 +4839,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '441',
@@ -4410,6 +4850,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '442',
@@ -4420,6 +4861,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '443',
@@ -4430,6 +4872,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '444',
@@ -4440,6 +4883,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '445',
@@ -4450,6 +4894,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '446',
@@ -4460,6 +4905,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '447',
@@ -4470,6 +4916,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '448',
@@ -4480,6 +4927,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '449',
@@ -4490,6 +4938,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '450',
@@ -4500,6 +4949,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '451',
@@ -4510,6 +4960,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '452',
@@ -4520,6 +4971,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '453',
@@ -4530,6 +4982,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '454',
@@ -4540,6 +4993,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '455',
@@ -4550,6 +5004,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '456',
@@ -4560,6 +5015,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '457',
@@ -4570,6 +5026,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '458',
@@ -4580,6 +5037,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '459',
@@ -4590,6 +5048,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '460',
@@ -4600,6 +5059,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '461',
@@ -4610,6 +5070,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '462',
@@ -4620,6 +5081,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '463',
@@ -4630,6 +5092,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '464',
@@ -4640,6 +5103,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '465',
@@ -4650,6 +5114,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '466',
@@ -4660,6 +5125,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '467',
@@ -4670,6 +5136,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '468',
@@ -4680,6 +5147,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '469',
@@ -4690,6 +5158,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '470',
@@ -4700,6 +5169,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '471',
@@ -4710,6 +5180,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '472',
@@ -4720,6 +5191,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '473',
@@ -4730,6 +5202,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '474',
@@ -4740,6 +5213,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '475',
@@ -4750,6 +5224,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '476',
@@ -4760,6 +5235,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '477',
@@ -4770,6 +5246,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '478',
@@ -4780,6 +5257,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '479',
@@ -4790,6 +5268,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '480',
@@ -4800,6 +5279,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '481',
@@ -4810,6 +5290,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '482',
@@ -4820,6 +5301,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '483',
@@ -4830,6 +5312,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '484',
@@ -4840,6 +5323,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '485',
@@ -4850,6 +5334,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '486',
@@ -4860,6 +5345,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '487',
@@ -4870,6 +5356,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '488',
@@ -4880,6 +5367,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '489',
@@ -4890,6 +5378,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '490',
@@ -4900,6 +5389,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '491',
@@ -4910,6 +5400,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '492',
@@ -4920,6 +5411,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '493',
@@ -4930,6 +5422,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '494',
@@ -4940,6 +5433,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '495',
@@ -4950,6 +5444,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '496',
@@ -4960,6 +5455,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '497',
@@ -4970,6 +5466,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '498',
@@ -4980,6 +5477,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '499',
@@ -4990,6 +5488,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '500',
@@ -5000,6 +5499,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '501',
@@ -5010,6 +5510,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '502',
@@ -5020,6 +5521,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '503',
@@ -5030,6 +5532,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '504',
@@ -5040,6 +5543,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '505',
@@ -5050,6 +5554,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '506',
@@ -5060,6 +5565,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '507',
@@ -5070,6 +5576,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '508',
@@ -5080,6 +5587,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '509',
@@ -5090,6 +5598,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '510',
@@ -5100,6 +5609,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '511',
@@ -5110,6 +5620,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '512',
@@ -5120,6 +5631,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '513',
@@ -5130,6 +5642,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '514',
@@ -5140,6 +5653,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '515',
@@ -5150,6 +5664,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '516',
@@ -5160,6 +5675,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '517',
@@ -5170,6 +5686,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '518',
@@ -5180,6 +5697,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '519',
@@ -5190,6 +5708,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '520',
@@ -5200,6 +5719,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '521',
@@ -5210,6 +5730,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '522',
@@ -5220,6 +5741,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '523',
@@ -5230,6 +5752,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '524',
@@ -5240,6 +5763,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '525',
@@ -5250,6 +5774,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '526',
@@ -5260,6 +5785,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '527',
@@ -5270,6 +5796,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '528',
@@ -5280,6 +5807,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '529',
@@ -5290,6 +5818,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '530',
@@ -5300,6 +5829,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '531',
@@ -5310,6 +5840,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '532',
@@ -5320,6 +5851,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '533',
@@ -5330,6 +5862,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '534',
@@ -5340,6 +5873,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '535',
@@ -5350,6 +5884,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '536',
@@ -5360,6 +5895,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '537',
@@ -5370,6 +5906,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '538',
@@ -5380,6 +5917,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '539',
@@ -5390,6 +5928,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '540',
@@ -5400,6 +5939,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '541',
@@ -5410,6 +5950,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '542',
@@ -5420,6 +5961,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '543',
@@ -5430,6 +5972,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '544',
@@ -5440,6 +5983,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '545',
@@ -5450,6 +5994,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '546',
@@ -5460,6 +6005,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '547',
@@ -5470,6 +6016,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '548',
@@ -5480,6 +6027,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '549',
@@ -5490,6 +6038,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Easy',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '550',
@@ -5500,6 +6049,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '551',
@@ -5510,6 +6060,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '552',
@@ -5520,6 +6071,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '553',
@@ -5530,6 +6082,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '554',
@@ -5540,6 +6093,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '555',
@@ -5550,6 +6104,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '556',
@@ -5560,6 +6115,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '557',
@@ -5570,6 +6126,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '558',
@@ -5580,6 +6137,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '559',
@@ -5590,6 +6148,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '560',
@@ -5600,6 +6159,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '561',
@@ -5610,6 +6170,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '562',
@@ -5620,6 +6181,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '563',
@@ -5630,6 +6192,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '564',
@@ -5640,6 +6203,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '565',
@@ -5650,6 +6214,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '566',
@@ -5660,6 +6225,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '567',
@@ -5670,6 +6236,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '568',
@@ -5680,6 +6247,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '569',
@@ -5690,6 +6258,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '570',
@@ -5700,6 +6269,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   {
     id: '571',
@@ -5710,6 +6280,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Hard',
     testType: 'Upper Level SSAT',
     source: 'Test Innovators',
+    isPracticeTest: false,
   },
   ...[...Array(7)].map((_, i) => ({
     id: `SAT-BB-${i + 4}`,
@@ -5720,6 +6291,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium' as const,
     testType: 'SAT' as const,
     source: 'Bluebook',
+    isPracticeTest: true,
   })),
   {
     id: 'SAT-BB-PSAT10',
@@ -5730,6 +6302,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium' as const,
     testType: 'SAT' as const,
     source: 'Bluebook',
+    isPracticeTest: true,
   },
   ...[...Array(10)].map((_, i) => ({
     id: `SAT-TI-${i + 1}`,
@@ -5740,6 +6313,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium' as const,
     testType: 'SAT' as const,
     source: 'Test Innovators',
+    isPracticeTest: true,
   })),
   ...[...Array(6)].map((_, i) => ({
     id: `SSAT-TI-${i + 1}`,
@@ -5750,6 +6324,7 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium' as const,
     testType: 'Upper Level SSAT' as const,
     source: 'Test Innovators',
+    isPracticeTest: true,
   })),
   ...[...Array(3)].map((_, i) => ({
     id: `SSAT-TI-Official-${i + 1}`,
@@ -5760,5 +6335,6 @@ export const mockAssignments: Assignment[] = [
     difficulty: 'Medium' as const,
     testType: 'Upper Level SSAT' as const,
     source: 'Test Innovators Official Upper Level',
+    isPracticeTest: true,
   })),
 ];
