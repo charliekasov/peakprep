@@ -18,8 +18,8 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ScrollArea } from './ui/scroll-area';
-import { Search, Loader2 } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Search, Loader2, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { handleAssignHomework } from '@/app/assign-homework/actions';
 
@@ -33,6 +33,7 @@ const SAT_WORKSHEET_SOURCES = ['Question Bank', 'Test Innovators'];
 const SSAT_WORKSHEET_SOURCES = ['Tutorverse', 'Test Innovators'];
 
 export function AssignHomeworkClient({ students, assignments, submissions }: AssignHomeworkClientProps) {
+  const [view, setView] = useState<'assignments' | 'email'>('assignments');
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [selectedAssignments, setSelectedAssignments] = useState<Set<string>>(new Set());
   const [worksheetSearchQuery, setWorksheetSearchQuery] = useState('');
@@ -94,8 +95,14 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
 
   const practiceTests = useMemo(() => {
      const practiceTestSources = ['Bluebook', 'Test Innovators'];
-     return relevantAssignments.filter(a => practiceTestSources.includes(a.source || ''));
-  }, [relevantAssignments]);
+     const ssatPracticeTests = relevantAssignments.filter(a => a.testType === 'Upper Level SSAT' && practiceTestSources.includes(a.source || ''));
+     const satPracticeTests = relevantAssignments.filter(a => a.testType === 'SAT' && practiceTestSources.includes(a.source || ''));
+     
+     if (selectedStudent?.testType === 'Upper Level SSAT') return ssatPracticeTests;
+     if (selectedStudent?.testType === 'SAT') return satPracticeTests;
+     
+     return [];
+  }, [relevantAssignments, selectedStudent]);
 
   const worksheets = useMemo(() => {
     const practiceTestSources = ['Bluebook'];
@@ -110,7 +117,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
         if (worksheetSearchQuery.trim() === '') return true;
         return a.title.toLowerCase().includes(worksheetSearchQuery.toLowerCase());
       });
-  }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources, selectedStudent]);
+  }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources]);
 
   const studentSubmissions = useMemo(() => {
     if (!selectedStudentId) return [];
@@ -173,6 +180,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       // Reset form
       setSelectedAssignments(new Set());
       setEmailSubject('');
+      setView('assignments');
 
     } catch (error) {
       toast({
@@ -186,48 +194,45 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Assign Homework</h1>
-      </div>
+    <div className="mx-auto w-full max-w-6xl">
+       <h1 className="text-2xl font-bold tracking-tight md:text-3xl mb-6">Assign Homework</h1>
 
-      <div className="grid flex-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
-        {/* Left Column: Student and Assignments */}
-        <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Select Student and Assignments</CardTitle>
-              <CardDescription>
-                Choose a student to see a filtered list of relevant assignments.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <Label htmlFor="student-select">Student</Label>
-                <Select onValueChange={handleStudentChange} value={selectedStudentId ?? ''}>
-                  <SelectTrigger id="student-select">
-                    <SelectValue placeholder="Select a student..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {students.map((student) => (
-                      <SelectItem key={student.id} value={student.id}>
-                        {student.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+      {view === 'assignments' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Select Student and Assignments</CardTitle>
+            <CardDescription>
+              Choose a student to see a filtered list of relevant assignments.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <Label htmlFor="student-select">Student</Label>
+              <Select onValueChange={handleStudentChange} value={selectedStudentId ?? ''}>
+                <SelectTrigger id="student-select" className="max-w-md">
+                  <SelectValue placeholder="Select a student..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {students.map((student) => (
+                    <SelectItem key={student.id} value={student.id}>
+                      {student.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-              {selectedStudent && (
-                 <Tabs defaultValue="worksheets">
-                 <TabsList className="grid w-full grid-cols-2">
-                   <TabsTrigger value="worksheets">Worksheets ({worksheets.length})</TabsTrigger>
-                   <TabsTrigger value="practice-tests">Practice Tests ({practiceTests.length})</TabsTrigger>
-                 </TabsList>
-                 <TabsContent value="worksheets">
-                    <Card>
-                      <CardHeader>
-                        <div className="relative">
+            {selectedStudent && (
+               <Tabs defaultValue="worksheets">
+               <TabsList className="grid w-full grid-cols-2 max-w-md">
+                 <TabsTrigger value="worksheets">Worksheets ({worksheets.length})</TabsTrigger>
+                 <TabsTrigger value="practice-tests">Practice Tests ({practiceTests.length})</TabsTrigger>
+               </TabsList>
+               <TabsContent value="worksheets">
+                  <Card>
+                    <CardHeader>
+                      <div className="flex flex-col gap-4 md:flex-row md:items-center">
+                        <div className="relative flex-1">
                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                            <Input 
                             placeholder="Search worksheets..." 
@@ -237,7 +242,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                            />
                         </div>
                          {worksheetSources.length > 0 && (
-                          <div className="mt-4 flex flex-wrap items-center gap-4">
+                          <div className="flex flex-wrap items-center gap-4">
                             <Label>Sources:</Label>
                               {worksheetSources.map(source => (
                                 <div key={source} className="flex items-center space-x-2">
@@ -246,73 +251,84 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                                     checked={selectedWorksheetSources.has(source)}
                                     onCheckedChange={() => handleSourceToggle(source)}
                                   />
-                                  <Label htmlFor={`source-${source}`}>{source}</Label>
+                                  <Label htmlFor={`source-${source}`} className="font-normal">{source}</Label>
                                 </div>
                               ))}
                           </div>
                          )}
-                      </CardHeader>
-                      <AssignmentTable assignments={worksheets} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
-                    </Card>
-                 </TabsContent>
-                 <TabsContent value="practice-tests">
-                  <AssignmentTable assignments={practiceTests} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
-                 </TabsContent>
-               </Tabs>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right Column: Email Composition */}
-        <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-          <Card className="lg:sticky lg:top-20">
-            <CardHeader>
-              <CardTitle>Compose Email</CardTitle>
-              <CardDescription>
-                Draft the email to send to the student.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <Label htmlFor="subject">Email Subject</Label>
-                <Input 
-                  id="subject" 
-                  placeholder="Your subject line..." 
-                  value={emailSubject}
-                  onChange={e => setEmailSubject(e.target.value)}
-                  disabled={!selectedStudentId}
-                />
-              </div>
-              <div>
-                <Label htmlFor="message">Email Message</Label>
-                <Textarea 
-                  id="message" 
-                  placeholder="Hi [Student Name], here is your homework..." 
-                  rows={15}
-                  value={emailMessage}
-                  onChange={e => setEmailMessage(e.target.value)}
-                  disabled={!selectedStudentId}
-                />
-              </div>
-               <div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="cc-parents" disabled={!selectedStudentId} />
-                  <Label htmlFor="cc-parents">CC Parents</Label>
-                </div>
-              </div>
-              <Button 
-                className="w-full" 
-                disabled={!selectedStudentId || selectedAssignments.size === 0 || isSubmitting}
-                onClick={handleSubmit}
+                      </div>
+                    </CardHeader>
+                    <AssignmentTable assignments={worksheets} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
+                  </Card>
+               </TabsContent>
+               <TabsContent value="practice-tests">
+                <AssignmentTable assignments={practiceTests} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
+               </TabsContent>
+             </Tabs>
+            )}
+          </CardContent>
+           <div className="flex justify-end p-6 pt-0">
+              <Button
+                disabled={selectedAssignments.size === 0}
+                onClick={() => setView('email')}
               >
-                {isSubmitting && <Loader2 className="mr-2 animate-spin" />}
-                Assign Homework ({selectedAssignments.size})
+                Compose Email ({selectedAssignments.size})
               </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </div>
+        </Card>
+      )}
+
+      {view === 'email' && (
+        <Card>
+          <CardHeader>
+             <Button variant="ghost" size="sm" onClick={() => setView('assignments')} className="w-fit p-0 h-auto mb-4">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Assignments
+            </Button>
+            <CardTitle>Compose Email</CardTitle>
+            <CardDescription>
+              Draft the email to send to {selectedStudent?.name || 'the student'}.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <Label htmlFor="subject">Email Subject</Label>
+              <Input 
+                id="subject" 
+                placeholder="Your subject line..." 
+                value={emailSubject}
+                onChange={e => setEmailSubject(e.target.value)}
+                disabled={!selectedStudentId}
+              />
+            </div>
+            <div>
+              <Label htmlFor="message">Email Message</Label>
+              <Textarea 
+                id="message" 
+                placeholder="Hi [Student Name], here is your homework..." 
+                rows={15}
+                value={emailMessage}
+                onChange={e => setEmailMessage(e.target.value)}
+                disabled={!selectedStudentId}
+              />
+            </div>
+             <div>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="cc-parents" disabled={!selectedStudentId || !selectedStudent?.parentEmail1} />
+                <Label htmlFor="cc-parents">CC Parents</Label>
+              </div>
+            </div>
+            <Button 
+              className="w-full" 
+              disabled={!selectedStudentId || selectedAssignments.size === 0 || isSubmitting}
+              onClick={handleSubmit}
+            >
+              {isSubmitting && <Loader2 className="mr-2 animate-spin" />}
+              Assign Homework
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
@@ -332,12 +348,13 @@ function AssignmentTable({ assignments, selectedAssignments, studentSubmissions,
       <ScrollArea className="h-96 w-full">
         <CardContent className="p-0">
           <Table>
-            <TableHeader className="sticky top-0 z-10 bg-background">
+            <TableHeader>
               <TableRow>
                 <TableHead className="w-[50px]"></TableHead>
-                <TableHead className="min-w-[200px]">Title</TableHead>
+                <TableHead>Title</TableHead>
                 <TableHead>Subject</TableHead>
                 <TableHead>Difficulty</TableHead>
+                <TableHead>Source</TableHead>
                 <TableHead>Last Assigned</TableHead>
               </TableRow>
             </TableHeader>
@@ -360,6 +377,7 @@ function AssignmentTable({ assignments, selectedAssignments, studentSubmissions,
                     <TableCell className="font-medium">{assignment.title}</TableCell>
                     <TableCell>{assignment.subject}</TableCell>
                     <TableCell>{assignment.difficulty}</TableCell>
+                    <TableCell>{assignment.source}</TableCell>
                     <TableCell>{lastSubmitted ? lastSubmitted.toLocaleDateString() : 'N/A'}</TableCell>
                   </TableRow>
                 )

@@ -9,10 +9,12 @@ export default async function AssignHomeworkPage() {
   const submissions = await getSubmissions();
 
   return (
-    <AssignHomeworkClient
-      students={students}
-      assignments={assignments}
-      submissions={submissions}
-    />
+    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+      <AssignHomeworkClient
+        students={students}
+        assignments={assignments}
+        submissions={submissions}
+      />
+    </div>
   );
 }
