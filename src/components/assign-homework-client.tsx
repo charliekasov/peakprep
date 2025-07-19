@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
@@ -60,6 +61,7 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
   useEffect(() => {
     if (!selectedStudent) {
       setEmailMessage('');
+      setEmailSubject('');
       return;
     }
 
@@ -67,12 +69,21 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
       .map(id => assignments.find(a => a.id === id))
       .filter(Boolean) as Assignment[];
 
-    const assignmentLinks = assignedItems.map(a => `${a.title}:\n${a.link}`).join('\n\n');
+    const assignmentList = assignedItems.map(a => {
+      if (a.link) {
+        return `${a.title}:\n${a.link}`;
+      }
+      return a.title;
+    }).join('\n\n');
 
-    const message = `Hi ${selectedStudent.name},\n\nHere is your homework for the week:\n\n${assignmentLinks}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
+    const message = `Hi ${selectedStudent.name},\n\nHere is your homework for the week:\n\n${assignmentList}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
     setEmailMessage(message);
 
-  }, [selectedStudent, selectedAssignments, assignments]);
+    if (!emailSubject) {
+      setEmailSubject(`Homework for ${selectedStudent.name}`);
+    }
+
+  }, [selectedStudent, selectedAssignments, assignments, emailSubject]);
 
 
   const relevantAssignments = useMemo(() => {
@@ -115,6 +126,7 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
   const handleStudentChange = (studentId: string) => {
     setSelectedStudentId(studentId);
     setSelectedAssignments(new Set()); 
+    setEmailSubject('');
   };
 
   const handleAssignmentToggle = (assignmentId: string) => {
