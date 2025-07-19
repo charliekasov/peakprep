@@ -31,6 +31,8 @@ interface AssignHomeworkClientProps {
 
 const SAT_WORKSHEET_SOURCES = ['Question Bank', 'Test Innovators'];
 const SSAT_WORKSHEET_SOURCES = ['Tutorverse', 'Test Innovators'];
+const PRACTICE_TEST_SOURCES = ['Bluebook', 'Test Innovators Official Upper Level', 'Test Innovators'];
+
 
 export function AssignHomeworkClient({ students, assignments, submissions }: AssignHomeworkClientProps) {
   const [view, setView] = useState<'assignments' | 'email'>('assignments');
@@ -94,22 +96,19 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   }, [selectedStudent, assignments]);
 
   const practiceTests = useMemo(() => {
-     const practiceTestSources = ['Bluebook'];
-     
      if (selectedStudent?.testType === 'Upper Level SSAT') {
-       return relevantAssignments.filter(a => a.testType === 'Upper Level SSAT' && practiceTestSources.includes(a.source || ''));
+       return relevantAssignments.filter(a => PRACTICE_TEST_SOURCES.includes(a.source || '') && a.title.includes('Test'));
      }
      if (selectedStudent?.testType === 'SAT') {
-       return relevantAssignments.filter(a => a.testType === 'SAT' && practiceTestSources.includes(a.source || ''));
+       return relevantAssignments.filter(a => PRACTICE_TEST_SOURCES.includes(a.source || '') && a.title.includes('Test'));
      }
      
      return [];
   }, [relevantAssignments, selectedStudent]);
 
   const worksheets = useMemo(() => {
-    const practiceTestSources = ['Bluebook'];
     return relevantAssignments
-      .filter(a => !practiceTestSources.includes(a.source || ''))
+      .filter(a => !practiceTests.some(pt => pt.id === a.id))
       .filter(a => {
         if (selectedWorksheetSources.size === 0) return true;
         const sourceForFilter = a.source === 'Google Drive' ? 'Question Bank' : a.source;
@@ -119,7 +118,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
         if (worksheetSearchQuery.trim() === '') return true;
         return a.title.toLowerCase().includes(worksheetSearchQuery.toLowerCase());
       });
-  }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources]);
+  }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources, practiceTests]);
 
   const studentSubmissions = useMemo(() => {
     if (!selectedStudentId) return [];
@@ -255,9 +254,9 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                         </div>
                          {worksheetSources.length > 0 && (
                           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                            <Label className="mt-2">Sources:</Label>
+                            <Label>Sources:</Label>
                               {worksheetSources.map(source => (
-                                <div key={source} className="flex items-start space-x-2 pt-2">
+                                <div key={source} className="flex items-center space-x-2 pt-2">
                                   <Checkbox 
                                     id={`source-${source}`} 
                                     checked={selectedWorksheetSources.has(source)}
