@@ -94,7 +94,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   }, [selectedStudent, assignments]);
 
   const practiceTests = useMemo(() => {
-     const practiceTestSources = ['Bluebook', 'Test Innovators'];
+     const practiceTestSources = ['Bluebook'];
      const ssatPracticeTests = relevantAssignments.filter(a => a.testType === 'Upper Level SSAT' && practiceTestSources.includes(a.source || ''));
      const satPracticeTests = relevantAssignments.filter(a => a.testType === 'SAT' && practiceTestSources.includes(a.source || ''));
      
