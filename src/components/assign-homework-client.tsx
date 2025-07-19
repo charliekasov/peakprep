@@ -201,7 +201,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
 
       {view === 'assignments' && (
         <Card>
-          <CardHeader>
+          <CardHeader className="sticky top-0 z-10 bg-card border-b">
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
               <div>
                 <CardTitle>Select Student and Assignments</CardTitle>
@@ -217,9 +217,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                 Compose Email ({selectedAssignments.size})
               </Button>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
+            <div className="pt-4">
               <Label htmlFor="student-select">Student</Label>
               <Select onValueChange={handleStudentChange} value={selectedStudentId ?? ''}>
                 <SelectTrigger id="student-select" className="max-w-md">
@@ -234,7 +232,8 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                 </SelectContent>
               </Select>
             </div>
-
+          </CardHeader>
+          <CardContent className="space-y-6 pt-6">
             {selectedStudent && (
                <Tabs defaultValue="worksheets">
                <TabsList className="grid w-full grid-cols-2 max-w-md">
@@ -255,7 +254,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                            />
                         </div>
                          {worksheetSources.length > 0 && (
-                          <div className="flex flex-wrap items-start gap-4">
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                             <Label className="mt-2">Sources:</Label>
                               {worksheetSources.map(source => (
                                 <div key={source} className="flex items-start space-x-2 pt-2">
