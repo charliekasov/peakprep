@@ -244,15 +244,14 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                            />
                         </div>
                          {worksheetSources.length > 0 && (
-                          <div className="flex flex-wrap items-center gap-4">
-                            <Label>Sources:</Label>
+                          <div className="flex flex-wrap items-start gap-4">
+                            <Label className="mt-2">Sources:</Label>
                               {worksheetSources.map(source => (
-                                <div key={source} className="flex items-start space-x-2">
+                                <div key={source} className="flex items-start space-x-2 pt-2">
                                   <Checkbox 
                                     id={`source-${source}`} 
                                     checked={selectedWorksheetSources.has(source)}
                                     onCheckedChange={() => handleSourceToggle(source)}
-                                    className="mt-1"
                                   />
                                   <div className="grid gap-1.5 leading-none">
                                     <Label htmlFor={`source-${source}`} className="font-normal">{source}</Label>
