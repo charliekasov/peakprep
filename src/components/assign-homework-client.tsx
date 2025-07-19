@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { Student, Assignment } from '@/lib/types';
 import {
   Select,
@@ -122,6 +122,10 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
       return newSet;
     })
   }
+  
+  const satWorksheetDisplaySources = useMemo(() => {
+    return SAT_WORKSHEET_SOURCES.map(source => source === 'Google Drive' ? 'Question Bank' : source);
+  }, []);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -184,7 +188,7 @@ export function AssignHomeworkClient({ students, assignments }: AssignHomeworkCl
                                     checked={selectedWorksheetSources.has(source)}
                                     onCheckedChange={() => handleSourceToggle(source)}
                                   />
-                                  <Label htmlFor={`source-${source}`}>{source}</Label>
+                                  <Label htmlFor={`source-${source}`}>{source === 'Google Drive' ? 'Question Bank' : source}</Label>
                                 </div>
                               ))}
                           </div>
