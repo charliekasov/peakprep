@@ -1,20 +1,45 @@
+
 'use server';
 
-import type { Submission } from './types';
+import type { Submission, SubmissionStatus } from './types';
 import { mockSubmissions } from './mock-data/submissions';
+import { getAssignments } from './assignments';
 
 export async function getSubmissions(): Promise<Submission[]> {
-    // In a real app, you would fetch from Firestore here.
-    // For now, we're returning the mock data.
     return Promise.resolve(mockSubmissions.sort((a,b) => b.submittedAt.getTime() - a.submittedAt.getTime()));
 }
 
-
 export async function getNeedsReviewSubmissions(): Promise<Submission[]> {
+    const assignments = await getAssignments();
+    const assignmentMap = new Map(assignments.map(a => [a.id, a]));
+
     const needsReview = mockSubmissions.filter(s => {
-      // It needs review if it's assigned OR if it's completed but has no scores yet.
-      const isCompletedWithoutScore = s.status === 'Completed' && (!s.scores || s.scores.length === 0);
-      return s.status === 'Assigned' || s.status === 'Incomplete' || isCompletedWithoutScore;
+      const assignment = assignmentMap.get(s.assignmentId);
+      if (!assignment) return false;
+
+      // It needs review if it's assigned OR if it's a practice test that's completed but has no scores yet.
+      const isPracticeTestMissingScores = assignment.isPracticeTest && s.status === 'Completed' && (!s.scores || s.scores.length === 0);
+      
+      return s.status === 'Assigned' || s.status === 'Incomplete' || isPracticeTestMissingScores;
     });
-    return Promise.resolve(needsReview);
+
+    return Promise.resolve(needsReview.sort((a,b) => a.submittedAt.getTime() - b.submittedAt.getTime()));
+}
+
+export async function updateSubmission(submissionId: string, updates: Partial<{ status: SubmissionStatus; scores: { section: string; score: number }[] }>) {
+  const submissionIndex = mockSubmissions.findIndex(s => s.id === submissionId);
+  if (submissionIndex === -1) {
+    throw new Error("Submission not found");
+  }
+
+  const updatedSubmission = {
+    ...mockSubmissions[submissionIndex],
+    ...updates,
+  };
+
+  mockSubmissions[submissionIndex] = updatedSubmission;
+
+  console.log('Updated Submission:', updatedSubmission);
+  
+  return Promise.resolve(updatedSubmission);
 }
