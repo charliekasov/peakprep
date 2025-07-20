@@ -68,7 +68,7 @@ export default async function NeedsReviewPage() {
               <TableRow>
                 <TableHead className={cn(tableHeadStyle)}>Student</TableHead>
                 <TableHead className={cn(tableHeadStyle)}>Assignment</TableHead>
-                <TableHead className={cn(tableHeadStyle)}>Assigned On</TableHead>
+                <TableHead className={cn(tableHeadStyle)}>Date</TableHead>
                 <TableHead className={cn(tableHeadStyle)}>Status</TableHead>
                 <TableHead className={cn(tableHeadStyle, "text-right")}>Actions</TableHead>
               </TableRow>
