@@ -60,6 +60,7 @@ export async function handleAssignHomework(input: unknown) {
       from: `TutorFlow <${process.env.FROM_EMAIL}>`,
       to: to,
       cc: cc.length > 0 ? cc : undefined,
+      reply_to: 'CharlieKasov@gmail.com',
       subject: emailSubject,
       text: emailMessage, // Using text for simplicity, can be changed to html
     });

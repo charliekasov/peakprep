@@ -42,8 +42,4 @@ To enable email sending, you must have a Resend account.
     FROM_EMAIL="you@your-verified-domain.com"
     ```
 
-### Scaling for Multiple Tutors
-
-If you expand this app for multiple tutors, each tutor would need to send from a verified email address.
-- **Recommended**: All tutors use email addresses from a single, verified company domain (e.g., `tutor-name@your-tutoring-company.com`). This works on Resend's free tier.
-- **Alternative**: If tutors need to use their own separate business domains, you would need to verify each domain, which would likely require upgrading to a paid Resend plan.
+When a student replies to the homework email, their response will be sent to the "Reply-To" address specified in the code (`CharlieKasov@gmail.com`), ensuring the conversation continues in your personal inbox.
