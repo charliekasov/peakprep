@@ -19,9 +19,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search, Loader2, ArrowLeft, History, Wand2 } from 'lucide-react';
+import { Search, Loader2, ArrowLeft, History } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { handleAssignHomework, handleGenerateSubjectForAssignment } from '@/app/assign-homework/actions';
+import { handleAssignHomework } from '@/app/assign-homework/actions';
 import {
   Dialog,
   DialogContent,
@@ -62,7 +62,6 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   const [emailSubject, setEmailSubject] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGeneratingSubject, setIsGeneratingSubject] = useState(false);
   const { toast } = useToast();
 
   const [configuringAssignment, setConfiguringAssignment] = useState<Assignment | null>(null);
@@ -283,35 +282,6 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     } finally {
       setIsSubmitting(false);
     }
-  }
-
-  const handleGenerateSubject = async () => {
-      if (!selectedStudent || !selectedStudent.profile || assignedAssignmentTitles.length === 0) {
-        toast({
-            title: "Cannot Generate Subject",
-            description: "A student with a profile and at least one selected assignment are required.",
-            variant: "destructive"
-        });
-        return;
-      }
-
-      setIsGeneratingSubject(true);
-      try {
-        const result = await handleGenerateSubjectForAssignment({
-            studentProfile: selectedStudent.profile,
-            assignmentContent: assignedAssignmentTitles.join(', '),
-        });
-        setEmailSubject(result.subjectLine);
-      } catch (error) {
-        console.error("Error generating subject:", error);
-        toast({
-            title: "Error",
-            description: "Failed to generate AI subject line. Please try again.",
-            variant: "destructive"
-        });
-      } finally {
-        setIsGeneratingSubject(false);
-      }
   }
   
   const renderConfigurationDialog = () => {
@@ -543,30 +513,13 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
           <CardContent className="space-y-6">
             <div>
               <Label htmlFor="subject">Email Subject</Label>
-              <div className="flex items-center gap-2">
-                <Input 
-                    id="subject" 
-                    placeholder="Your subject line..." 
-                    value={emailSubject}
-                    onChange={e => setEmailSubject(e.target.value)}
-                    disabled={!selectedStudentId}
-                    className="flex-1"
-                />
-                <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleGenerateSubject}
-                    disabled={isGeneratingSubject || !selectedStudent?.profile}
-                    title="Generate subject with AI"
-                >
-                    {isGeneratingSubject ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <Wand2 className="h-4 w-4" />
-                    )}
-                    <span className="sr-only">Generate Subject</span>
-                </Button>
-              </div>
+              <Input 
+                  id="subject" 
+                  placeholder="Your subject line..." 
+                  value={emailSubject}
+                  onChange={e => setEmailSubject(e.target.value)}
+                  disabled={!selectedStudentId}
+              />
             </div>
             <div>
               <Label htmlFor="message">Email Message</Label>

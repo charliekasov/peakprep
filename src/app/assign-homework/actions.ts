@@ -1,7 +1,6 @@
 'use server';
 
 import { z } from 'zod';
-import { generateEmailSubject, GenerateEmailSubjectInput, GenerateEmailSubjectOutput } from '@/ai/flows/generate-email-subject';
 
 const assignmentDetailsSchema = z.object({
   id: z.string(),
@@ -39,11 +38,4 @@ export async function handleAssignHomework(input: unknown) {
   // and send the email.
 
   return { success: true, message: 'Homework assignment logged.' };
-}
-
-export async function handleGenerateSubjectForAssignment(
-  input: GenerateEmailSubjectInput
-): Promise<GenerateEmailSubjectOutput> {
-  const result = await generateEmailSubject(input);
-  return result;
 }
