@@ -62,6 +62,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   const [emailSubject, setEmailSubject] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [ccParents, setCcParents] = useState(false);
   const { toast } = useToast();
 
   const [configuringAssignment, setConfiguringAssignment] = useState<Assignment | null>(null);
@@ -258,25 +259,28 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
         };
       });
       
-      await handleAssignHomework({
+      const result = await handleAssignHomework({
         studentId: selectedStudentId,
         assignments: assignmentsPayload,
         emailSubject,
         emailMessage,
+        ccParents,
       });
+
       toast({
         title: 'Homework Assigned!',
-        description: `Email draft for ${selectedStudent?.name} has been logged.`,
+        description: result.message,
       });
+
       // Reset form
       setSelectedAssignments(new Map());
       setEmailSubject('');
       setView('assignments');
 
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: 'Error',
-        description: 'Failed to assign homework. Please try again.',
+        title: 'Error Assigning Homework',
+        description: error.message || 'An unexpected error occurred.',
         variant: 'destructive',
       });
     } finally {
@@ -534,7 +538,12 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
             </div>
              <div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="cc-parents" disabled={!selectedStudentId || !selectedStudent?.parentEmail1} />
+                <Checkbox 
+                  id="cc-parents" 
+                  disabled={!selectedStudentId || (!selectedStudent?.parentEmail1 && !selectedStudent?.parentEmail2)}
+                  checked={ccParents}
+                  onCheckedChange={(checked) => setCcParents(!!checked)}
+                />
                 <Label htmlFor="cc-parents">CC Parents</Label>
               </div>
             </div>
