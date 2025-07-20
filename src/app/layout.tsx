@@ -17,7 +17,7 @@ import { Logo } from '@/components/logo';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'TutorFlow',
+  title: 'Peak Prep',
   description: 'Streamlined student and assignment management.',
 };
 

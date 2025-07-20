@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 function StatusBadge({ status }: { status: SubmissionStatus }) {
   const variant: "default" | "secondary" | "destructive" | "outline" = {
@@ -51,6 +52,8 @@ export default async function NeedsReviewPage() {
   const studentMap = new Map(students.map(s => [s.id, s]));
   const assignmentMap = new Map(assignments.map(a => [a.id, a]));
 
+  const tableHeadStyle = "text-base font-semibold text-foreground";
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
@@ -58,20 +61,16 @@ export default async function NeedsReviewPage() {
       </h1>
       <Card>
         <CardHeader>
-          <CardTitle>Action Items</CardTitle>
-          <CardDescription>
-            View and manage the status of all assigned work that requires your attention.
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Student</TableHead>
-                <TableHead>Assignment</TableHead>
-                <TableHead>Assigned On</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className={cn(tableHeadStyle)}>Student</TableHead>
+                <TableHead className={cn(tableHeadStyle)}>Assignment</TableHead>
+                <TableHead className={cn(tableHeadStyle)}>Assigned On</TableHead>
+                <TableHead className={cn(tableHeadStyle)}>Status</TableHead>
+                <TableHead className={cn(tableHeadStyle, "text-right")}>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

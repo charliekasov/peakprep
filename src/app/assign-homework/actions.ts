@@ -57,7 +57,7 @@ export async function handleAssignHomework(input: unknown) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: `TutorFlow <${process.env.FROM_EMAIL}>`,
+      from: `Peak Prep <${process.env.FROM_EMAIL}>`,
       to: to,
       cc: cc.length > 0 ? cc : undefined,
       reply_to: 'CharlieKasov@gmail.com',

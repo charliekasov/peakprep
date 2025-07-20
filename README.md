@@ -1,4 +1,4 @@
-# TutorFlow - A Next.js App for Tutors
+# Peak Prep - A Next.js App for Tutors
 
 This is a Next.js application built in Firebase Studio to help tutors manage students, assignments, and communications in a streamlined way.
 
