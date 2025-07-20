@@ -55,7 +55,13 @@ const SSAT_SECTIONS = ['Verbal', 'Quantitative 1', 'Reading', 'Quantitative 2'];
 
 const scoreSchema = z.object({
   section: z.string(),
-  score: z.coerce.number().min(0, "Score can't be negative").max(800, "Score can't exceed 800"),
+  score: z.coerce
+    .number()
+    .min(200, "Score must be at least 200.")
+    .max(800, "Score cannot exceed 800.")
+    .refine((val) => val % 10 === 0, {
+      message: "Score must be a multiple of 10.",
+    }),
 });
 
 const formSchema = z.object({
@@ -96,8 +102,11 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
   
   const handleOpenDialog = (submission: EnrichedSubmission) => {
     setSelectedSubmission(submission);
+    const scoreSections = submission.assignment?.testType === 'SAT' ? SAT_SECTIONS : SSAT_SECTIONS;
+    const defaultScore = submission.assignment?.testType === 'SAT' ? 600 : 0;
+    
     form.reset({
-      scores: (submission.assignment?.testType === 'SAT' ? SAT_SECTIONS : SSAT_SECTIONS).map(section => ({ section, score: 0 }))
+      scores: scoreSections.map(section => ({ section, score: defaultScore }))
     });
     setIsDialogOpen(true);
   };
@@ -207,7 +216,7 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
                         <FormItem>
                           <FormLabel>{sections[index]}</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="Score" {...field} />
+                            <Input type="number" step="10" placeholder="Score" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
