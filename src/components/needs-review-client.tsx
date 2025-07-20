@@ -69,11 +69,9 @@ const formSchema = z.object({
 });
 
 function StatusBadge({ submission }: { submission: EnrichedSubmission }) {
-  const { status, assignment, scores } = submission;
-  
-  if (assignment?.isPracticeTest && status === 'Completed' && (!scores || scores.length === 0)) {
-    return <Badge variant="default" className="bg-blue-500 hover:bg-blue-600">Enter Scores</Badge>;
-  }
+  const { status, assignment } = submission;
+
+  const isPracticeTest = assignment?.isPracticeTest;
 
   const variant: 'secondary' | 'destructive' | 'outline' | 'default' = {
     'Assigned': 'secondary',
@@ -81,6 +79,11 @@ function StatusBadge({ submission }: { submission: EnrichedSubmission }) {
     'Incomplete': 'destructive',
     'Did Together': 'outline',
   }[status];
+  
+  // Custom styling for Assigned Practice Tests
+  if (isPracticeTest && status === 'Assigned') {
+    return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">Assigned</Badge>
+  }
 
   return <Badge variant={variant}>{status}</Badge>;
 }
@@ -103,10 +106,9 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
   const handleOpenDialog = (submission: EnrichedSubmission) => {
     setSelectedSubmission(submission);
     const scoreSections = submission.assignment?.testType === 'SAT' ? SAT_SECTIONS : SSAT_SECTIONS;
-    const defaultScore = submission.assignment?.testType === 'SAT' ? 600 : 0;
     
     form.reset({
-      scores: scoreSections.map(section => ({ section, score: defaultScore }))
+      scores: scoreSections.map(section => ({ section, score: 600 }))
     });
     setIsDialogOpen(true);
   };
@@ -128,6 +130,7 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
 
     setIsSubmitting(true);
     try {
+      // When scores are submitted, the status is automatically updated to 'Completed'
       await handleUpdateSubmission({
         submissionId: selectedSubmission.id,
         status: 'Completed',
@@ -177,8 +180,11 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        {submission.assignment?.isPracticeTest && submission.status === 'Completed' ? (
-                          <DropdownMenuItem onClick={() => handleOpenDialog(submission)}>Enter Scores</DropdownMenuItem>
+                        {submission.assignment?.isPracticeTest ? (
+                           <>
+                             <DropdownMenuItem onClick={() => handleOpenDialog(submission)}>Enter Scores</DropdownMenuItem>
+                             <DropdownMenuItem onClick={() => handleStatusChange(submission.id, 'Incomplete')}>Mark as Incomplete</DropdownMenuItem>
+                           </>
                         ) : (
                           <>
                             <DropdownMenuItem onClick={() => handleStatusChange(submission.id, 'Completed')}>Mark as Completed</DropdownMenuItem>

@@ -16,11 +16,8 @@ export async function getNeedsReviewSubmissions(): Promise<Submission[]> {
     const needsReview = mockSubmissions.filter(s => {
       const assignment = assignmentMap.get(s.assignmentId);
       if (!assignment) return false;
-
-      // It needs review if it's assigned OR if it's a practice test that's completed but has no scores yet.
-      const isPracticeTestMissingScores = assignment.isPracticeTest && s.status === 'Completed' && (!s.scores || s.scores.length === 0);
       
-      return s.status === 'Assigned' || s.status === 'Incomplete' || isPracticeTestMissingScores;
+      return s.status === 'Assigned' || s.status === 'Incomplete';
     });
 
     return Promise.resolve(needsReview.sort((a,b) => a.submittedAt.getTime() - b.submittedAt.getTime()));
