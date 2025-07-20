@@ -12,6 +12,7 @@ import {
   Users,
   FileText,
   Mail,
+  CheckSquare,
 } from 'lucide-react';
 
 const navItems = [
@@ -34,6 +35,11 @@ const navItems = [
     href: '/assign-homework',
     icon: Mail,
     label: 'Assign Homework',
+  },
+   {
+    href: '/submissions',
+    icon: CheckSquare,
+    label: 'Submissions',
   },
 ];
 

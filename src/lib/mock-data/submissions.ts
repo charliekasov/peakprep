@@ -29,7 +29,7 @@ export const mockSubmissions: Submission[] = [
     id: 'S4',
     assignmentId: '325',
     studentId: '1',
-    status: 'Needs Review',
+    status: 'Assigned',
     submittedAt: new Date('2024-07-18T12:00:00Z'),
   },
   {
@@ -52,14 +52,14 @@ export const mockSubmissions: Submission[] = [
     id: 'S7',
     assignmentId: '5',
     studentId: '4',
-    status: 'Needs Review',
+    status: 'Assigned',
     submittedAt: new Date('2024-07-19T09:30:00Z'),
   },
   {
     id: 'S8',
     assignmentId: '6',
     studentId: '4',
-    status: 'Needs Review',
+    status: 'Assigned',
     submittedAt: new Date('2024-07-19T09:30:00Z'),
   },
   {
@@ -82,7 +82,7 @@ export const mockSubmissions: Submission[] = [
     id: 'S11',
     assignmentId: '292',
     studentId: '6',
-    status: 'Needs Review',
+    status: 'Assigned',
     submittedAt: new Date('2024-07-12T18:00:00Z'),
   },
   {
@@ -105,7 +105,7 @@ export const mockSubmissions: Submission[] = [
     id: 'S14',
     assignmentId: '297',
     studentId: '5',
-    status: 'Needs Review',
+    status: 'Assigned',
     submittedAt: new Date('2024-07-11T14:00:00Z'),
   },
   {
@@ -136,14 +136,14 @@ export const mockSubmissions: Submission[] = [
     id: 'S18',
     assignmentId: '37',
     studentId: '2',
-    status: 'Needs Review',
+    status: 'Assigned',
     submittedAt: new Date('2024-07-08T11:00:00Z'),
   },
   {
     id: 'S19',
     assignmentId: '1',
     studentId: '3',
-    status: 'Needs Review',
+    status: 'Assigned',
     submittedAt: new Date('2024-07-20T10:00:00Z'),
   },
 ];

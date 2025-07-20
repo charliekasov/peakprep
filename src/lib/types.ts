@@ -34,11 +34,13 @@ export type Assignment = Omit<FirebaseAssignment, 'dueDate' | 'id'> & {
   dueDate?: Date;
 };
 
+export type SubmissionStatus = 'Assigned' | 'Completed' | 'Incomplete' | 'Did Together';
+
 export interface FirebaseSubmission {
   id:string;
   assignmentId: string;
   studentId: string;
-  status: 'Not Started' | 'In Progress' | 'Submitted' | 'Needs Review' | 'Completed';
+  status: SubmissionStatus;
   submittedAt: Timestamp;
   score?: number;
 }
