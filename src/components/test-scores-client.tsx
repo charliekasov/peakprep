@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { Student, Assignment, Submission } from '@/lib/types';
 import {
   Card,
@@ -44,7 +44,17 @@ const sourceColors: { [key: string]: string } = {
 };
 
 export function TestScoresClient({ students, assignments, submissions }: TestScoresClientProps) {
-  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(students[0]?.id || null);
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+    if (students.length > 0) {
+      setSelectedStudentId(students[0].id);
+    }
+  }, [students]);
+
+
   const [selectedSources, setSelectedSources] = useState<Set<string>>(
     new Set(Object.keys(sourceColors))
   );
@@ -107,6 +117,10 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
 
   const selectedStudent = studentMap.get(selectedStudentId || '');
   
+  if (!isMounted) {
+    return null; // or a loading skeleton
+  }
+
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

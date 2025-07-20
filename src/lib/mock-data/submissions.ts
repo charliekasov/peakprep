@@ -105,8 +105,12 @@ export const mockSubmissions: Submission[] = [
     id: 'S14',
     assignmentId: 'SAT-TI-2',
     studentId: '5',
-    status: 'Assigned',
+    status: 'Completed',
     submittedAt: new Date('2024-07-11T14:00:00Z'),
+    scores: [
+      { section: 'Reading + Writing', score: 680 },
+      { section: 'Math', score: 720 },
+    ],
   },
   {
     id: 'S15',
@@ -158,16 +162,22 @@ export const mockSubmissions: Submission[] = [
     id: 'S21',
     assignmentId: 'SAT-TI-1',
     studentId: '5',
-    status: 'Assigned',
+    status: 'Completed',
     submittedAt: new Date('2024-07-22T10:00:00Z'),
-    scores: []
+    scores: [
+      { section: 'Reading + Writing', score: 650 },
+      { section: 'Math', score: 680 },
+    ],
   },
   {
     id: 'S22',
     assignmentId: 'SAT-BB-5',
     studentId: '5',
-    status: 'Assigned',
+    status: 'Completed',
     submittedAt: new Date('2024-07-29T10:00:00Z'),
-    scores: []
+    scores: [
+      { section: 'Reading + Writing', score: 710 },
+      { section: 'Math', score: 700 },
+    ],
   }
 ];
