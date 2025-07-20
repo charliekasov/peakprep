@@ -19,7 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search, Loader2, ArrowLeft } from 'lucide-react';
+import { Search, Loader2, ArrowLeft, History } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { handleAssignHomework } from '@/app/assign-homework/actions';
 import {
@@ -32,6 +32,12 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 
 interface AssignHomeworkClientProps {
@@ -162,7 +168,9 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
 
   const studentSubmissions = useMemo(() => {
     if (!selectedStudentId) return [];
-    return submissions.filter(sub => sub.studentId === selectedStudentId);
+    return submissions
+      .filter(sub => sub.studentId === selectedStudentId)
+      .sort((a, b) => b.submittedAt.getTime() - a.submittedAt.getTime());
   }, [selectedStudentId, submissions]);
 
 
@@ -401,6 +409,37 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
           </CardHeader>
           <CardContent className="space-y-6 pt-6">
             {selectedStudent && (
+              <>
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger>
+                       <div className="flex items-center gap-2">
+                          <History className="h-4 w-4" />
+                          <span>View Assignment History ({studentSubmissions.length})</span>
+                       </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                       {studentSubmissions.length > 0 ? (
+                          <ScrollArea className="h-48">
+                            <ul className="space-y-2 pr-4">
+                              {studentSubmissions.map(submission => {
+                                const assignment = assignments.find(a => a.id === submission.assignmentId);
+                                return (
+                                  <li key={submission.id} className="flex justify-between items-center text-sm">
+                                    <span>{assignment?.title || 'Unknown Assignment'}</span>
+                                    <span className="text-muted-foreground">{submission.submittedAt.toLocaleDateString()}</span>
+                                  </li>
+                                )
+                              })}
+                            </ul>
+                          </ScrollArea>
+                       ) : (
+                          <p className="text-sm text-muted-foreground">No assignment history for this student.</p>
+                       )}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+
                <Tabs defaultValue="worksheets">
                <TabsList className="grid w-full grid-cols-2 max-w-md">
                  <TabsTrigger value="worksheets">Worksheets ({worksheets.length})</TabsTrigger>
@@ -448,6 +487,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                   <PracticeTestTable assignments={practiceTests} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
                </TabsContent>
              </Tabs>
+             </>
             )}
           </CardContent>
         </Card>
@@ -612,3 +652,5 @@ function PracticeTestTable({ assignments, selectedAssignments, studentSubmission
       </ScrollArea>
   )
 }
+
+    
