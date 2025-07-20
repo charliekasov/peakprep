@@ -39,9 +39,13 @@ function StatusBadge({ status }: { status: SubmissionStatus }) {
 }
 
 export default async function NeedsReviewPage() {
-  const submissions = await getSubmissions();
+  const allSubmissions = await getSubmissions();
   const students = await getStudents();
   const assignments = await getAssignments();
+  
+  // Filter submissions to only show what needs action
+  const submissions = allSubmissions.filter(s => s.status === 'Assigned' || s.status === 'Incomplete');
+
 
   // Create maps for quick lookup
   const studentMap = new Map(students.map(s => [s.id, s]));
@@ -54,9 +58,9 @@ export default async function NeedsReviewPage() {
       </h1>
       <Card>
         <CardHeader>
-          <CardTitle>All Submissions</CardTitle>
+          <CardTitle>Action Items</CardTitle>
           <CardDescription>
-            View and manage the status of all assigned work.
+            View and manage the status of all assigned work that requires your attention.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,7 +96,6 @@ export default async function NeedsReviewPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>Mark as Assigned</DropdownMenuItem>
                           <DropdownMenuItem>Mark as Completed</DropdownMenuItem>
                           <DropdownMenuItem>Mark as Incomplete</DropdownMenuItem>
                           <DropdownMenuItem>Mark as "Did Together"</DropdownMenuItem>
