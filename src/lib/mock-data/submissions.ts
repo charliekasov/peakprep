@@ -103,7 +103,7 @@ export const mockSubmissions: Submission[] = [
   },
   {
     id: 'S14',
-    assignmentId: '297',
+    assignmentId: 'SAT-TI-2',
     studentId: '5',
     status: 'Assigned',
     submittedAt: new Date('2024-07-11T14:00:00Z'),
@@ -162,4 +162,12 @@ export const mockSubmissions: Submission[] = [
     submittedAt: new Date('2024-07-22T10:00:00Z'),
     scores: []
   },
+  {
+    id: 'S22',
+    assignmentId: 'SAT-BB-5',
+    studentId: '5',
+    status: 'Assigned',
+    submittedAt: new Date('2024-07-29T10:00:00Z'),
+    scores: []
+  }
 ];
