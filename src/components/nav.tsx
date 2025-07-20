@@ -13,6 +13,7 @@ import {
   FileText,
   Mail,
   CheckSquare,
+  BarChart,
 } from 'lucide-react';
 
 const navItems = [
@@ -40,6 +41,11 @@ const navItems = [
     href: '/needs-review',
     icon: CheckSquare,
     label: 'Needs Review',
+  },
+  {
+    href: '/test-scores',
+    icon: BarChart,
+    label: 'Test Scores',
   },
 ];
 

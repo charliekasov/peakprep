@@ -7,7 +7,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '1',
     status: 'Completed',
     submittedAt: new Date('2024-05-10T10:00:00Z'),
-    score: 90
+    scores: [{ section: 'Verbal Reasoning', score: 85 }, { section: 'Quantitative Reasoning', score: 90 }]
   },
   {
     id: 'S2',
@@ -15,7 +15,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '1',
     status: 'Completed',
     submittedAt: new Date('2024-05-17T10:00:00Z'),
-    score: 95
+    scores: [{ section: 'Verbal Reasoning', score: 92 }, { section: 'Quantitative Reasoning', score: 95 }]
   },
   {
     id: 'S3',
@@ -23,7 +23,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '1',
     status: 'Completed',
     submittedAt: new Date('2024-05-24T10:00:00Z'),
-    score: 88
+    scores: [{ section: 'Reading Comprehension', score: 88 }]
   },
   {
     id: 'S4',
@@ -38,7 +38,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '5',
     status: 'Completed',
     submittedAt: new Date('2024-06-20T14:00:00Z'),
-    score: 88
+    scores: [{ section: 'Words in Context', score: 88 }]
   },
   {
     id: 'S6',
@@ -46,7 +46,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '6',
     status: 'Completed',
     submittedAt: new Date('2024-06-22T18:00:00Z'),
-    score: 92
+    scores: [{ section: 'Form, Structure, and Sense', score: 92 }]
   },
    {
     id: 'S7',
@@ -68,7 +68,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '6',
     status: 'Completed',
     submittedAt: new Date('2024-06-28T18:00:00Z'),
-    score: 95
+    scores: [{ section: 'Command of Evidence: Textual', score: 95 }]
   },
   {
     id: 'S10',
@@ -76,7 +76,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '6',
     status: 'Completed',
     submittedAt: new Date('2024-07-05T18:00:00Z'),
-    score: 89
+    scores: [{ section: 'Text Structure and Purpose', score: 89 }]
   },
   {
     id: 'S11',
@@ -91,7 +91,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '5',
     status: 'Completed',
     submittedAt: new Date('2024-06-27T14:00:00Z'),
-    score: 91
+    scores: [{ section: 'Words in Context', score: 91 }]
   },
   {
     id: 'S13',
@@ -99,7 +99,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '5',
     status: 'Completed',
     submittedAt: new Date('2024-07-04T14:00:00Z'),
-    score: 94
+    scores: [{ section: 'Equivalent expressions', score: 94 }]
   },
   {
     id: 'S14',
@@ -114,7 +114,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '4',
     status: 'Completed',
     submittedAt: new Date('2024-06-15T16:00:00Z'),
-    score: 85
+    scores: [{ section: 'Linear Functions', score: 85 }]
   },
   {
     id: 'S16',
@@ -122,7 +122,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '4',
     status: 'Completed',
     submittedAt: new Date('2024-06-22T16:00:00Z'),
-    score: 88
+    scores: [{ section: 'Systems of two linear equations', score: 88 }]
   },
   {
     id: 'S17',
@@ -130,7 +130,7 @@ export const mockSubmissions: Submission[] = [
     studentId: '2',
     status: 'Completed',
     submittedAt: new Date('2024-07-01T11:00:00Z'),
-    score: 90
+    scores: [{ section: 'Area and Volume', score: 90 }]
   },
    {
     id: 'S18',

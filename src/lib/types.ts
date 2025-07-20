@@ -42,7 +42,7 @@ export interface FirebaseSubmission {
   studentId: string;
   status: SubmissionStatus;
   submittedAt: Timestamp;
-  score?: number;
+  scores?: { section: string; score: number }[];
 }
 
 export type Submission = Omit<FirebaseSubmission, 'submittedAt' | 'id'> & {

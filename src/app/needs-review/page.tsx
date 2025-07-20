@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getSubmissions } from '@/lib/submissions';
+import { getNeedsReviewSubmissions } from '@/lib/submissions';
 import { getStudents } from '@/lib/students';
 import { getAssignments } from '@/lib/assignments';
 import type { Submission, Student, Assignment, SubmissionStatus } from '@/lib/types';
@@ -28,25 +28,27 @@ import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-function StatusBadge({ status }: { status: SubmissionStatus }) {
+function StatusBadge({ status, assignment, submission }: { status: SubmissionStatus, assignment?: Assignment, submission: Submission }) {
+  let currentStatus = status;
+  if (assignment?.isPracticeTest && status === 'Completed' && (!submission.scores || submission.scores.length === 0)) {
+    currentStatus = 'Completed'; // Special state for UI
+    return <Badge variant="default" className="bg-blue-500 hover:bg-blue-600">Enter Scores</Badge>;
+  }
+
   const variant: "default" | "secondary" | "destructive" | "outline" = {
     'Assigned': 'secondary',
     'Completed': 'default',
     'Incomplete': 'destructive',
     'Did Together': 'outline',
-  }[status];
+  }[currentStatus];
 
-  return <Badge variant={variant}>{status}</Badge>;
+  return <Badge variant={variant}>{currentStatus}</Badge>;
 }
 
 export default async function NeedsReviewPage() {
-  const allSubmissions = await getSubmissions();
+  const submissions = await getNeedsReviewSubmissions();
   const students = await getStudents();
   const assignments = await getAssignments();
-  
-  // Filter submissions to only show what needs action
-  const submissions = allSubmissions.filter(s => s.status === 'Assigned' || s.status === 'Incomplete');
-
 
   // Create maps for quick lookup
   const studentMap = new Map(students.map(s => [s.id, s]));
@@ -84,7 +86,7 @@ export default async function NeedsReviewPage() {
                     <TableCell>{assignment?.title || 'Unknown Assignment'}</TableCell>
                     <TableCell>{submission.submittedAt.toLocaleDateString()}</TableCell>
                     <TableCell>
-                      <StatusBadge status={submission.status} />
+                      <StatusBadge status={submission.status} assignment={assignment} submission={submission} />
                     </TableCell>
                     <TableCell className="text-right">
                        <DropdownMenu>
