@@ -37,9 +37,9 @@ const navItems = [
     label: 'Assign Homework',
   },
    {
-    href: '/submissions',
+    href: '/needs-review',
     icon: CheckSquare,
-    label: 'Submissions',
+    label: 'Needs Review',
   },
 ];
 
