@@ -19,9 +19,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search, Loader2, ArrowLeft, History } from 'lucide-react';
+import { Search, Loader2, ArrowLeft, History, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { handleAssignHomework } from '@/app/assign-homework/actions';
+import { handleAssignHomework, handleGenerateSubjectForAssignment } from '@/app/assign-homework/actions';
 import {
   Dialog,
   DialogContent,
@@ -62,6 +62,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   const [emailSubject, setEmailSubject] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeneratingSubject, setIsGeneratingSubject] = useState(false);
   const { toast } = useToast();
 
   const [configuringAssignment, setConfiguringAssignment] = useState<Assignment | null>(null);
@@ -96,75 +97,78 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     setSelectedWorksheetSources(new Set(worksheetSources));
   }, [worksheetSources]);
 
+  const assignedAssignmentTitles = useMemo(() => {
+    return Array.from(selectedAssignments.entries()).map(([id, options]) => {
+      const assignment = assignments.find(a => a.id === id);
+      if (!assignment) return null;
+
+      let title = assignment.title;
+      if (assignment.isPracticeTest) {
+        let details = [];
+        if (options.sections && Array.isArray(options.sections) && options.sections.length > 0) {
+          details.push(options.sections.join(', '));
+        } else if (options.sections && typeof options.sections === 'string' && options.sections !== 'Whole Test') {
+            details.push(options.sections);
+        }
+
+        if (options.timing) {
+          details.push(options.timing.charAt(0).toUpperCase() + options.timing.slice(1));
+        }
+
+        if (details.length > 0) {
+          title += ` (${details.join(', ')})`;
+        }
+      }
+      return title;
+    }).filter(Boolean);
+  }, [selectedAssignments, assignments]);
+
   useEffect(() => {
     if (!selectedStudent) {
       setEmailMessage('');
       setEmailSubject('');
       return;
     }
-
-    const assignedItems = Array.from(selectedAssignments.entries())
-      .map(([id, options]) => {
-        const assignment = assignments.find(a => a.id === id);
-        if (!assignment) return null;
-
-        let title = assignment.title;
-        if (assignment.isPracticeTest) {
-          let details = [];
-          if (options.sections) {
-            if (Array.isArray(options.sections)) {
-              details.push(options.sections.join(', '));
-            } else {
-              details.push(options.sections);
-            }
-          }
-          if (options.timing) {
-            details.push(options.timing.charAt(0).toUpperCase() + options.timing.slice(1));
-          }
-          if (details.length > 0) {
-            title += ` (${details.join(', ')})`;
-          }
-        }
-        
-        if (assignment.link) {
+    
+    const assignedItemsText = assignedAssignmentTitles.map(title => {
+        const assignment = assignments.find(a => a.title === title.split(' (')[0]);
+        if (assignment && assignment.link) {
             return `${title}: ${assignment.link}`;
         }
         return title;
-    }).filter(Boolean).join('\n\n');
+    }).join('\n\n');
+
 
     const firstName = selectedStudent.name.split(' ')[0];
-    const message = `Hi ${firstName},\n\n${assignedItems}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
+    const message = `Hi ${firstName},\n\n${assignedItemsText}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
     setEmailMessage(message);
 
-  }, [selectedStudent, selectedAssignments, assignments]);
+  }, [selectedStudent, assignedAssignmentTitles, assignments]);
 
-
-  const relevantAssignments = useMemo(() => {
-    if (!selectedStudent || !selectedStudent.testType) {
-      return [];
-    }
-    return assignments.filter(
-      (a) => a.testType === selectedStudent.testType || !a.testType
-    );
-  }, [selectedStudent, assignments]);
-
-  const practiceTests = useMemo(() => {
-     return relevantAssignments.filter(a => a.isPracticeTest);
-  }, [relevantAssignments]);
 
   const worksheets = useMemo(() => {
-    return relevantAssignments
+    if (!selectedStudent) return [];
+    return assignments
       .filter(a => !a.isPracticeTest)
       .filter(a => {
-        if (selectedWorksheetSources.size === 0) return true;
-        const sourceForFilter = a.source === 'Google Drive' ? 'Question Bank' : a.source;
-        return sourceForFilter && selectedWorksheetSources.has(sourceForFilter);
+        if (!selectedStudent.testType || a.testType === selectedStudent.testType || !a.testType) {
+            const sourceForFilter = a.source === 'Google Drive' ? 'Question Bank' : a.source;
+            if (selectedWorksheetSources.size === 0) return true;
+            return sourceForFilter && selectedWorksheetSources.has(sourceForFilter);
+        }
+        return false;
       })
       .filter(a => {
         if (worksheetSearchQuery.trim() === '') return true;
         return a.title.toLowerCase().includes(worksheetSearchQuery.toLowerCase());
       });
-  }, [relevantAssignments, worksheetSearchQuery, selectedWorksheetSources]);
+  }, [selectedStudent, assignments, worksheetSearchQuery, selectedWorksheetSources]);
+
+   const practiceTests = useMemo(() => {
+    if (!selectedStudent) return [];
+    return assignments.filter(a => a.isPracticeTest && a.testType === selectedStudent.testType);
+  }, [selectedStudent, assignments]);
+
 
   const studentSubmissions = useMemo(() => {
     if (!selectedStudentId) return [];
@@ -178,6 +182,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     setSelectedStudentId(studentId);
     setSelectedAssignments(new Map()); 
     setEmailSubject('');
+    setWorksheetSearchQuery('');
   };
 
   const handleAssignmentToggle = (assignment: Assignment) => {
@@ -188,7 +193,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     } else {
       if (assignment.isPracticeTest) {
         setConfiguringAssignment(assignment);
-        setTempOptions({ timing: 'timed' }); 
+        setTempOptions({ timing: 'timed', sections: 'Whole Test' }); 
       } else {
         newSet.set(assignment.id, {});
         setSelectedAssignments(newSet);
@@ -242,7 +247,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
         if(assignment.isPracticeTest) {
           if (Array.isArray(options.sections)) {
             sections = options.sections;
-          } else if (typeof options.sections === 'string') {
+          } else if (typeof options.sections === 'string' && options.sections !== 'Whole Test') {
             sections = [options.sections];
           }
         }
@@ -279,6 +284,35 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       setIsSubmitting(false);
     }
   }
+
+  const handleGenerateSubject = async () => {
+      if (!selectedStudent || !selectedStudent.profile || assignedAssignmentTitles.length === 0) {
+        toast({
+            title: "Cannot Generate Subject",
+            description: "A student with a profile and at least one selected assignment are required.",
+            variant: "destructive"
+        });
+        return;
+      }
+
+      setIsGeneratingSubject(true);
+      try {
+        const result = await handleGenerateSubjectForAssignment({
+            studentProfile: selectedStudent.profile,
+            assignmentContent: assignedAssignmentTitles.join(', '),
+        });
+        setEmailSubject(result.subjectLine);
+      } catch (error) {
+        console.error("Error generating subject:", error);
+        toast({
+            title: "Error",
+            description: "Failed to generate AI subject line. Please try again.",
+            variant: "destructive"
+        });
+      } finally {
+        setIsGeneratingSubject(false);
+      }
+  }
   
   const renderConfigurationDialog = () => {
     if (!configuringAssignment || !selectedStudent) return null;
@@ -297,7 +331,8 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                  <div className="space-y-2">
                    <Label>Sections</Label>
                     <RadioGroup
-                        value={typeof tempOptions.sections === 'string' ? tempOptions.sections : 'Whole Test'}
+                        value={Array.isArray(tempOptions.sections) ? 'Whole Test' : tempOptions.sections}
+                        defaultValue="Whole Test"
                         onValueChange={(value) => setTempOptions(prev => ({ ...prev, sections: value }))}
                     >
                       <div className="flex items-center space-x-2">
@@ -326,7 +361,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                                       setTempOptions(prev => {
                                         const currentSections = Array.isArray(prev.sections) ? prev.sections : [];
                                         if (checked) {
-                                          return { ...prev, sections: [...currentSections, section] };
+                                          return { ...prev, sections: [...currentSections, section].filter(s => s !== 'Whole Test') };
                                         } else {
                                           return { ...prev, sections: currentSections.filter(s => s !== section) };
                                         }
@@ -508,13 +543,30 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
           <CardContent className="space-y-6">
             <div>
               <Label htmlFor="subject">Email Subject</Label>
-              <Input 
-                id="subject" 
-                placeholder="Your subject line..." 
-                value={emailSubject}
-                onChange={e => setEmailSubject(e.target.value)}
-                disabled={!selectedStudentId}
-              />
+              <div className="flex items-center gap-2">
+                <Input 
+                    id="subject" 
+                    placeholder="Your subject line..." 
+                    value={emailSubject}
+                    onChange={e => setEmailSubject(e.target.value)}
+                    disabled={!selectedStudentId}
+                    className="flex-1"
+                />
+                <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleGenerateSubject}
+                    disabled={isGeneratingSubject || !selectedStudent?.profile}
+                    title="Generate subject with AI"
+                >
+                    {isGeneratingSubject ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <Wand2 className="h-4 w-4" />
+                    )}
+                    <span className="sr-only">Generate Subject</span>
+                </Button>
+              </div>
             </div>
             <div>
               <Label htmlFor="message">Email Message</Label>
@@ -652,5 +704,3 @@ function PracticeTestTable({ assignments, selectedAssignments, studentSubmission
       </ScrollArea>
   )
 }
-
-    
