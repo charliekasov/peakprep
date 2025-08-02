@@ -72,12 +72,14 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
   const assignmentMap = useMemo(() => new Map(assignments.map(a => [a.id, a])), [assignments]);
 
   const scoredSubmissions = useMemo(() => {
-    return submissions.filter(s =>
-      s.status === 'Completed' &&
-      s.scores &&
-      s.scores.length > 0
-    );
-  }, [submissions]);
+    return submissions.filter(s => {
+       const assignment = assignmentMap.get(s.assignmentId);
+       return assignment?.isPracticeTest &&
+         s.status === 'Completed' &&
+         s.scores &&
+         s.scores.length > 0;
+     });
+  }, [submissions, assignmentMap]);
 
   const studentSubmissions = useMemo(() => {
     if (!selectedStudentId) return [];
@@ -178,7 +180,7 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
                 <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
-                    <YAxis type="number" domain={[200, 800]} />
+                    <YAxis type="number" domain={[200, 800]} ticks={[200, 300, 400, 500, 600, 700, 800]} />
                     <Tooltip />
                     <Legend />
                     {allSections.map((section, index) => (
