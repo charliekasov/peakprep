@@ -41,6 +41,7 @@ const studentSchema = z.object({
   profile: z.string().min(10, {
     message: 'Profile must be at least 10 characters.',
   }),
+  upcomingTestDate: z.string().optional(),
 });
 
 
@@ -56,6 +57,7 @@ export function AddStudentSheet() {
       email: '',
       parentEmail: '',
       profile: '',
+      upcomingTestDate: '',
     },
   });
 
@@ -138,6 +140,22 @@ export function AddStudentSheet() {
                   <FormControl>
                     <Input
                       placeholder="e.g., jane.doe@example.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="upcomingTestDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Upcoming Test Date (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g., August 24, 2024"
                       {...field}
                     />
                   </FormControl>

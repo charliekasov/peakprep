@@ -12,6 +12,7 @@ export interface Student {
   frequency?: string;
   startDate?: string;
   projectedEndDate?: string;
+  upcomingTestDate?: string;
   profile?: string;
 }
 

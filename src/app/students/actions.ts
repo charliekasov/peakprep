@@ -15,6 +15,7 @@ const studentSchema = z.object({
   profile: z.string().min(10, {
     message: 'Profile must be at least 10 characters.',
   }),
+  upcomingTestDate: z.string().optional(),
 });
 
 export async function handleAddStudent(data: unknown) {

@@ -12,7 +12,8 @@ export const mockStudents: Student[] = [
     "rate": 240,
     "frequency": "1x",
     "startDate": "March 2024",
-    "projectedEndDate": "Winter 2025"
+    "projectedEndDate": "Winter 2025",
+    "upcomingTestDate": "December 7, 2024"
   },
   {
     "id": "2",
@@ -25,7 +26,8 @@ export const mockStudents: Student[] = [
     "rate": 240,
     "frequency": "1x/week",
     "startDate": "6/18/2025",
-    "projectedEndDate": "June 2026"
+    "projectedEndDate": "June 2026",
+    "upcomingTestDate": "October 5, 2024"
   },
   {
     "id": "3",
@@ -51,7 +53,8 @@ export const mockStudents: Student[] = [
     "rate": 240,
     "frequency": "1-2x/week",
     "startDate": "6/14/2025",
-    "projectedEndDate": "Fall 2025 (maybe Fall 2026)"
+    "projectedEndDate": "Fall 2025 (maybe Fall 2026)",
+    "upcomingTestDate": "August 24, 2024"
   },
   {
     "id": "5",
@@ -64,7 +67,8 @@ export const mockStudents: Student[] = [
     "rate": 240,
     "frequency": "2x/week",
     "startDate": "6/19/2025",
-    "projectedEndDate": "8/23/25"
+    "projectedEndDate": "8/23/25",
+    "upcomingTestDate": "August 24, 2024"
   },
   {
     "id": "6",
@@ -77,7 +81,8 @@ export const mockStudents: Student[] = [
     "rate": 240,
     "frequency": "2-3x/week",
     "startDate": "6/23/2025",
-    "projectedEndDate": "September 2025"
+    "projectedEndDate": "September 2025",
+    "upcomingTestDate": "August 24, 2024"
   },
   {
     "id": "7",
@@ -142,6 +147,7 @@ export const mockStudents: Student[] = [
     "rate": 250,
     "frequency": "1x/week",
     "startDate": "7/14/2025",
-    "projectedEndDate": "Fall 2025"
+    "projectedEndDate": "Fall 2025",
+    "upcomingTestDate": "October 5, 2024"
   }
 ];
