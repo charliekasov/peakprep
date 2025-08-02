@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { Line, LineChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 
 interface TestScoresClientProps {
   students: Student[];
@@ -42,6 +42,15 @@ const sourceColors: { [key: string]: string } = {
   'Official PSAT': '#a7f3d0', // green-200
   'Official SAT': '#34d399', // green-400
 };
+
+const sectionColors: { [key: string]: string } = {
+  'Reading + Writing': '#8884d8',
+  'Math': '#82ca9d',
+  'Verbal Reasoning': '#ffc658',
+  'Quantitative Reasoning': '#ff8042',
+  'Reading Comprehension': '#0088FE',
+}
+
 
 export function TestScoresClient({ students, assignments, submissions }: TestScoresClientProps) {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
@@ -166,16 +175,23 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
           <div className="h-96 w-full">
             {chartData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
+                <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis type="number" domain={[200, 800]} />
                     <Tooltip />
                     <Legend />
                     {allSections.map((section, index) => (
-                        <Bar key={section} dataKey={section} fill={Object.values(sourceColors)[index % Object.keys(sourceColors).length]} />
+                        <Line 
+                            key={section} 
+                            type="monotone"
+                            dataKey={section} 
+                            stroke={sectionColors[section] || Object.values(sourceColors)[index % Object.keys(sourceColors).length]}
+                            strokeDasharray="5 5"
+                            activeDot={{ r: 8 }}
+                         />
                     ))}
-                </BarChart>
+                </LineChart>
                 </ResponsiveContainer>
             ) : (
                 <div className="flex h-full items-center justify-center rounded-lg border border-dashed text-muted-foreground">
