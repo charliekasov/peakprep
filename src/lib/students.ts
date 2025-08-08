@@ -1,26 +1,34 @@
 'use server';
 
+import { db } from './firebase';
+import { collection, getDocs, doc, getDoc, addDoc } from 'firebase/firestore';
 import type { Student } from './types';
-import { mockStudents } from './mock-data/students';
+
 
 export async function getStudents(): Promise<Student[]> {
-  // Reading from mock data instead of Firestore
-  return Promise.resolve(mockStudents);
+  const studentsCollection = collection(db, 'students');
+  const studentsSnapshot = await getDocs(studentsCollection);
+  const students = studentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Student));
+  return students;
 }
 
 export async function getStudentById(id: string): Promise<Student | null> {
-  const student = mockStudents.find((s) => s.id === id) || null;
-  return Promise.resolve(student);
+  const docRef = doc(db, 'students', id);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    return { id: docSnap.id, ...docSnap.data() } as Student;
+  }
+  return null;
 }
 
 export async function getStudentsCount(): Promise<number> {
-  // Reading from mock data instead of Firestore
-  return Promise.resolve(mockStudents.length);
+  const studentsCollection = collection(db, 'students');
+  const studentsSnapshot = await getDocs(studentsCollection);
+  return studentsSnapshot.size;
 }
 
 export async function addStudent(student: Omit<Student, 'id'>): Promise<string> {
-    // This function will need to be updated to work with a database later.
-    const newStudent = { ...student, id: (mockStudents.length + 1).toString() };
-    mockStudents.push(newStudent);
-    return Promise.resolve(newStudent.id);
+  const studentsCollection = collection(db, 'students');
+  const docRef = await addDoc(studentsCollection, student);
+  return docRef.id;
 }

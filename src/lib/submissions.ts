@@ -1,42 +1,44 @@
 
 'use server';
 
-import type { Submission, SubmissionStatus } from './types';
-import { mockSubmissions } from './mock-data/submissions';
+import { db } from './firebase';
+import { collection, getDocs, doc, updateDoc, query, where } from 'firebase/firestore';
+import type { Submission, FirebaseSubmission, SubmissionStatus } from './types';
 import { getAssignments } from './assignments';
 
+function fromFirebase(doc: any): Submission {
+  const data = doc.data() as FirebaseSubmission;
+  return {
+    ...data,
+    id: doc.id,
+    submittedAt: data.submittedAt.toDate(),
+  };
+}
+
 export async function getSubmissions(): Promise<Submission[]> {
-    return Promise.resolve(mockSubmissions.sort((a,b) => b.submittedAt.getTime() - a.submittedAt.getTime()));
+    const submissionsCollection = collection(db, 'submissions');
+    const submissionsSnapshot = await getDocs(submissionsCollection);
+    const submissions = submissionsSnapshot.docs.map(fromFirebase);
+    return submissions.sort((a,b) => b.submittedAt.getTime() - a.submittedAt.getTime());
 }
 
 export async function getNeedsReviewSubmissions(): Promise<Submission[]> {
-    const assignments = await getAssignments();
-    const assignmentMap = new Map(assignments.map(a => [a.id, a]));
+    const submissionsCollection = collection(db, 'submissions');
+    const q = query(submissionsCollection, where('status', 'in', ['Assigned', 'Incomplete']));
+    const querySnapshot = await getDocs(q);
+    
+    const needsReview = querySnapshot.docs.map(fromFirebase);
 
-    const needsReview = mockSubmissions.filter(s => {
-      const assignment = assignmentMap.get(s.assignmentId);
-      if (!assignment) return false;
-      
-      return s.status === 'Assigned' || s.status === 'Incomplete';
-    });
-
-    return Promise.resolve(needsReview.sort((a,b) => a.submittedAt.getTime() - b.submittedAt.getTime()));
+    return needsReview.sort((a,b) => a.submittedAt.getTime() - b.submittedAt.getTime());
 }
 
 export async function updateSubmission(submissionId: string, updates: Partial<{ status: SubmissionStatus; scores: { section: string; score: number }[] }>) {
-  const submissionIndex = mockSubmissions.findIndex(s => s.id === submissionId);
-  if (submissionIndex === -1) {
-    throw new Error("Submission not found");
-  }
-
-  const updatedSubmission = {
-    ...mockSubmissions[submissionIndex],
-    ...updates,
-  };
-
-  mockSubmissions[submissionIndex] = updatedSubmission;
-
-  console.log('Updated Submission:', updatedSubmission);
+  const submissionRef = doc(db, 'submissions', submissionId);
   
-  return Promise.resolve(updatedSubmission);
+  await updateDoc(submissionRef, updates);
+
+  console.log('Updated Submission:', submissionId, updates);
+  
+  // No need to return the submission, the calling function will revalidate the path
+  return Promise.resolve();
 }
