@@ -2,6 +2,7 @@
 import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getAdminApp } from "./firebase-admin";
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: "AIzaSyCOmZZITPwGwIlyMcwHS-6vHNnt1qNEm_M", // <--- PASTE YOUR API KEY HERE
@@ -12,9 +13,14 @@ const firebaseConfig: FirebaseOptions = {
   appId: "1:155331393444:web:603173740269389771191a"
 };
 
-// Initialize Firebase
+// Initialize Firebase for the client
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore(app);
 const auth = getAuth(app);
 
-export { db, auth };
+// Initialize Firestore for the client
+const db = getFirestore(app);
+
+// Initialize Firestore for the server
+const dbAdmin = getAdminApp();
+
+export { db, auth, dbAdmin };

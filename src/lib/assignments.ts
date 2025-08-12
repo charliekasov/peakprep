@@ -1,31 +1,32 @@
 'use server';
 
-import { db } from './firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { dbAdmin } from './firebase-admin';
 import type { Assignment, FirebaseAssignment } from './types';
+import { Timestamp } from 'firebase-admin/firestore';
 
-function fromFirebase(doc: any): Assignment {
+
+function fromFirebase(doc: admin.firestore.DocumentSnapshot): Assignment {
   const data = doc.data() as FirebaseAssignment;
   return {
     ...data,
     id: doc.id,
-    dueDate: data.dueDate?.toDate(),
+    dueDate: data.dueDate instanceof Timestamp ? data.dueDate.toDate() : undefined,
   };
 }
 
 
 export async function getAssignments(): Promise<Assignment[]> {
-    const assignmentsCollection = collection(db, 'assignments');
-    const assignmentsSnapshot = await getDocs(assignmentsCollection);
+    const assignmentsCollection = dbAdmin.collection('assignments');
+    const assignmentsSnapshot = await assignmentsCollection.get();
     const assignments = assignmentsSnapshot.docs.map(fromFirebase);
     return assignments;
 }
 
 export async function getAssignmentById(id: string): Promise<Assignment | null> {
-    const docRef = doc(db, 'assignments', id);
-    const docSnap = await getDoc(docRef);
+    const docRef = dbAdmin.collection('assignments').doc(id);
+    const docSnap = await docRef.get();
 
-    if (docSnap.exists()) {
+    if (docSnap.exists) {
         return fromFirebase(docSnap);
     } else {
         return null;
@@ -34,7 +35,7 @@ export async function getAssignmentById(id: string): Promise<Assignment | null> 
 
 
 export async function getAssignmentsCount(): Promise<number> {
-    const assignmentsCollection = collection(db, 'assignments');
-    const assignmentsSnapshot = await getDocs(assignmentsCollection);
+    const assignmentsCollection = dbAdmin.collection('assignments');
+    const assignmentsSnapshot = await assignmentsCollection.get();
     return assignmentsSnapshot.size;
 }

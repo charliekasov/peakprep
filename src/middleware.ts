@@ -1,9 +1,10 @@
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { adminAuth } from '@/lib/firebase-admin';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const sessionToken = request.cookies.get('firebase-session-token');
+  const sessionToken = request.cookies.get('firebase-session-token')?.value;
 
   const protectedRoutes = [
     '/',
@@ -16,18 +17,49 @@ export function middleware(request: NextRequest) {
 
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route) && (route !== '/' || pathname === '/'));
 
-  if (isProtectedRoute && !sessionToken) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirect_to', pathname);
-    return NextResponse.redirect(loginUrl);
+  // If it's a protected route, verify the token
+  if (isProtectedRoute) {
+    if (!sessionToken) {
+      // No token, redirect to login
+      return redirectToLogin(request);
+    }
+
+    try {
+      // Verify the token with Firebase Admin SDK
+      await adminAuth().verifySessionCookie(sessionToken, true);
+      // Token is valid, allow the request to proceed
+      return NextResponse.next();
+    } catch (error) {
+      // Token is invalid or expired, redirect to login
+      console.error('Error verifying session cookie:', error);
+      return redirectToLogin(request);
+    }
   }
 
+  // If the user is trying to access the login page with a valid token
   if (pathname === '/login' && sessionToken) {
-    return NextResponse.redirect(new URL('/', request.url));
+    try {
+      await adminAuth().verifySessionCookie(sessionToken, true);
+      // If token is valid, redirect them to the dashboard
+      return NextResponse.redirect(new URL('/', request.url));
+    } catch (error) {
+      // If token is invalid, let them proceed to the login page
+      return NextResponse.next();
+    }
   }
 
   return NextResponse.next();
 }
+
+function redirectToLogin(request: NextRequest) {
+  const loginUrl = new URL('/login', request.url);
+  loginUrl.searchParams.set('redirect_to', request.nextUrl.pathname);
+  const response = NextResponse.redirect(loginUrl);
+  // Clear the invalid cookie
+  response.cookies.delete('firebase-session-token');
+  return response;
+}
+
 
 export const config = {
   matcher: [

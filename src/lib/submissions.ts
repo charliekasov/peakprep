@@ -1,31 +1,31 @@
 
 'use server';
 
-import { db } from './firebase';
-import { collection, getDocs, doc, updateDoc, query, where } from 'firebase/firestore';
+import { dbAdmin } from './firebase-admin';
 import type { Submission, FirebaseSubmission, SubmissionStatus } from './types';
-import { getAssignments } from './assignments';
+import { Timestamp } from 'firebase-admin/firestore';
 
-function fromFirebase(doc: any): Submission {
+
+function fromFirebase(doc: admin.firestore.DocumentSnapshot): Submission {
   const data = doc.data() as FirebaseSubmission;
   return {
     ...data,
     id: doc.id,
-    submittedAt: data.submittedAt.toDate(),
+    submittedAt: data.submittedAt instanceof Timestamp ? data.submittedAt.toDate() : new Date(),
   };
 }
 
 export async function getSubmissions(): Promise<Submission[]> {
-    const submissionsCollection = collection(db, 'submissions');
-    const submissionsSnapshot = await getDocs(submissionsCollection);
+    const submissionsCollection = dbAdmin.collection('submissions');
+    const submissionsSnapshot = await submissionsCollection.get();
     const submissions = submissionsSnapshot.docs.map(fromFirebase);
     return submissions.sort((a,b) => b.submittedAt.getTime() - a.submittedAt.getTime());
 }
 
 export async function getNeedsReviewSubmissions(): Promise<Submission[]> {
-    const submissionsCollection = collection(db, 'submissions');
-    const q = query(submissionsCollection, where('status', 'in', ['Assigned', 'Incomplete']));
-    const querySnapshot = await getDocs(q);
+    const submissionsCollection = dbAdmin.collection('submissions');
+    const q = submissionsCollection.where('status', 'in', ['Assigned', 'Incomplete']);
+    const querySnapshot = await q.get();
     
     const needsReview = querySnapshot.docs.map(fromFirebase);
 
@@ -33,12 +33,11 @@ export async function getNeedsReviewSubmissions(): Promise<Submission[]> {
 }
 
 export async function updateSubmission(submissionId: string, updates: Partial<{ status: SubmissionStatus; scores: { section: string; score: number }[] }>) {
-  const submissionRef = doc(db, 'submissions', submissionId);
+  const submissionRef = dbAdmin.collection('submissions').doc(submissionId);
   
-  await updateDoc(submissionRef, updates);
+  await submissionRef.update(updates);
 
   console.log('Updated Submission:', submissionId, updates);
   
-  // No need to return the submission, the calling function will revalidate the path
   return Promise.resolve();
 }

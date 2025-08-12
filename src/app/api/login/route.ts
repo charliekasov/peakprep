@@ -1,6 +1,6 @@
 
 import { NextResponse, type NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
+import { adminAuth } from '@/lib/firebase-admin';
 
 export async function POST(request: NextRequest) {
   const { idToken } = await request.json();
@@ -9,25 +9,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'ID token is required' }, { status: 400 });
   }
 
+  // Set session expiration to 5 days.
+  const expiresIn = 60 * 60 * 24 * 5 * 1000;
+
   try {
-    // Note: In a real production app, you would verify the ID token here
-    // with the Firebase Admin SDK to ensure it's valid.
-    // For this prototype, we are trusting the client-side authentication.
+    const sessionCookie = await adminAuth().createSessionCookie(idToken, { expiresIn });
     
-    const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
-    const cookieStore = cookies();
-    
-    cookieStore.set('firebase-session-token', idToken, {
+    const options = {
+        name: 'firebase-session-token',
+        value: sessionCookie,
         maxAge: expiresIn / 1000,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         path: '/',
-        sameSite: 'lax',
-    });
+    };
 
-    return NextResponse.json({ success: true });
+    const response = NextResponse.json({ success: true });
+    response.cookies.set(options);
+
+    return response;
+
   } catch (error) {
-    console.error('Error setting session cookie:', error);
+    console.error('Error creating session cookie:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
