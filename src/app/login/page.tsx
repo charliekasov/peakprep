@@ -51,27 +51,12 @@ export default function LoginPage() {
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     setIsLoading(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(
+      await signInWithEmailAndPassword(
         auth,
         values.email,
         values.password
       );
       
-      const idToken = await userCredential.user.getIdToken();
-      
-      // Send token to our API route to set the session cookie
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ idToken }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to set session cookie');
-      }
-
       toast({
         title: 'Login Successful',
         description: "Welcome back!",

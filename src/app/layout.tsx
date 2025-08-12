@@ -1,7 +1,7 @@
 
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import {
@@ -27,6 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -34,15 +35,18 @@ export default function RootLayout({
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
+      if (!user && pathname !== '/login') {
+        router.push('/login');
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [pathname, router]);
 
   const isLoginPage = pathname === '/login';
 
   const LayoutSkeleton = () => (
     <div className="flex min-h-screen">
-      <div className="hidden md:flex flex-col w-64 border-r p-2 gap-2">
+      <div className="hidden md:flex flex-col w-64 border-r p-2 gap-2 bg-card">
         <div className="p-2 flex items-center gap-2">
             <Skeleton className="h-6 w-6" />
             <Skeleton className="h-6 w-32" />
@@ -80,6 +84,20 @@ export default function RootLayout({
       </SidebarProvider>
   )
 
+  const renderContent = () => {
+    if (loading) {
+      return <LayoutSkeleton />;
+    }
+    if (isLoginPage) {
+      return children;
+    }
+    if (user) {
+      return <AppContent />;
+    }
+    // If not loading, not on login page, and no user, we show the skeleton while redirecting.
+    return <LayoutSkeleton />;
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -97,13 +115,7 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased')}>
-        {isLoginPage ? (
-          children
-        ) : (
-          <>
-           {loading ? <LayoutSkeleton /> : user ? <AppContent /> : <LayoutSkeleton />}
-          </>
-        )}
+        {renderContent()}
         <Toaster />
       </body>
     </html>
