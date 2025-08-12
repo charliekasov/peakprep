@@ -1,7 +1,6 @@
 'use server';
 
 import { dbAdmin } from './firebase-admin';
-import { collection, getDocs, doc, getDoc, addDoc } from 'firebase/firestore';
 import type { Student } from './types';
 
 

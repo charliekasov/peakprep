@@ -73,3 +73,6 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
+
+// This line is crucial for fixing the runtime error.
+export const runtime = 'nodejs';

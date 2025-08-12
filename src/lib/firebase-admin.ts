@@ -4,9 +4,9 @@ import { getFirestore } from 'firebase-admin/firestore';
 
 // This is a helper function to initialize the Firebase Admin SDK.
 // It ensures that we only initialize the app once, which is a best practice.
-export function getAdminApp() {
+function initializeAdminApp() {
   if (admin.apps.length > 0) {
-    return admin.apps[0]!.firestore();
+    return admin.app();
   }
 
   // To run this locally, you'll need to create a service account key
@@ -16,14 +16,9 @@ export function getAdminApp() {
       credential: admin.credential.applicationDefault(),
   });
 
-  return admin.app().firestore();
+  return admin.app();
 }
 
-export const adminAuth = () => {
-    if (admin.apps.length === 0) {
-        admin.initializeApp({
-            credential: admin.credential.applicationDefault(),
-        });
-    }
-    return admin.auth();
-}
+export const adminApp = initializeAdminApp();
+export const dbAdmin = getFirestore(adminApp);
+export const adminAuth = admin.auth;

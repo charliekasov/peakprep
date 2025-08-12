@@ -1,8 +1,8 @@
+
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getAdminApp } from "./firebase-admin";
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: "AIzaSyCOmZZITPwGwIlyMcwHS-6vHNnt1qNEm_M", // <--- PASTE YOUR API KEY HERE
@@ -20,7 +20,4 @@ const auth = getAuth(app);
 // Initialize Firestore for the client
 const db = getFirestore(app);
 
-// Initialize Firestore for the server
-const dbAdmin = getAdminApp();
-
-export { db, auth, dbAdmin };
+export { db, auth };
