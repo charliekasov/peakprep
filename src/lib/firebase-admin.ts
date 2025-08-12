@@ -1,6 +1,7 @@
 
 import * as admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
 
 // This is a helper function to initialize the Firebase Admin SDK.
 // It ensures that we only initialize the app once, which is a best practice.
@@ -21,4 +22,4 @@ function initializeAdminApp() {
 
 export const adminApp = initializeAdminApp();
 export const dbAdmin = getFirestore(adminApp);
-export const adminAuth = admin.auth;
+export const adminAuth = getAuth;
