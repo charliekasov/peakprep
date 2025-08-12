@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "import-data": "tsx ./src/scripts/import-data.ts"
+    "import-data": "tsx ./scripts/import-data.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.13.0",
