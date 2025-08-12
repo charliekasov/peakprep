@@ -62,6 +62,23 @@ export default function RootLayout({
       </div>
     </div>
   );
+  
+  const AppContent = () => (
+     <SidebarProvider>
+        <Sidebar>
+          <SidebarHeader>
+            <Logo />
+          </SidebarHeader>
+          <SidebarContent>
+            <Nav />
+          </SidebarContent>
+          <SidebarFooter>
+            <UserNav />
+          </SidebarFooter>
+        </Sidebar>
+        <SidebarInset>{children}</SidebarInset>
+      </SidebarProvider>
+  )
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -84,22 +101,7 @@ export default function RootLayout({
           children
         ) : (
           <>
-           {loading ? <LayoutSkeleton /> : (
-            <SidebarProvider>
-              <Sidebar>
-                <SidebarHeader>
-                  <Logo />
-                </SidebarHeader>
-                <SidebarContent>
-                  <Nav />
-                </SidebarContent>
-                <SidebarFooter>
-                  <UserNav />
-                </SidebarFooter>
-              </Sidebar>
-              <SidebarInset>{children}</SidebarInset>
-            </SidebarProvider>
-           )}
+           {loading ? <LayoutSkeleton /> : user ? <AppContent /> : <LayoutSkeleton />}
           </>
         )}
         <Toaster />
