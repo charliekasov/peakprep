@@ -1,6 +1,6 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
 import {
   Card,
   CardHeader,
@@ -16,31 +16,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getAssignments } from '@/lib/assignments';
 import type { Assignment } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useData } from '@/context/data-provider';
+
 
 export default function AssignmentsPage() {
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      try {
-        const assignmentsData = await getAssignments();
-        setAssignments(assignmentsData);
-      } catch (error) {
-        console.error("Failed to fetch assignments:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+  const { assignments, isLoading } = useData();
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

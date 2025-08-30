@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -21,13 +22,11 @@ import {
   Users,
   AlertCircle,
 } from 'lucide-react';
-import { getNeedsReviewSubmissions } from '@/lib/submissions';
-import { getStudents, getStudentsCount } from '@/lib/students';
-import { getAssignments, getAssignmentsCount } from '@/lib/assignments';
 import Link from 'next/link';
 import { StudentPerformanceChart } from '@/components/student-performance-chart';
 import type { Submission, Student, Assignment } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useData } from '@/context/data-provider';
 
 function StatCard({ title, value, icon: Icon, isLoading }: { title: string, value: number, icon: React.ElementType, isLoading: boolean }) {
   return (
@@ -49,43 +48,16 @@ function StatCard({ title, value, icon: Icon, isLoading }: { title: string, valu
 
 
 export default function Dashboard() {
-  const [needsReview, setNeedsReview] = useState<Submission[]>([]);
-  const [students, setStudents] = useState<Student[]>([]);
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [studentsCount, setStudentsCount] = useState(0);
-  const [assignmentsCount, setAssignmentsCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const { students, assignments, submissions, isLoading } = useData();
 
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      try {
-        const [
-          needsReviewData,
-          studentsData,
-          assignmentsData,
-          studentsCountData,
-          assignmentsCountData,
-        ] = await Promise.all([
-          getNeedsReviewSubmissions(),
-          getStudents(),
-          getAssignments(),
-          getStudentsCount(),
-          getAssignmentsCount(),
-        ]);
-        setNeedsReview(needsReviewData);
-        setStudents(studentsData);
-        setAssignments(assignmentsData);
-        setStudentsCount(studentsCountData);
-        setAssignmentsCount(assignmentsCountData);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+  const needsReview = useMemo(() => {
+    return submissions
+      .filter(s => s.status === 'Assigned' || s.status === 'Incomplete')
+      .sort((a,b) => a.submittedAt.getTime() - b.submittedAt.getTime());
+  }, [submissions]);
+
+  const studentsCount = useMemo(() => students.length, [students]);
+  const assignmentsCount = useMemo(() => assignments.length, [assignments]);
 
 
   return (

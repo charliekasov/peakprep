@@ -40,6 +40,7 @@ import { MoreHorizontal, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { handleUpdateSubmission } from '@/app/needs-review/actions';
+import { useData } from '@/context/data-provider';
 
 type EnrichedSubmission = Submission & {
   student?: Student;
@@ -93,6 +94,7 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState<EnrichedSubmission | null>(null);
   const { toast } = useToast();
+  const { refetchData } = useData();
 
   const sections = selectedSubmission?.assignment?.testType === 'SAT' ? SAT_SECTIONS : SSAT_SECTIONS;
   
@@ -118,6 +120,7 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
     try {
       await handleUpdateSubmission({ submissionId, status });
       toast({ title: 'Status Updated', description: `Assignment marked as ${status}.` });
+      refetchData();
     } catch (error) {
       toast({ title: 'Error', description: 'Failed to update status.', variant: 'destructive' });
     } finally {
@@ -137,6 +140,7 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
         scores: values.scores,
       });
       toast({ title: 'Scores Saved', description: 'The test scores have been recorded.' });
+      refetchData();
       setIsDialogOpen(false);
       setSelectedSubmission(null);
     } catch (error) {

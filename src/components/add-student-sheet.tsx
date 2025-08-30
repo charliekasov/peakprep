@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -29,6 +30,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { handleAddStudent } from '@/app/students/actions';
+import { useData } from '@/context/data-provider';
 
 const studentSchema = z.object({
   name: z.string().min(2, {
@@ -49,6 +51,7 @@ export function AddStudentSheet() {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { refetchData } = useData();
 
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
@@ -69,6 +72,7 @@ export function AddStudentSheet() {
         title: 'Student Added',
         description: `${values.name} has been successfully added.`,
       });
+      refetchData(); // Refetch data to update the UI
       form.reset();
       setOpen(false);
     } catch (error) {

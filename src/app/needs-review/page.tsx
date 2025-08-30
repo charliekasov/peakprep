@@ -1,12 +1,11 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
-import { getNeedsReviewSubmissions } from '@/lib/submissions';
-import { getStudents } from '@/lib/students';
-import { getAssignments } from '@/lib/assignments';
+import { useMemo } from 'react';
 import { NeedsReviewClient } from '@/components/needs-review-client';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Submission, Student, Assignment } from '@/lib/types';
+import { useData } from '@/context/data-provider';
 
 type EnrichedSubmission = Submission & {
   student?: Student;
@@ -14,36 +13,22 @@ type EnrichedSubmission = Submission & {
 };
 
 export default function NeedsReviewPage() {
-  const [enrichedSubmissions, setEnrichedSubmissions] = useState<EnrichedSubmission[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { students, assignments, submissions, isLoading } = useData();
 
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      try {
-        const [submissions, students, assignments] = await Promise.all([
-          getNeedsReviewSubmissions(),
-          getStudents(),
-          getAssignments(),
-        ]);
+  const enrichedSubmissions = useMemo<EnrichedSubmission[]>(() => {
+    const needsReviewSubmissions = submissions
+      .filter(s => s.status === 'Assigned' || s.status === 'Incomplete')
+      .sort((a,b) => a.submittedAt.getTime() - b.submittedAt.getTime());
 
-        const studentMap = new Map(students.map(s => [s.id, s]));
-        const assignmentMap = new Map(assignments.map(a => [a.id, a]));
+    const studentMap = new Map(students.map(s => [s.id, s]));
+    const assignmentMap = new Map(assignments.map(a => [a.id, a]));
 
-        const enriched = submissions.map(submission => ({
-          ...submission,
-          student: studentMap.get(submission.studentId),
-          assignment: assignmentMap.get(submission.assignmentId),
-        }));
-        setEnrichedSubmissions(enriched);
-      } catch (error) {
-        console.error("Failed to fetch needs review data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+    return needsReviewSubmissions.map(submission => ({
+      ...submission,
+      student: studentMap.get(submission.studentId),
+      assignment: assignmentMap.get(submission.assignmentId),
+    }));
+  }, [submissions, students, assignments]);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

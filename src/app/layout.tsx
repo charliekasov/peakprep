@@ -1,7 +1,7 @@
 
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import {
@@ -16,32 +16,18 @@ import { UserNav } from '@/components/user-nav';
 import { Nav } from '@/components/nav';
 import { Logo } from '@/components/logo';
 import { Toaster } from '@/components/ui/toaster';
-import { useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged, type User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AuthProvider, useAuth } from '@/hooks/use-auth';
+import { DataProvider } from '@/context/data-provider';
 
-export default function RootLayout({
+function AppLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-      if (!user && pathname !== '/login') {
-        router.push('/login');
-      }
-    });
-    return () => unsubscribe();
-  }, [pathname, router]);
-
+  const { user, loading } = useAuth();
+  
   const isLoginPage = pathname === '/login';
 
   const LayoutSkeleton = () => (
@@ -99,6 +85,19 @@ export default function RootLayout({
   };
 
   return (
+    <>
+      {renderContent()}
+    </>
+  );
+}
+
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <title>Peak Prep</title>
@@ -115,9 +114,14 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased')}>
-        {renderContent()}
+        <AuthProvider>
+          <DataProvider>
+            <AppLayout>{children}</AppLayout>
+          </DataProvider>
+        </AuthProvider>
         <Toaster />
       </body>
     </html>
   );
 }
+

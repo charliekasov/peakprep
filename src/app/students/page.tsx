@@ -1,28 +1,12 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
-import { getStudents } from '@/lib/students';
+import { useData } from '@/context/data-provider';
 import { StudentListClient } from '@/components/student-list-client';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function StudentsPage() {
-  const [students, setStudents] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      try {
-        const studentsData = await getStudents();
-        setStudents(studentsData);
-      } catch (error) {
-        console.error("Failed to fetch students:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+  const { students, isLoading } = useData();
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
