@@ -13,6 +13,42 @@ To get started, take a look at the various pages in `src/app/`. The main dashboa
 - **Assignment Management**: A comprehensive list of all available assignments and practice tests.
 - **Assign Homework Workflow**: A dedicated interface to select a student, choose assignments/tests, and compose and send homework emails.
 - **Email Automation**: Uses **Resend** to reliably send homework emails to students and parents.
+- **Data Import**: A utility script to bulk-import data from CSV files into Firestore.
+
+---
+
+## How to Import Your Data
+
+To populate the application with your existing student, assignment, and submission data from a spreadsheet (like Google Sheets), you can use the provided import script.
+
+1.  **Export to CSV**:
+    *   Open your spreadsheet.
+    *   Export the data for your students, assignments, and submissions into three separate CSV files: `students.csv`, `assignments.csv`, and `submissions.csv`.
+    *   Ensure the column headers in your CSV files match the data fields expected by the application (e.g., `name`, `email`, `title`, `subject`, `studentId`, `assignmentId`, etc.).
+
+2.  **Set Up Service Account**:
+    *   To run the script, you need to authenticate with Firebase using a **Service Account**. This is a secure way to give the script admin access to your database.
+    *   In the Firebase Console, go to **Project Settings** > **Service Accounts**.
+    *   Click **Generate new private key** and save the downloaded JSON file.
+    *   Place this key file in the root directory of your project.
+
+3.  **Configure Environment**:
+    *   In the `.env` file at the root of your project, add a line pointing to your key file:
+        ```
+        GOOGLE_APPLICATION_CREDENTIALS="your-service-account-key-file-name.json"
+        ```
+
+4.  **Prepare Files for Import**:
+    *   Create a new folder named `data` in the root directory of your project.
+    *   Place your `students.csv`, `assignments.csv`, and `submissions.csv` files inside this `data` folder.
+
+5.  **Run the Script**:
+    *   Open a terminal in your project's root directory.
+    *   Run the following command:
+        ```bash
+        npm run import-data
+        ```
+    *   The script will log its progress in the terminal and let you know when the import is complete.
 
 ---
 
