@@ -3,17 +3,14 @@ import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/a
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// --- PASTE YOUR FIREBASE CONFIGURATION OBJECT HERE ---
-// You can find this in your Firebase project settings.
-const firebaseConfig: FirebaseOptions = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+const firebaseConfig = {
+  apiKey: "AIzaSyCOmZZITPwGwIlyMcwHS-6vHNnt1qNEm_M",
+  authDomain: "tutorflow-ivaba.firebaseapp.com",
+  projectId: "tutorflow-ivaba",
+  storageBucket: "tutorflow-ivaba.firebasestorage.app",
+  messagingSenderId: "743946118520",
+  appId: "1:743946118520:web:b73df158fb73ce3358d48d"
 };
-// ----------------------------------------------------
 
 // Initialize Firebase for the client
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
