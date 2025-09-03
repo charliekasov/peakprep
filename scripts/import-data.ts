@@ -13,8 +13,7 @@
  * 4.  Update the .env file with the path to your key file:
  *     GOOGLE_APPLICATION_CREDENTIALS="your-service-account-key.json"
  * 5.  Create a 'data' directory in the root of your project.
- * 6.  Place your CSV files in the 'data' directory, naming them
- *     'students.csv', 'assignments.csv', and 'submissions.csv'.
+ * 6.  Place your CSV files in the 'data' directory.
  * 7.  Ensure the CSV files have headers that match the fields in your data types.
  * 8.  Run the script from your terminal using: `npm run import-data`
  */
@@ -29,11 +28,11 @@ config();
 
 // --- Configuration ---
 const DATA_DIR = path.join(process.cwd(), 'data');
-const COLLECTIONS_TO_IMPORT = [
-  'students',
-  'assignments',
-  'submissions',
-];
+const COLLECTIONS_TO_IMPORT = {
+  students: 'Student Database as of 8:31.csv',
+  assignments: 'assignments.csv',
+  submissions: 'submissions.csv',
+};
 const SERVICE_ACCOUNT_PATH = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
 // --- Firebase Initialization ---
@@ -68,8 +67,8 @@ const db = admin.firestore();
 
 // --- Main Import Logic ---
 
-async function importCollection(collectionName: string) {
-  const filePath = path.join(DATA_DIR, `${collectionName}.csv`);
+async function importCollection(collectionName: string, fileName: string) {
+  const filePath = path.join(DATA_DIR, fileName);
   if (!fs.existsSync(filePath)) {
     console.warn(`Skipping: File not found for collection '${collectionName}' at ${filePath}`);
     return;
@@ -84,12 +83,12 @@ async function importCollection(collectionName: string) {
   });
 
   if (errors.length > 0) {
-    console.error(`Errors parsing ${collectionName}.csv:`, errors);
+    console.error(`Errors parsing ${fileName}:`, errors);
     return;
   }
 
   if (data.length === 0) {
-    console.log(`No data found in ${collectionName}.csv.`);
+    console.log(`No data found in ${fileName}.`);
     return;
   }
 
@@ -148,8 +147,8 @@ async function importCollection(collectionName: string) {
 
 async function main() {
   console.log('Starting Firestore data import...');
-  for (const collectionName of COLLECTIONS_TO_IMPORT) {
-    await importCollection(collectionName);
+  for (const [collectionName, fileName] of Object.entries(COLLECTIONS_TO_IMPORT)) {
+    await importCollection(collectionName, fileName);
   }
   console.log('\nData import process finished.');
 }
