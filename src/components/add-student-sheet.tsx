@@ -39,7 +39,8 @@ const studentSchema = z.object({
   email: z.string().email({
     message: 'Please enter a valid email address.',
   }),
-  parentEmail: z.string().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
+  parentEmail1: z.string().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
+  parentEmail2: z.string().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
   profile: z.string().min(10, {
     message: 'Profile must be at least 10 characters.',
   }),
@@ -58,7 +59,8 @@ export function AddStudentSheet() {
     defaultValues: {
       name: '',
       email: '',
-      parentEmail: '',
+      parentEmail1: '',
+      parentEmail2: '',
       profile: '',
       upcomingTestDate: '',
     },
@@ -94,7 +96,7 @@ export function AddStudentSheet() {
           New Student
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Add New Student</SheetTitle>
           <SheetDescription>
@@ -137,13 +139,29 @@ export function AddStudentSheet() {
             />
              <FormField
               control={form.control}
-              name="parentEmail"
+              name="parentEmail1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Parent&apos;s Email (Optional)</FormLabel>
+                  <FormLabel>Parent's Email 1 (Optional)</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="e.g., jane.doe@example.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="parentEmail2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Parent's Email 2 (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g., another.parent@example.com"
                       {...field}
                     />
                   </FormControl>

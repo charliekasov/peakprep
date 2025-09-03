@@ -11,7 +11,8 @@ const studentSchema = z.object({
   email: z.string().email({
     message: 'Please enter a valid email address.',
   }),
-  parentEmail: z.string().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
+  parentEmail1: z.string().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
+  parentEmail2: z.string().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
   profile: z.string().min(10, {
     message: 'Profile must be at least 10 characters.',
   }),
@@ -29,9 +30,12 @@ export async function handleAddStudent(data: unknown) {
   const studentData = validatedFields.data;
 
   try {
-    // If parentEmail is an empty string, remove it before saving
-    if (studentData.parentEmail === '') {
-      delete studentData.parentEmail;
+    // If parentEmails are empty strings, remove them before saving
+    if (studentData.parentEmail1 === '') {
+      delete studentData.parentEmail1;
+    }
+    if (studentData.parentEmail2 === '') {
+      delete studentData.parentEmail2;
     }
     
     await addStudent(studentData);
