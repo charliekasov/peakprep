@@ -1,51 +1,53 @@
 /**
- * @fileoverview A script to import data from CSV files into Firestore.
- * 
- * This script reads CSV files from a 'data' directory, parses them, and uploads
- * the data to the specified Firestore collections. It uses a service account key
- * for authentication.
- * 
+ * @fileoverview A script to import data from a Google Sheet into Firestore.
+ *
+ * This script connects to the Google Sheets API, reads data from specified
+ * sheets, and uploads it to the corresponding Firestore collections. It uses
+ * a service account for authentication.
+ *
  * To use this script:
- * 1.  Enable the Cloud Firestore API in your Google Cloud project.
+ * 1.  Enable the Cloud Firestore API and Google Sheets API in your Google Cloud project.
  * 2.  Create a Firebase service account and download the private key JSON file.
- *     Go to Project Settings -> Service accounts -> Generate new private key.
- * 3.  Place the downloaded JSON key file in the root directory of your project.
- * 4.  Update the .env file with the path to your key file:
+ *     (Project Settings -> Service accounts -> Generate new private key).
+ * 3.  Place the downloaded JSON key file in the root directory.
+ * 4.  Update the .env file with:
  *     GOOGLE_APPLICATION_CREDENTIALS="your-service-account-key.json"
- * 5.  Create a 'data' directory in the root of your project.
- * 6.  Place your CSV files in the 'data' directory.
- * 7.  Ensure the CSV files have headers that match the fields in your data types.
- * 8.  Run the script from your terminal using: `npm run import-data`
+ * 5.  In your Google Sheet, share the sheet with the `client_email` from the
+ *     JSON key file (e.g., "firebase-adminsdk-xxxxx@...iam.gserviceaccount.com").
+ * 6.  Update the `SPREADSHEET_ID` and `SHEET_NAMES` configuration below.
+ * 7.  Run the script from your terminal: `npm run import-data`
  */
 import * as admin from 'firebase-admin';
 import * as fs from 'fs';
-import * as path from 'path';
-import Papa from 'papaparse';
+import { google } from 'googleapis';
 import { config } from 'dotenv';
 
 // Load environment variables from .env file
 config();
 
 // --- Configuration ---
-const DATA_DIR = path.join(process.cwd(), 'data');
-const COLLECTIONS_TO_IMPORT = {
-  students: 'Student Database as of 8:31.csv',
-  assignments: 'assignments.csv',
-  submissions: 'submissions.csv',
+// The ID of your Google Sheet (from the URL)
+const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID_HERE'; 
+
+// Mapping from Firestore collection name to the exact name of the sheet tab
+const SHEET_NAMES = {
+  students: 'Student Database',
+  assignments: 'Assignments',
+  submissions: 'Submissions',
 };
+
 const SERVICE_ACCOUNT_PATH = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
 // --- Firebase Initialization ---
-
 if (!SERVICE_ACCOUNT_PATH) {
-    console.error('ERROR: GOOGLE_APPLICATION_CREDENTIALS environment variable is not set.');
-    console.error('Please point it to your service account key file in your .env file.');
-    process.exit(1);
+  console.error('ERROR: GOOGLE_APPLICATION_CREDENTIALS environment variable is not set.');
+  console.error('Please point it to your service account key file in your .env file.');
+  process.exit(1);
 }
 
 if (!fs.existsSync(SERVICE_ACCOUNT_PATH)) {
-    console.error(`ERROR: Service account key file not found at: ${SERVICE_ACCOUNT_PATH}`);
-    process.exit(1);
+  console.error(`ERROR: Service account key file not found at: ${SERVICE_ACCOUNT_PATH}`);
+  process.exit(1);
 }
 
 try {
@@ -62,59 +64,31 @@ try {
   process.exit(1);
 }
 
-
 const db = admin.firestore();
 
-// --- Main Import Logic ---
+// --- Google Sheets API Logic ---
 
-async function importCollection(collectionName: string, fileName: string) {
-  const filePath = path.join(DATA_DIR, fileName);
-  if (!fs.existsSync(filePath)) {
-    console.warn(`Skipping: File not found for collection '${collectionName}' at ${filePath}`);
-    return;
-  }
-
-  console.log(`\nImporting data for collection: '${collectionName}'...`);
-
-  const fileContent = fs.readFileSync(filePath, 'utf8');
-  const { data, errors, meta } = Papa.parse(fileContent, {
-    header: true,
-    skipEmptyLines: true,
+// Helper to convert sheet data to a structured JSON array
+function sheetDataToJSON(header: any[], rows: any[][]) {
+  return rows.map((row) => {
+    const jsonObj: { [key: string]: any } = {};
+    header.forEach((key, index) => {
+      jsonObj[key] = row[index] || null; // Use null for empty cells
+    });
+    return jsonObj;
   });
+}
 
-  if (errors.length > 0) {
-    console.error(`Errors parsing ${fileName}:`, errors);
-    return;
-  }
-
-  if (data.length === 0) {
-    console.log(`No data found in ${fileName}.`);
-    return;
-  }
-
-  console.log(`Found ${data.length} records to import.`);
-  const collectionRef = db.collection(collectionName);
-  
-  const batch = db.batch();
-  for (const item of data as any[]) {
-    // Firestore needs string IDs for documents. If an ID is provided in the CSV, use it.
-    // Otherwise, let Firestore generate a unique ID.
-    let docRef;
-    if (item.id) {
-        docRef = collectionRef.doc(item.id);
-        delete item.id; // Don't store the id field inside the document itself
-    } else {
-        docRef = collectionRef.doc();
-    }
+// Helper to process data before Firestore import
+function processRecord(item: any) {
+    const processedItem = { ...item };
     
     // Convert date strings to Firestore Timestamps if applicable
-    const processedItem = { ...item };
     if (processedItem.submittedAt) {
       const date = new Date(processedItem.submittedAt);
       if (!isNaN(date.getTime())) {
         processedItem.submittedAt = admin.firestore.Timestamp.fromDate(date);
       } else {
-        console.warn(`Invalid date format for 'submittedAt' in row: ${JSON.stringify(item)}. Skipping conversion.`);
         delete processedItem.submittedAt;
       }
     }
@@ -123,10 +97,10 @@ async function importCollection(collectionName: string, fileName: string) {
        if (!isNaN(date.getTime())) {
         processedItem.dueDate = admin.firestore.Timestamp.fromDate(date);
       } else {
-        console.warn(`Invalid date format for 'dueDate' in row: ${JSON.stringify(item)}. Skipping conversion.`);
         delete processedItem.dueDate;
       }
     }
+    // Convert numeric strings to numbers
     if (processedItem.score) {
         const score = Number(processedItem.score);
         if (!isNaN(score)) {
@@ -135,20 +109,90 @@ async function importCollection(collectionName: string, fileName: string) {
             delete processedItem.score;
         }
     }
+    if (processedItem.Rate) {
+        const rate = Number(processedItem.Rate);
+        if (!isNaN(rate)) {
+            processedItem.Rate = rate;
+        } else {
+            delete processedItem.Rate;
+        }
+    }
 
+    return processedItem;
+}
 
-    batch.set(docRef, processedItem);
+async function importCollectionFromSheet(collectionName: string, sheetName: string) {
+  console.log(`\nImporting data for collection: '${collectionName}' from sheet: '${sheetName}'...`);
+  
+  if (SPREADSHEET_ID === 'YOUR_SPREADSHEET_ID_HERE') {
+      console.error("ERROR: Please update the SPREADSHEET_ID in the script.");
+      return;
   }
-  await batch.commit();
+  
+  const auth = new google.auth.GoogleAuth({
+    keyFile: SERVICE_ACCOUNT_PATH,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+  });
 
-  console.log(`Successfully imported ${data.length} documents into '${collectionName}'.`);
+  const sheets = google.sheets({ version: 'v4', auth });
 
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: sheetName,
+    });
+
+    const rows = response.data.values;
+    if (!rows || rows.length === 0) {
+      console.log(`No data found in sheet '${sheetName}'.`);
+      return;
+    }
+
+    const header = rows[0];
+    const dataRows = rows.slice(1);
+    const jsonData = sheetDataToJSON(header, dataRows);
+
+    console.log(`Found ${jsonData.length} records to import.`);
+    const collectionRef = db.collection(collectionName);
+    
+    // Clear the existing collection before importing new data
+    console.log(`Clearing existing data in '${collectionName}'...`);
+    const snapshot = await collectionRef.get();
+    const deleteBatch = db.batch();
+    snapshot.docs.forEach(doc => {
+      deleteBatch.delete(doc.ref);
+    });
+    await deleteBatch.commit();
+    console.log(`Cleared ${snapshot.size} documents.`);
+
+    // Import new data
+    const importBatch = db.batch();
+    for (const item of jsonData) {
+      let docRef;
+      if (item.id) {
+          docRef = collectionRef.doc(item.id);
+          delete item.id;
+      } else {
+          docRef = collectionRef.doc();
+      }
+      
+      const processedItem = processRecord(item);
+      importBatch.set(docRef, processedItem);
+    }
+    await importBatch.commit();
+
+    console.log(`Successfully imported ${jsonData.length} documents into '${collectionName}'.`);
+
+  } catch (err) {
+    console.error(`Error reading from sheet '${sheetName}':`, err);
+    console.error("\nPlease ensure the Google Sheets API is enabled and the sheet is shared with the service account email.");
+  }
 }
 
 async function main() {
-  console.log('Starting Firestore data import...');
-  for (const [collectionName, fileName] of Object.entries(COLLECTIONS_TO_IMPORT)) {
-    await importCollection(collectionName, fileName);
+  console.log('Starting Firestore data import from Google Sheets...');
+  for (const [collectionName, sheetName] of Object.entries(SHEET_NAMES)) {
+    await importCollectionFromSheet(collectionName, sheetName);
   }
   console.log('\nData import process finished.');
 }
