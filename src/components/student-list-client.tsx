@@ -27,44 +27,44 @@ function StudentDetails({ student }: { student: Student }) {
     return (
       <Card className="mt-4 animate-in fade-in">
         <CardHeader>
-          <CardTitle>{student.name}</CardTitle>
+          <CardTitle>{student['Student Name']}</CardTitle>
           <CardDescription>
-             Detailed information for {student.name}.
+             Detailed information for {student['Student Name']}.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Student Email</p>
-                <p>{student.email || 'N/A'}</p>
+                <p>{student['Student Email'] || 'N/A'}</p>
             </div>
              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Parent Email 1</p>
-                <p>{student.parentEmail1 || 'N/A'}</p>
+                <p>{student['Parent Email 1'] || 'N/A'}</p>
             </div>
              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Parent Email 2</p>
-                <p>{student.parentEmail2 || 'N/A'}</p>
+                <p>{student['Parent Email 2'] || 'N/A'}</p>
             </div>
             <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Target Score</p>
-                <p>{student.targetScore || 'N/A'}</p>
+                <p>{student['Target Score'] || 'N/A'}</p>
             </div>
              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Rate</p>
-                <p>{student.rate ? `$${student.rate}` : 'N/A'}</p>
+                <p>{student['Rate'] ? `$${student['Rate']}` : 'N/A'}</p>
             </div>
             <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Frequency</p>
-                <p>{student.frequency || 'N/A'}</p>
+                <p>{student['Frequency'] || 'N/A'}</p>
             </div>
              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Start Date</p>
-                <p>{student.startDate || 'N/A'}</p>
+                <p>{student['Start Date'] || 'N/A'}</p>
             </div>
              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Projected End Date</p>
-                <p>{student.projectedEndDate || 'N/A'}</p>
+                <p>{student['Projected End Date'] || 'N/A'}</p>
             </div>
             <div className="space-y-1 md:col-span-2">
                 <p className="text-sm font-medium text-muted-foreground">Profile</p>
@@ -125,9 +125,9 @@ export function StudentListClient({ students }: StudentListClientProps) {
                         selectedStudent?.id === student.id && "bg-muted hover:bg-muted"
                     )}
                 >
-                  <TableCell className="font-medium">{student.name}</TableCell>
-                  <TableCell>{student.testType || 'N/A'}</TableCell>
-                  <TableCell>{student.upcomingTestDate || 'N/A'}</TableCell>
+                  <TableCell className="font-medium">{student['Student Name']}</TableCell>
+                  <TableCell>{student['Test Type'] || 'N/A'}</TableCell>
+                  <TableCell>{student['Upcoming Test Date'] || 'N/A'}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

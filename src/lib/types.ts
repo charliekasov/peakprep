@@ -2,18 +2,25 @@ import type { Timestamp } from 'firebase/firestore';
 
 export interface Student {
   id: string;
+  'Student Name': string;
+  'Student Email': string;
+  'Parent Email 1'?: string;
+  'Parent Email 2'?: string;
+  'Test Type'?: string;
+  'Target Score'?: string;
+  'Rate'?: number;
+  'Frequency'?: string;
+  'Start Date'?: string;
+  'Projected End Date'?: string;
+  'Upcoming Test Date'?: string;
+  profile?: string; // This field was in the original form, keeping it for now.
+  // Mapped old fields to new ones for compatibility where needed, but it's better to update components.
   name: string;
   email: string;
   parentEmail1?: string;
   parentEmail2?: string;
   testType?: string;
-  targetScore?: string;
-  rate?: number;
-  frequency?: string;
-  startDate?: string;
-  projectedEndDate?: string;
   upcomingTestDate?: string;
-  profile?: string;
 }
 
 export interface FirebaseAssignment {
