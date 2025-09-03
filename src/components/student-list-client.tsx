@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -35,7 +36,7 @@ function StudentDetails({ student }: { student: Student }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Student Email</p>
-                <p>{student.email}</p>
+                <p>{student.email || 'N/A'}</p>
             </div>
              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Parent Email 1</p>
