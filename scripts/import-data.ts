@@ -129,6 +129,34 @@ function processRecord(item: any) {
         delete processedItem.dueDate;
       }
     }
+
+    // --- New Score Processing Logic ---
+    const scoreFields: { [key: string]: string } = {
+        'Math Score': 'Math',
+        'Reading and Writing Score': 'Reading + Writing',
+        'Verbal Score': 'Verbal',
+        'Quantitative Score': 'Quantitative',
+        'Reading Score': 'Reading'
+    };
+
+    const scores: { section: string; score: number }[] = [];
+
+    for (const [sheetHeader, sectionName] of Object.entries(scoreFields)) {
+        if (processedItem[sheetHeader]) {
+            const scoreValue = Number(processedItem[sheetHeader]);
+            if (!isNaN(scoreValue)) {
+                scores.push({ section: sectionName, score: scoreValue });
+                delete processedItem[sheetHeader]; // Remove the old top-level field
+            }
+        }
+    }
+    
+    if (scores.length > 0) {
+      processedItem.scores = scores;
+    }
+    // --- End New Score Processing Logic ---
+
+
     // Convert numeric strings to numbers
     if (processedItem.score) {
         const score = Number(processedItem.score);

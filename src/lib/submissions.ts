@@ -8,11 +8,38 @@ import type { DocumentSnapshot, Timestamp } from 'firebase/firestore';
 
 function fromFirebase(doc: DocumentSnapshot): Submission {
   const data = doc.data() as FirebaseSubmission;
-  return {
+  
+  const submission: Submission = {
     ...data,
     id: doc.id,
     submittedAt: (data.submittedAt as Timestamp)?.toDate() || new Date(),
+    scores: data.scores || [],
   };
+
+  // --- Dynamic Score Transformation ---
+  // If the scores array is empty, check for top-level score fields
+  // from the old import method and transform them.
+  if (submission.scores.length === 0) {
+    const scoreFields: { [key: string]: string } = {
+        'Math Score': 'Math',
+        'Reading and Writing Score': 'Reading + Writing',
+        'Verbal Score': 'Verbal',
+        'Quantitative Score': 'Quantitative',
+        'Reading Score': 'Reading'
+    };
+
+    for (const [sheetHeader, sectionName] of Object.entries(scoreFields)) {
+        if ((data as any)[sheetHeader]) {
+            const scoreValue = Number((data as any)[sheetHeader]);
+            if (!isNaN(scoreValue)) {
+                submission.scores.push({ section: sectionName, score: scoreValue });
+            }
+        }
+    }
+  }
+  // --- End Transformation ---
+  
+  return submission;
 }
 
 export async function getSubmissions(): Promise<Submission[]> {
