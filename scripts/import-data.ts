@@ -5,17 +5,43 @@
  * sheets, and uploads it to the corresponding Firestore collections. It uses
  * a service account for authentication.
  *
- * To use this script:
- * 1.  Enable the Cloud Firestore API and Google Sheets API in your Google Cloud project.
- * 2.  Create a Firebase service account and download the private key JSON file.
- *     (Project Settings -> Service accounts -> Generate new private key).
- * 3.  Place the downloaded JSON key file in the root directory.
- * 4.  Update the .env file with:
- *     GOOGLE_APPLICATION_CREDENTIALS="your-service-account-key.json"
- * 5.  In your Google Sheet, share the sheet with the `client_email` from the
- *     JSON key file (e.g., "firebase-adminsdk-xxxxx@...iam.gserviceaccount.com").
- * 6.  Update the `SPREADSHEET_ID` and `SHEET_NAMES` configuration below.
- * 7.  Run the script from your terminal: `npm run import-data`
+ * ==============================================================================
+ *  TROUBLESHOOTING & SETUP
+ * ==============================================================================
+ *
+ * If you see an error like "GaxiosError: The caller does not have permission",
+ * please complete the following TWO steps:
+ *
+ * STEP 1: Enable the Google Sheets API for your project.
+ * -----------------------------------------------------------
+ *    a. Go to the Google Cloud Console: https://console.cloud.google.com
+ *    b. Make sure you have selected the correct project (tutorflow-ivaba).
+ *    c. In the search bar at the top, type "Google Sheets API" and select it.
+ *    d. Click the "Enable" button. If it's already enabled, you're all set.
+ *
+ *
+ * STEP 2: Share your Google Sheet with the Service Account.
+ * -----------------------------------------------------------
+ *    a. Open your Google Sheet.
+ *    b. Click the "Share" button in the top right corner.
+ *    c. Copy the email address below and paste it into the "Add people and groups" field:
+ *
+ *       firebase-adminsdk-fbsvc@tutorflow-ivaba.iam.gserviceaccount.com
+ *
+ *    d. Ensure it has at least "Viewer" access, then click "Share".
+ *
+ *
+ * STEP 3: Configure the script below.
+ * -----------------------------------------------------------
+ *    a. Update the SPREADSHEET_ID with your Google Sheet's ID from the URL.
+ *    b. Update the SHEET_NAMES to match the exact names of your sheet tabs.
+ *
+ *
+ * STEP 4: Run the script from your terminal.
+ * -----------------------------------------------------------
+ *    npm run import-data
+ *
+ * ==============================================================================
  */
 import * as admin from 'firebase-admin';
 import * as fs from 'fs';
