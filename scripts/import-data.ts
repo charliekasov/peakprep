@@ -27,7 +27,7 @@ config();
 
 // --- Configuration ---
 // The ID of your Google Sheet (from the URL)
-const SPREADSHEET_ID = '1rAS--uHk3MfWTuTr-Z7dsvPlUQVf-pgIUZOREYmtoro/edit?gid=148603927'; 
+const SPREADSHEET_ID = '1rAS--uHk3MfWTuTr-Z7dsvPlUQVf-pgIUZOREYmtoro'; 
 
 // Mapping from Firestore collection name to the exact name of the sheet tab(s)
 // For submissions, you can provide an array of sheet names to merge.
