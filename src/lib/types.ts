@@ -13,8 +13,7 @@ export interface Student {
   'Start Date'?: string;
   'Projected End Date'?: string;
   'Upcoming Test Date'?: string;
-  profile?: string; // This field was in the original form, keeping it for now.
-  // Mapped old fields to new ones for compatibility where needed, but it's better to update components.
+  profile?: string; 
   name: string;
   email: string;
   parentEmail1?: string;
@@ -24,22 +23,18 @@ export interface Student {
 }
 
 export interface FirebaseAssignment {
-  id: string;
-  title: string;
-  link: string;
-  subject: string;
-  broadCategory: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  testType?: string;
-  source?: string;
-  dueDate?: Timestamp;
-  isPracticeTest?: boolean;
+  'Full Assignment Name': string;
+  'Link': string;
+  'Subject': string;
+  'Broad Category': string;
+  'Difficulty': 'Easy' | 'Medium' | 'Hard';
+  'Test Type'?: string;
+  'Source'?: string;
+  'isPracticeTest'?: boolean;
 }
 
-export type Assignment = Omit<FirebaseAssignment, 'dueDate' | 'id'> & {
+export type Assignment = FirebaseAssignment & {
   id: string;
-  title: string;
-  dueDate?: Date;
 };
 
 export type SubmissionStatus = 'Assigned' | 'Completed' | 'Incomplete' | 'Did Together';
@@ -57,3 +52,5 @@ export type Submission = Omit<FirebaseSubmission, 'submittedAt' | 'id'> & {
     id: string;
     submittedAt: Date;
 }
+
+    

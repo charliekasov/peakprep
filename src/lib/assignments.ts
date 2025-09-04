@@ -2,16 +2,15 @@
 
 import { collection, getDocs, getDoc, doc } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Assignment, FirebaseAssignment } from './types';
-import type { DocumentSnapshot, Timestamp } from 'firebase/firestore';
+import type { Assignment } from './types';
+import type { DocumentSnapshot } from 'firebase/firestore';
 
 function fromFirebase(doc: DocumentSnapshot): Assignment {
-  const data = doc.data() as FirebaseAssignment;
+  const data = doc.data()!;
   return {
     ...data,
     id: doc.id,
-    dueDate: (data.dueDate as Timestamp)?.toDate(),
-  };
+  } as Assignment;
 }
 
 export async function getAssignments(): Promise<Assignment[]> {
@@ -37,3 +36,5 @@ export async function getAssignmentsCount(): Promise<number> {
     const assignmentsSnapshot = await getDocs(assignmentsCollection);
     return assignmentsSnapshot.size;
 }
+
+    

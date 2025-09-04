@@ -77,13 +77,13 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   const worksheetSources = useMemo(() => {
     const sources = new Set<string>();
     assignments
-      .filter(a => !a.isPracticeTest)
+      .filter(a => !a['isPracticeTest'])
       .forEach(a => {
-        if (a.source) {
-            const sourceName = a.source === 'Google Drive' ? 'Question Bank' : a.source;
-            if (selectedStudent?.testType === 'Upper Level SSAT' && ['Tutorverse', 'Test Innovators'].includes(a.source)) {
+        if (a['Source']) {
+            const sourceName = a['Source'] === 'Google Drive' ? 'Question Bank' : a['Source'];
+            if (selectedStudent?.['Test Type'] === 'Upper Level SSAT' && ['Tutorverse', 'Test Innovators'].includes(a['Source'])) {
                  sources.add(sourceName);
-            } else if (selectedStudent?.testType === 'SAT' && ['Question Bank', 'Test Innovators'].includes(sourceName)){
+            } else if (selectedStudent?.['Test Type'] === 'SAT' && ['Question Bank', 'Test Innovators'].includes(sourceName)){
                  sources.add(sourceName);
             }
         }
@@ -102,8 +102,8 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       const assignment = assignments.find(a => a.id === id);
       if (!assignment) return null;
 
-      let title = assignment.title;
-      if (assignment.isPracticeTest) {
+      let title = assignment['Full Assignment Name'];
+      if (assignment['isPracticeTest']) {
         let details = [];
         if (options.sections && Array.isArray(options.sections) && options.sections.length > 0) {
           details.push(options.sections.join(', '));
@@ -131,9 +131,9 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     }
     
     const assignedItemsText = assignedAssignmentTitles.map(title => {
-        const assignment = assignments.find(a => a.title === title.split(' (')[0]);
-        if (assignment && assignment.link) {
-            return `${title}: ${assignment.link}`;
+        const assignment = assignments.find(a => a['Full Assignment Name'] === title.split(' (')[0]);
+        if (assignment && assignment['Link']) {
+            return `${title}: ${assignment['Link']}`;
         }
         return title;
     }).join('\n\n');
@@ -149,10 +149,10 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   const worksheets = useMemo(() => {
     if (!selectedStudent) return [];
     return assignments
-      .filter(a => !a.isPracticeTest)
+      .filter(a => !a['isPracticeTest'])
       .filter(a => {
-        if (!selectedStudent.testType || a.testType === selectedStudent.testType || !a.testType) {
-            const sourceForFilter = a.source === 'Google Drive' ? 'Question Bank' : a.source;
+        if (!selectedStudent['Test Type'] || a['Test Type'] === selectedStudent['Test Type'] || !a['Test Type']) {
+            const sourceForFilter = a['Source'] === 'Google Drive' ? 'Question Bank' : a['Source'];
             if (selectedWorksheetSources.size === 0) return true;
             return sourceForFilter && selectedWorksheetSources.has(sourceForFilter);
         }
@@ -160,13 +160,13 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       })
       .filter(a => {
         if (worksheetSearchQuery.trim() === '') return true;
-        return a.title.toLowerCase().includes(worksheetSearchQuery.toLowerCase());
+        return a['Full Assignment Name'].toLowerCase().includes(worksheetSearchQuery.toLowerCase());
       });
   }, [selectedStudent, assignments, worksheetSearchQuery, selectedWorksheetSources]);
 
    const practiceTests = useMemo(() => {
     if (!selectedStudent) return [];
-    return assignments.filter(a => a.isPracticeTest && a.testType === selectedStudent.testType);
+    return assignments.filter(a => a['isPracticeTest'] && a['Test Type'] === selectedStudent['Test Type']);
   }, [selectedStudent, assignments]);
 
 
@@ -191,7 +191,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       newSet.delete(assignment.id);
       setSelectedAssignments(newSet);
     } else {
-      if (assignment.isPracticeTest) {
+      if (assignment['isPracticeTest']) {
         setConfiguringAssignment(assignment);
         setTempOptions({ timing: 'timed', sections: 'Whole Test' }); 
       } else {
@@ -244,7 +244,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
         const assignment = assignments.find(a => a.id === id)!;
         let sections: string[] = [];
 
-        if(assignment.isPracticeTest) {
+        if(assignment['isPracticeTest']) {
           if (Array.isArray(options.sections)) {
             sections = options.sections;
           } else if (typeof options.sections === 'string' && options.sections !== 'Whole Test') {
@@ -290,14 +290,14 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   
   const renderConfigurationDialog = () => {
     if (!configuringAssignment || !selectedStudent) return null;
-    const isSAT = selectedStudent.testType === 'SAT';
-    const isSSAT = selectedStudent.testType === 'Upper Level SSAT';
+    const isSAT = selectedStudent['Test Type'] === 'SAT';
+    const isSSAT = selectedStudent['Test Type'] === 'Upper Level SSAT';
     
     return (
        <Dialog open={!!configuringAssignment} onOpenChange={(isOpen) => !isOpen && handleCancelConfiguration()}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Configure: {configuringAssignment.title}</DialogTitle>
+              <DialogTitle>Configure: {configuringAssignment['Full Assignment Name']}</DialogTitle>
               <DialogDescription>Select sections and timing for this practice test.</DialogDescription>
             </DialogHeader>
             <div className="space-y-6 py-4">
@@ -435,7 +435,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                                 const assignment = assignments.find(a => a.id === submission.assignmentId);
                                 return (
                                   <li key={submission.id} className="flex justify-between items-center text-sm">
-                                    <span>{assignment?.title || 'Unknown Assignment'}</span>
+                                    <span>{assignment?.['Full Assignment Name'] || 'Unknown Assignment'}</span>
                                     <span className="text-muted-foreground">{submission.submittedAt.toLocaleDateString()}</span>
                                   </li>
                                 )
@@ -602,10 +602,10 @@ function WorksheetTable({ assignments, selectedAssignments, studentSubmissions, 
                         onCheckedChange={() => onToggle(assignment)}
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{assignment.title}</TableCell>
-                    <TableCell>{assignment.subject}</TableCell>
-                    <TableCell>{assignment.difficulty}</TableCell>
-                    <TableCell>{assignment.source}</TableCell>
+                    <TableCell className="font-medium">{assignment['Full Assignment Name']}</TableCell>
+                    <TableCell>{assignment['Subject']}</TableCell>
+                    <TableCell>{assignment['Difficulty']}</TableCell>
+                    <TableCell>{assignment['Source']}</TableCell>
                     <TableCell>{lastSubmitted ? lastSubmitted.toLocaleDateString() : 'N/A'}</TableCell>
                   </TableRow>
                 )
@@ -654,8 +654,8 @@ function PracticeTestTable({ assignments, selectedAssignments, studentSubmission
                         onCheckedChange={() => onToggle(assignment)}
                       />
                     </TableCell>
-                    <TableCell>{assignment.source}</TableCell>
-                    <TableCell className="font-medium">{getTestName(assignment.title)}</TableCell>
+                    <TableCell>{assignment['Source']}</TableCell>
+                    <TableCell className="font-medium">{getTestName(assignment['Full Assignment Name'])}</TableCell>
                     <TableCell>{lastSubmitted ? lastSubmitted.toLocaleDateString() : 'N/A'}</TableCell>
                   </TableRow>
                 )
@@ -666,3 +666,5 @@ function PracticeTestTable({ assignments, selectedAssignments, studentSubmission
       </ScrollArea>
   )
 }
+
+    
