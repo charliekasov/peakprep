@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Card,
   CardHeader,
@@ -42,6 +42,22 @@ export default function AssignmentsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSubject, setSelectedSubject] = useState('all');
 
+  // Effect to reset dependent filters when a parent filter changes
+  useEffect(() => {
+    setSelectedSource('all');
+    setSelectedCategory('all');
+    setSelectedSubject('all');
+  }, [selectedTestType]);
+
+  useEffect(() => {
+    setSelectedCategory('all');
+    setSelectedSubject('all');
+  }, [selectedSource]);
+
+  useEffect(() => {
+    setSelectedSubject('all');
+  }, [selectedCategory]);
+
   const filteredAssignments = useMemo(() => {
     let filtered = assignments;
 
@@ -67,24 +83,44 @@ export default function AssignmentsPage() {
     return filtered;
   }, [assignments, searchQuery, selectedTestType, selectedSource, selectedCategory, selectedSubject]);
 
-  const getUniqueValues = (key: keyof Assignment) => {
-    return Array.from(new Set(assignments.map(a => a[key]).filter(Boolean)));
+  const getUniqueValues = (key: keyof Assignment, sourceData: Assignment[]) => {
+    return Array.from(new Set(sourceData.map(a => a[key]).filter(Boolean)));
   };
 
-  const getCascadingUniqueValues = (key: keyof Assignment, dependsOn: { key: keyof Assignment, value: string }[]) => {
-      let sourceData = assignments;
-      dependsOn.forEach(dep => {
-          if (dep.value !== 'all') {
-              sourceData = sourceData.filter(a => a[dep.key] === dep.value)
-          }
-      })
-      return Array.from(new Set(sourceData.map(a => a[key]).filter(Boolean)));
-  }
+  const testTypes = useMemo(() => getUniqueValues('Test Type', assignments), [assignments]);
+  
+  const sources = useMemo(() => {
+    let filtered = assignments;
+    if (selectedTestType !== 'all') {
+      filtered = filtered.filter(a => a['Test Type'] === selectedTestType);
+    }
+    return getUniqueValues('Source', filtered);
+  }, [assignments, selectedTestType]);
 
-  const testTypes = useMemo(() => getUniqueValues('Test Type'), [assignments]);
-  const sources = useMemo(() => getCascadingUniqueValues('Source', [{ key: 'Test Type', value: selectedTestType }]), [assignments, selectedTestType]);
-  const categories = useMemo(() => getCascadingUniqueValues('Broad Category', [{ key: 'Test Type', value: selectedTestType }, { key: 'Source', value: selectedSource }]), [assignments, selectedTestType, selectedSource]);
-  const subjects = useMemo(() => getCascadingUniqueValues('Subject', [{ key: 'Test Type', value: selectedTestType }, { key: 'Source', value: selectedSource }, { key: 'Broad Category', value: selectedCategory }]), [assignments, selectedTestType, selectedSource, selectedCategory]);
+  const categories = useMemo(() => {
+    let filtered = assignments;
+    if (selectedTestType !== 'all') {
+      filtered = filtered.filter(a => a['Test Type'] === selectedTestType);
+    }
+    if (selectedSource !== 'all') {
+      filtered = filtered.filter(a => a['Source'] === selectedSource);
+    }
+    return getUniqueValues('Broad Category', filtered);
+  }, [assignments, selectedTestType, selectedSource]);
+
+  const subjects = useMemo(() => {
+    let filtered = assignments;
+     if (selectedTestType !== 'all') {
+      filtered = filtered.filter(a => a['Test Type'] === selectedTestType);
+    }
+    if (selectedSource !== 'all') {
+      filtered = filtered.filter(a => a['Source'] === selectedSource);
+    }
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(a => a['Broad Category'] === selectedCategory);
+    }
+    return getUniqueValues('Subject', filtered);
+  }, [assignments, selectedTestType, selectedSource, selectedCategory]);
 
 
   const resetFilters = () => {
@@ -138,7 +174,7 @@ export default function AssignmentsPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={selectedSource} onValueChange={setSelectedSource}>
+              <Select value={selectedSource} onValueChange={setSelectedSource} disabled={selectedTestType === 'all'}>
                 <SelectTrigger>
                   <SelectValue placeholder="Filter by Source" />
                 </SelectTrigger>
@@ -151,7 +187,7 @@ export default function AssignmentsPage() {
                   ))}
                 </SelectContent>
               </Select>
-               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+               <Select value={selectedCategory} onValueChange={setSelectedCategory} disabled={selectedSource === 'all'}>
                 <SelectTrigger>
                   <SelectValue placeholder="Filter by Category" />
                 </SelectTrigger>
@@ -164,7 +200,7 @@ export default function AssignmentsPage() {
                   ))}
                 </SelectContent>
               </Select>
-               <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+               <Select value={selectedSubject} onValueChange={setSelectedSubject} disabled={selectedCategory === 'all'}>
                 <SelectTrigger>
                   <SelectValue placeholder="Filter by Subject" />
                 </SelectTrigger>
@@ -236,4 +272,3 @@ export default function AssignmentsPage() {
     </div>
   );
 }
-
