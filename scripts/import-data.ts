@@ -109,7 +109,7 @@ function sheetDataToJSON(header: any[], rows: any[][]) {
 }
 
 // Helper to process data before Firestore import
-function processRecord(item: any) {
+function processRecord(item: any, collectionName: string) {
     const processedItem = { ...item };
     
     // Convert date strings to Firestore Timestamps if applicable
@@ -131,28 +131,30 @@ function processRecord(item: any) {
     }
 
     // --- New Score Processing Logic ---
-    const scoreFields: { [key: string]: string } = {
-        'Math Score': 'Math',
-        'Reading and Writing Score': 'Reading + Writing',
-        'Verbal Score': 'Verbal',
-        'Quantitative Score': 'Quantitative',
-        'Reading Score': 'Reading'
-    };
+    if (collectionName === 'submissions') {
+        const scoreFields: { [key: string]: string } = {
+            'Math Score': 'Math',
+            'Reading and Writing Score': 'Reading + Writing',
+            'Verbal Score': 'Verbal',
+            'Quantitative Score': 'Quantitative',
+            'Reading Score': 'Reading'
+        };
 
-    const scores: { section: string; score: number }[] = [];
+        const scores: { section: string; score: number }[] = [];
 
-    for (const [sheetHeader, sectionName] of Object.entries(scoreFields)) {
-        if (processedItem[sheetHeader]) {
-            const scoreValue = Number(processedItem[sheetHeader]);
-            if (!isNaN(scoreValue)) {
-                scores.push({ section: sectionName, score: scoreValue });
-                delete processedItem[sheetHeader]; // Remove the old top-level field
+        for (const [sheetHeader, sectionName] of Object.entries(scoreFields)) {
+            if (processedItem[sheetHeader]) {
+                const scoreValue = Number(processedItem[sheetHeader]);
+                if (!isNaN(scoreValue)) {
+                    scores.push({ section: sectionName, score: scoreValue });
+                    delete processedItem[sheetHeader]; // Remove the old top-level field
+                }
             }
         }
-    }
-    
-    if (scores.length > 0) {
-      processedItem.scores = scores;
+        
+        if (scores.length > 0) {
+          processedItem.scores = scores;
+        }
     }
     // --- End New Score Processing Logic ---
 
@@ -253,6 +255,37 @@ async function importCollectionFromSheet(collectionName: string, sheetNameOrName
 
   // Import new data
   const importBatch = db.batch();
+  
+  // --- New Logic for creating assignments from submissions ---
+  const assignmentsRef = db.collection('assignments');
+  const existingAssignments = new Set<string>();
+  if (collectionName === 'submissions') {
+      console.log('Scanning submissions to create practice test assignments...');
+      for (const item of jsonData) {
+          if (item['isPracticeTest'] === 'TRUE' && item['Full Assignment Name'] && !existingAssignments.has(item['Full Assignment Name'])) {
+              const newAssignment = {
+                  'Full Assignment Name': item['Full Assignment Name'],
+                  'isPracticeTest': true,
+                  'Source': item['Source'],
+                  'Test Type': item['Test Type'],
+                  'Difficulty': item['Difficulty'] || 'Medium',
+                  'Subject': item['Subject'] || 'Practice Test',
+                  'Broad Category': item['Broad Category'] || 'Full Test',
+                  'Link': item['Link'] || null
+              };
+              
+              // Use a consistent ID based on the name to avoid duplicates
+              const docId = newAssignment['Full Assignment Name'].replace(/[^a-zA-Z0-9]/g, '');
+              const docRef = assignmentsRef.doc(docId);
+              importBatch.set(docRef, newAssignment);
+              existingAssignments.add(item['Full Assignment Name']);
+          }
+      }
+      console.log(`Created ${existingAssignments.size} new practice test assignments.`);
+  }
+  // --- End New Logic ---
+
+
   for (const item of jsonData) {
     // Skip empty rows that might have been parsed
     if (Object.keys(item).length === 0) continue;
@@ -265,7 +298,7 @@ async function importCollectionFromSheet(collectionName: string, sheetNameOrName
         docRef = collectionRef.doc();
     }
     
-    const processedItem = processRecord(item);
+    const processedItem = processRecord(item, collectionName);
     importBatch.set(docRef, processedItem);
   }
   await importBatch.commit();
@@ -275,9 +308,13 @@ async function importCollectionFromSheet(collectionName: string, sheetNameOrName
 
 async function main() {
   console.log('Starting Firestore data import from Google Sheets...');
-  for (const [collectionName, sheetName] of Object.entries(SHEET_NAMES)) {
-    await importCollectionFromSheet(collectionName, sheetName);
-  }
+  // Import students and assignments first
+  await importCollectionFromSheet('students', SHEET_NAMES.students);
+  await importCollectionFromSheet('assignments', SHEET_NAMES.assignments);
+  
+  // Then import submissions, which will also create practice test assignments
+  await importCollectionFromSheet('submissions', SHEET_NAMES.submissions);
+  
   console.log('\nData import process finished.');
 }
 
