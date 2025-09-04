@@ -116,7 +116,7 @@ export function StudentListClient({ students }: StudentListClientProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {students.map((student: Student) => (
+              {(students as any[]).map((student: any) => (
                 <TableRow 
                     key={student.id} 
                     onClick={() => handleRowClick(student)}
