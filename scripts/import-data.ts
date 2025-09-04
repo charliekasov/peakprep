@@ -27,13 +27,13 @@ config();
 
 // --- Configuration ---
 // The ID of your Google Sheet (from the URL)
-const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID_HERE'; 
+const SPREADSHEET_ID = '1rAS--uHk3MfWTuTr-Z7dsvPlUQVf-pgIUZOREYmtoro/edit?gid=148603927'; 
 
 // Mapping from Firestore collection name to the exact name of the sheet tab
 const SHEET_NAMES = {
   students: 'Student Database',
-  assignments: 'Assignments',
-  submissions: 'Submissions',
+  assignments: 'Assignments List',
+  submissions: 'Master Tracker',
 };
 
 const SERVICE_ACCOUNT_PATH = process.env.GOOGLE_APPLICATION_CREDENTIALS;
