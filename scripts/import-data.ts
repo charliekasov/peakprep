@@ -29,11 +29,12 @@ config();
 // The ID of your Google Sheet (from the URL)
 const SPREADSHEET_ID = '1rAS--uHk3MfWTuTr-Z7dsvPlUQVf-pgIUZOREYmtoro/edit?gid=148603927'; 
 
-// Mapping from Firestore collection name to the exact name of the sheet tab
+// Mapping from Firestore collection name to the exact name of the sheet tab(s)
+// For submissions, you can provide an array of sheet names to merge.
 const SHEET_NAMES = {
   students: 'Student Database',
   assignments: 'Assignments List',
-  submissions: 'Master Tracker',
+  submissions: ['Master Tracker', 'Test Scores'],
 };
 
 const SERVICE_ACCOUNT_PATH = process.env.GOOGLE_APPLICATION_CREDENTIALS;
@@ -73,6 +74,8 @@ function sheetDataToJSON(header: any[], rows: any[][]) {
   return rows.map((row) => {
     const jsonObj: { [key: string]: any } = {};
     header.forEach((key, index) => {
+      // Stop processing if the header key is missing for this column
+      if (!key) return;
       jsonObj[key] = row[index] || null; // Use null for empty cells
     });
     return jsonObj;
@@ -121,8 +124,37 @@ function processRecord(item: any) {
     return processedItem;
 }
 
-async function importCollectionFromSheet(collectionName: string, sheetName: string) {
-  console.log(`\nImporting data for collection: '${collectionName}' from sheet: '${sheetName}'...`);
+// Fetches and parses data from a single sheet
+async function getDataFromSheet(sheetName: string, auth: any) {
+    const sheets = google.sheets({ version: 'v4', auth });
+    try {
+        const response = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: sheetName,
+        });
+
+        const rows = response.data.values;
+        if (!rows || rows.length === 0) {
+            console.log(`No data found in sheet '${sheetName}'.`);
+            return [];
+        }
+        
+        const header = rows[0];
+        const dataRows = rows.slice(1);
+        const jsonData = sheetDataToJSON(header, dataRows);
+
+        return jsonData;
+
+    } catch (err) {
+        console.error(`Error reading from sheet '${sheetName}':`, err);
+        console.error("\nPlease ensure the Google Sheets API is enabled and the sheet is shared with the service account email.");
+        return [];
+    }
+}
+
+
+async function importCollectionFromSheet(collectionName: string, sheetNameOrNames: string | string[]) {
+  console.log(`\nImporting data for collection: '${collectionName}'...`);
   
   if (SPREADSHEET_ID === 'YOUR_SPREADSHEET_ID_HERE') {
       console.error("ERROR: Please update the SPREADSHEET_ID in the script.");
@@ -134,59 +166,57 @@ async function importCollectionFromSheet(collectionName: string, sheetName: stri
     scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
   });
 
-  const sheets = google.sheets({ version: 'v4', auth });
-
-  try {
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: sheetName,
-    });
-
-    const rows = response.data.values;
-    if (!rows || rows.length === 0) {
-      console.log(`No data found in sheet '${sheetName}'.`);
-      return;
-    }
-
-    const header = rows[0];
-    const dataRows = rows.slice(1);
-    const jsonData = sheetDataToJSON(header, dataRows);
-
-    console.log(`Found ${jsonData.length} records to import.`);
-    const collectionRef = db.collection(collectionName);
-    
-    // Clear the existing collection before importing new data
-    console.log(`Clearing existing data in '${collectionName}'...`);
-    const snapshot = await collectionRef.get();
-    const deleteBatch = db.batch();
-    snapshot.docs.forEach(doc => {
-      deleteBatch.delete(doc.ref);
-    });
-    await deleteBatch.commit();
-    console.log(`Cleared ${snapshot.size} documents.`);
-
-    // Import new data
-    const importBatch = db.batch();
-    for (const item of jsonData) {
-      let docRef;
-      if (item.id) {
-          docRef = collectionRef.doc(item.id);
-          delete item.id;
-      } else {
-          docRef = collectionRef.doc();
+  let jsonData: any[] = [];
+  if (Array.isArray(sheetNameOrNames)) {
+      console.log(`Merging data from sheets: ${sheetNameOrNames.join(', ')}`);
+      for (const sheetName of sheetNameOrNames) {
+          const sheetData = await getDataFromSheet(sheetName, auth);
+          jsonData = jsonData.concat(sheetData);
       }
-      
-      const processedItem = processRecord(item);
-      importBatch.set(docRef, processedItem);
-    }
-    await importBatch.commit();
-
-    console.log(`Successfully imported ${jsonData.length} documents into '${collectionName}'.`);
-
-  } catch (err) {
-    console.error(`Error reading from sheet '${sheetName}':`, err);
-    console.error("\nPlease ensure the Google Sheets API is enabled and the sheet is shared with the service account email.");
+  } else {
+      console.log(`Reading from sheet: '${sheetNameOrNames}'`);
+      jsonData = await getDataFromSheet(sheetNameOrNames, auth);
   }
+
+
+  if (jsonData.length === 0) {
+    console.log(`No records to import for collection '${collectionName}'.`);
+    return;
+  }
+
+  console.log(`Found ${jsonData.length} total records to import into '${collectionName}'.`);
+  const collectionRef = db.collection(collectionName);
+  
+  // Clear the existing collection before importing new data
+  console.log(`Clearing existing data in '${collectionName}'...`);
+  const snapshot = await collectionRef.get();
+  const deleteBatch = db.batch();
+  snapshot.docs.forEach(doc => {
+    deleteBatch.delete(doc.ref);
+  });
+  await deleteBatch.commit();
+  console.log(`Cleared ${snapshot.size} documents.`);
+
+  // Import new data
+  const importBatch = db.batch();
+  for (const item of jsonData) {
+    // Skip empty rows that might have been parsed
+    if (Object.keys(item).length === 0) continue;
+
+    let docRef;
+    if (item.id) {
+        docRef = collectionRef.doc(item.id);
+        delete item.id;
+    } else {
+        docRef = collectionRef.doc();
+    }
+    
+    const processedItem = processRecord(item);
+    importBatch.set(docRef, processedItem);
+  }
+  await importBatch.commit();
+
+  console.log(`Successfully imported ${jsonData.length} documents into '${collectionName}'.`);
 }
 
 async function main() {
