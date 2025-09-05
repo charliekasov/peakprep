@@ -28,7 +28,6 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Line, LineChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
-import { AddOfficialScoreDialog } from './add-official-score-dialog';
 
 interface TestScoresClientProps {
   students: Student[];
@@ -155,11 +154,6 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                </SelectContent>
              </Select>
            </div>
-           <AddOfficialScoreDialog 
-              students={students} 
-              assignments={practiceTests}
-              onScoreAdded={onScoreAdd} 
-            />
         </div>
       </div>
 
