@@ -6,6 +6,7 @@ import { NeedsReviewClient } from '@/components/needs-review-client';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Submission, Student, Assignment } from '@/lib/types';
 import { useData } from '@/context/data-provider';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 type EnrichedSubmission = Submission & {
   student?: Student;
@@ -16,6 +17,9 @@ export default function NeedsReviewPage() {
   const { students, assignments, submissions, isLoading } = useData();
 
   const enrichedSubmissions = useMemo<EnrichedSubmission[]>(() => {
+    // We only want to show items that are 'Assigned' or 'Incomplete'.
+    // Practice tests are considered 'Assigned' until scores are entered.
+    // Other assignments are also considered 'Assigned' until manually marked.
     const needsReviewSubmissions = submissions
       .filter(s => s.status === 'Assigned' || s.status === 'Incomplete')
       .sort((a,b) => a.submittedAt.getTime() - b.submittedAt.getTime());
@@ -32,14 +36,22 @@ export default function NeedsReviewPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-      <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-        Needs Review
-      </h1>
-      {isLoading ? (
-        <Skeleton className="h-96 w-full" />
-      ) : (
-        <NeedsReviewClient submissions={enrichedSubmissions} />
-      )}
+      <Card>
+        <CardHeader>
+            <CardTitle>Needs Review</CardTitle>
+            <CardDescription>
+                A prioritized list of all assignments that have been assigned or are
+                incomplete.
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <Skeleton className="h-96 w-full" />
+          ) : (
+            <NeedsReviewClient submissions={enrichedSubmissions} />
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -52,17 +52,13 @@ interface NeedsReviewClientProps {
 }
 
 const SAT_SECTIONS = ['Reading + Writing', 'Math'];
-const SSAT_SECTIONS = ['Verbal', 'Quantitative 1', 'Reading', 'Quantitative 2'];
+const SSAT_SECTIONS = ['Verbal', 'Quantitative', 'Reading'];
 
 const scoreSchema = z.object({
   section: z.string(),
   score: z.coerce
-    .number()
-    .min(200, "Score must be at least 200.")
-    .max(800, "Score cannot exceed 800.")
-    .refine((val) => val % 10 === 0, {
-      message: "Score must be a multiple of 10.",
-    }),
+    .number({ invalid_type_error: 'Score is required.' })
+    .min(1, "Score is required.")
 });
 
 const formSchema = z.object({
@@ -96,7 +92,7 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
   const { toast } = useToast();
   const { refetchData } = useData();
 
-  const sections = selectedSubmission?.assignment?.testType === 'SAT' ? SAT_SECTIONS : SSAT_SECTIONS;
+  const sections = selectedSubmission?.assignment?.['Test Type'] === 'SAT' ? SAT_SECTIONS : SSAT_SECTIONS;
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -107,10 +103,16 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
   
   const handleOpenDialog = (submission: EnrichedSubmission) => {
     setSelectedSubmission(submission);
-    const scoreSections = submission.assignment?.testType === 'SAT' ? SAT_SECTIONS : SSAT_SECTIONS;
+    const scoreSections = submission.assignment?.['Test Type'] === 'SAT' ? SAT_SECTIONS : SSAT_SECTIONS;
     
+    // Check if there are existing scores to populate the form
+    const existingScoresMap = new Map(submission.scores?.map(s => [s.section, s.score]));
+
     form.reset({
-      scores: scoreSections.map(section => ({ section, score: 600 }))
+      scores: scoreSections.map(section => ({ 
+        section, 
+        score: existingScoresMap.get(section) || 0,
+      }))
     });
     setIsDialogOpen(true);
   };
@@ -155,7 +157,7 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
   return (
     <>
       <Card>
-        <CardContent>
+        <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -170,7 +172,7 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
               {submissions.map((submission) => (
                 <TableRow key={submission.id}>
                   <TableCell className="font-medium">{submission.student?.name || 'Unknown Student'}</TableCell>
-                  <TableCell>{submission.assignment?.title || 'Unknown Assignment'}</TableCell>
+                  <TableCell>{submission.assignment?.['Full Assignment Name'] || 'Unknown Assignment'}</TableCell>
                   <TableCell>{submission.submittedAt.toLocaleDateString()}</TableCell>
                   <TableCell>
                     <StatusBadge submission={submission} />
@@ -209,7 +211,7 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Enter Scores for {selectedSubmission?.assignment?.title}</DialogTitle>
+            <DialogTitle>Enter Scores for {selectedSubmission?.assignment?.['Full Assignment Name']}</DialogTitle>
             <DialogDescription>
               Enter the scores for each section for {selectedSubmission?.student?.name}.
             </DialogDescription>
@@ -226,7 +228,7 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
                         <FormItem>
                           <FormLabel>{sections[index]}</FormLabel>
                           <FormControl>
-                            <Input type="number" step="10" placeholder="Score" {...field} />
+                            <Input type="number" placeholder="Score" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
