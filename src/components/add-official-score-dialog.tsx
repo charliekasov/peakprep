@@ -97,18 +97,9 @@ export function AddOfficialScoreDialog({
   const selectedTestType = form.watch('testType');
   const selectedAssignmentId = form.watch('assignmentId');
 
-  const selectedStudent = useMemo(() => {
-    return students.find((s) => s.id === selectedStudentId);
-  }, [selectedStudentId, students]);
-
-  const filteredPracticeTests = useMemo(() => {
-    if (!selectedStudent) {
-      return [];
-    }
-    return assignments.filter(
-      (a) => a['Test Type'] === selectedStudent?.['Test Type'] && a.isPracticeTest
-    );
-  }, [selectedStudent, assignments]);
+  const practiceTests = useMemo(() => {
+    return assignments.filter((a) => a.isPracticeTest);
+  }, [assignments]);
 
   const sections = useMemo(() => {
     if (selectedTestType === PRACTICE_TEST_ID) {
@@ -266,7 +257,7 @@ export function AddOfficialScoreDialog({
                         </Trigger>
                       </FormControl>
                       <SelectContent>
-                        {filteredPracticeTests.map((assignment) => (
+                        {practiceTests.map((assignment) => (
                           <SelectItem key={assignment.id} value={assignment.id}>
                             {assignment['Full Assignment Name']}
                           </SelectItem>
