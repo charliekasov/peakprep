@@ -1,7 +1,7 @@
 
 'use server';
 
-import { addDoc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { db } from '@/lib/firebase';
@@ -102,5 +102,3 @@ export async function handleAddTestScore(input: unknown) {
     throw new Error(error.message || 'Failed to add test score.');
   }
 }
-
-    

@@ -163,7 +163,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
           month: (new Date().getMonth()).toString(),
           year: new Date().getFullYear().toString(),
           scores: [],
-        })
+        });
     }
   }, [studentId, students, reset, setValue]);
 
@@ -273,7 +273,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                             <FormControl>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select test type" />
-                            </Trigger>
+                            </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                             <SelectItem value="Practice Test">Practice Test</SelectItem>
@@ -428,5 +428,3 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
-
-    
