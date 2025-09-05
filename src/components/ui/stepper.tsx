@@ -31,6 +31,7 @@ export function Stepper({ value = 0, onValueChange, min = 0, max = 100, step = 1
   return (
     <div className="flex items-center gap-2">
       <Button
+        type="button"
         variant="outline"
         size="icon"
         className="h-8 w-8 shrink-0 rounded-full"
@@ -58,6 +59,7 @@ export function Stepper({ value = 0, onValueChange, min = 0, max = 100, step = 1
         className="w-20 text-center"
       />
       <Button
+        type="button"
         variant="outline"
         size="icon"
         className="h-8 w-8 shrink-0 rounded-full"
@@ -70,5 +72,3 @@ export function Stepper({ value = 0, onValueChange, min = 0, max = 100, step = 1
     </div>
   );
 }
-
-    

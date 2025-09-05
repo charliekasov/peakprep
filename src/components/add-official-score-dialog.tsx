@@ -109,7 +109,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     resolver: zodResolver(formSchema),
     defaultValues: {
       studentId: '',
-      testTypeSelection: '',
+      testTypeSelection: 'Practice Test',
       officialTestName: '',
       practiceTestId: '',
       month: (new Date().getMonth()).toString(),
@@ -118,7 +118,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     },
   });
 
-  const { watch, resetField, setValue } = form;
+  const { watch, resetField, setValue, reset } = form;
   const studentId = watch('studentId');
   const testTypeSelection = watch('testTypeSelection');
   const scores = watch('scores') || [];
@@ -139,21 +139,24 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
   const isStanineTest = useMemo(() => studentTestType?.includes('SSAT') || studentTestType?.includes('ISEE'), [studentTestType]);
 
   useEffect(() => {
+    // When student changes, reset the form fields but keep studentId
     if (studentId) {
-      resetField('testTypeSelection');
-      resetField('practiceTestId');
-      resetField('officialTestName');
+        const student = students.find(s => s.id === studentId);
+        const testType = student?.['Test Type'] || '';
+        const config = TEST_CONFIG[testType];
+        
+        reset({
+            studentId: studentId,
+            testTypeSelection: 'Practice Test',
+            practiceTestId: '',
+            officialTestName: '',
+            month: (new Date().getMonth()).toString(),
+            year: new Date().getFullYear().toString(),
+            scores: config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : [],
+        });
     }
-  }, [studentId, resetField]);
+  }, [studentId, students, reset]);
   
-  useEffect(() => {
-    if (currentTestConfig) {
-       setValue('scores', currentTestConfig.sections.map((s: any) => ({ section: s.name, score: s.default })));
-    } else {
-       setValue('scores', []);
-    }
-  }, [currentTestConfig, setValue]);
-
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
@@ -207,13 +210,14 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
           Add Test Score
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90svh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Add New Test Score</DialogTitle>
           <DialogDescription>
             Record an official or practice test score for a student.
           </DialogDescription>
         </DialogHeader>
+        <div className="flex-1 overflow-y-auto pr-6 -mr-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -249,7 +253,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Test Type</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select test type" />
@@ -272,7 +276,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Practice Test</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select a practice test" />
@@ -315,7 +319,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                       render={({ field }) => (
                         <FormItem>
                            <FormLabel>Month</FormLabel>
-                           <Select onValueChange={field.onChange} defaultValue={field.value}>
+                           <Select onValueChange={field.onChange} value={field.value}>
                              <FormControl>
                                <SelectTrigger>
                                  <SelectValue placeholder="Select month" />
@@ -337,7 +341,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                       render={({ field }) => (
                         <FormItem>
                            <FormLabel>Year</FormLabel>
-                           <Select onValueChange={field.onChange} defaultValue={field.value}>
+                           <Select onValueChange={field.onChange} value={field.value}>
                              <FormControl>
                                <SelectTrigger>
                                  <SelectValue placeholder="Select year" />
@@ -394,8 +398,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                 )}
               </>
             )}
-
-            <DialogFooter>
+            <DialogFooter className="sticky bottom-0 bg-background pt-4">
               <DialogClose asChild>
                 <Button type="button" variant="ghost">Cancel</Button>
               </DialogClose>
@@ -406,9 +409,8 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
             </DialogFooter>
           </form>
         </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
-
-    
