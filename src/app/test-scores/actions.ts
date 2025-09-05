@@ -16,17 +16,17 @@ const scoreSchema = z.object({
 const testScoreSchema = z.object({
   studentId: z.string().min(1, 'Student is required.'),
   testType: z.string().min(1, 'Test type is required.'),
-  // assignmentId is optional, only used for practice tests
-  assignmentId: z.string().optional(),
+  // assignmentId can be the ID of a practice test OR the name of an official test
+  assignmentId: z.string().min(1, 'Test identifier is required.'),
   testDate: z.date({ required_error: 'Test date is required.' }),
   scores: z.array(scoreSchema),
 });
 
-async function findOrCreateOfficialTestAssignment(testType: string) {
+async function findOrCreateOfficialTestAssignment(testName: string, testType: string) {
   const assignmentsRef = collection(db, 'assignments');
   const q = query(
     assignmentsRef,
-    where('Full Assignment Name', '==', testType),
+    where('Full Assignment Name', '==', testName),
     where('isOfficialTest', '==', true)
   );
 
@@ -37,14 +37,15 @@ async function findOrCreateOfficialTestAssignment(testType: string) {
   } else {
     // Create it if it doesn't exist
     const newAssignment = {
-      'Full Assignment Name': testType,
-      isPracticeTest: true, // Treat like a practice test for scoring purposes
-      isOfficialTest: true,
-      Source: 'Official',
+      'Full Assignment Name': testName,
+      'isPracticeTest': true, // Treat like a practice test for scoring purposes
+      'isOfficialTest': true,
+      'Source': 'Official',
       'Test Type': testType.replace('Official ', ''),
-      Subject: 'Official Test',
+      'Subject': 'Official Test',
     };
     const docRef = await addDoc(assignmentsRef, newAssignment);
+    console.log(`Created new official test assignment: ${docRef.id}`);
     return docRef.id;
   }
 }
@@ -70,21 +71,38 @@ export async function handleAddTestScore(input: unknown) {
     let finalAssignmentId = assignmentId;
     let isOfficial = false;
 
-    // If no assignmentId is provided, it's an official test.
-    if (!finalAssignmentId) {
-      finalAssignmentId = await findOrCreateOfficialTestAssignment(testType);
-      isOfficial = true;
+    // If testType starts with 'Official', it's an official test.
+    if (testType.startsWith('Official')) {
+        isOfficial = true;
+        // The assignmentId here is actually the name, like "May 2024 Digital SAT"
+        finalAssignmentId = await findOrCreateOfficialTestAssignment(assignmentId, testType);
     }
+    
 
     const submissionsRef = collection(db, 'submissions');
-    await addDoc(submissionsRef, {
+    const submissionData = {
       studentId,
       assignmentId: finalAssignmentId,
       scores,
       status: 'Completed' as SubmissionStatus,
-      submittedAt: testDate, // Use the provided date as the submission date
+      submittedAt: testDate,
       isOfficial,
-    });
+    };
+
+    if (isOfficial) {
+       // When saving an official test, we store the user-provided name
+       // in the assignmentId field for display purposes, but link it
+       // to the actual (potentially new) assignment document via finalAssignmentId.
+       // The UI will then know to display assignmentId if isOfficial is true.
+       submissionData.assignmentId = assignmentId; // The user-provided name
+       // We should actually save the real ID to a different field, or adjust our model.
+       // For now, let's adjust the submission logic:
+       const officialTestDocId = await findOrCreateOfficialTestAssignment(assignmentId, testType);
+       submissionData.assignmentId = officialTestDocId;
+    }
+
+
+    await addDoc(submissionsRef, submissionData);
 
     revalidatePath('/test-scores');
     revalidatePath('/'); // Revalidate dashboard as well
@@ -95,3 +113,5 @@ export async function handleAddTestScore(input: unknown) {
     throw new Error('Failed to add test score.');
   }
 }
+
+    

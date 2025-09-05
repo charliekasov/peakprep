@@ -28,6 +28,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Line, LineChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { AddOfficialScoreDialog } from './add-official-score-dialog';
 
 interface TestScoresClientProps {
   students: Student[];
@@ -60,10 +61,10 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
   
   useEffect(() => {
     setIsMounted(true);
-    if (students.length > 0) {
+    if (students.length > 0 && !selectedStudentId) {
       setSelectedStudentId(students[0].id);
     }
-  }, [students]);
+  }, [students, selectedStudentId]);
 
 
   const [selectedSources, setSelectedSources] = useState<Set<string>>(
@@ -72,8 +73,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
 
   const studentMap = useMemo(() => new Map(students.map(s => [s.id, s])), [students]);
   const assignmentMap = useMemo(() => new Map(assignments.map(a => [a.id, a])), [assignments]);
-  const practiceTests = useMemo(() => assignments.filter(a => a.isPracticeTest), [assignments]);
-
+  
   const scoredSubmissions = useMemo(() => {
     return submissions.filter(s => {
        const assignment = assignmentMap.get(s.assignmentId);
@@ -92,14 +92,19 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
         ...s,
         assignment: assignmentMap.get(s.assignmentId),
       }))
-      .filter(s => s.assignment && selectedSources.has(s.assignment.Source || ''))
+      .filter(s => {
+          if (!s.assignment) return false;
+          // For official tests from the new dialog, the source might be 'Official'
+          if (s.isOfficial) return selectedSources.has('Official');
+          return selectedSources.has(s.assignment.Source || '');
+      })
       .sort((a, b) => a.submittedAt.getTime() - b.submittedAt.getTime());
   }, [selectedStudentId, scoredSubmissions, assignmentMap, selectedSources]);
 
   const chartData = useMemo(() => {
     return studentSubmissions.map(s => {
       const dataPoint: { [key: string]: any } = {
-        name: s.assignment?.['Full Assignment Name'] || 'Unknown Test',
+        name: s.isOfficial ? s.assignmentId : s.assignment?.['Full Assignment Name'] || 'Unknown Test',
         date: s.submittedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       };
       s.scores?.forEach(score => {
@@ -154,6 +159,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                </SelectContent>
              </Select>
            </div>
+           <AddOfficialScoreDialog students={students} assignments={assignments} onScoreAdd={onScoreAdd} />
         </div>
       </div>
 
@@ -230,10 +236,10 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
               {[...studentSubmissions].reverse().map((submission) => (
                 <TableRow key={submission.id}>
                   <TableCell className="font-medium">
-                    {submission.assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
+                    {submission.isOfficial ? submission.assignmentId : submission.assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
                   </TableCell>
                   <TableCell>
-                    {submission.assignment?.Source || 'N/A'}
+                     {submission.isOfficial ? 'Official' : submission.assignment?.Source || 'N/A'}
                   </TableCell>
                   <TableCell>
                     {submission.submittedAt.toLocaleDateString()}
@@ -252,3 +258,5 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
     </>
   );
 }
+
+    
