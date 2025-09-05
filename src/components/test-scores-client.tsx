@@ -141,10 +141,6 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
 
   const selectedStudent = studentMap.get(selectedStudentId || '');
   
-  if (!isMounted) {
-    return null; // or a loading skeleton
-  }
-
   const yAxisDomain = useMemo(() => {
     const testType = selectedStudent?.['Test Type'];
     if (testType === 'SAT') return [200, 800];
@@ -152,6 +148,10 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
     if (testType?.includes('SSAT') || testType?.includes('ISEE')) return [1, 99];
     return ['auto', 'auto']; // Default domain
   }, [selectedStudent]);
+  
+  if (!isMounted) {
+    return null; // or a loading skeleton
+  }
 
   return (
     <>
