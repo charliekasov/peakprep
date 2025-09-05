@@ -154,6 +154,17 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
             scores: config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : [],
         });
         setValue('testTypeSelection', 'Practice Test');
+    } else {
+        // Reset form if no student is selected
+        reset({
+          studentId: '',
+          testTypeSelection: '',
+          officialTestName: '',
+          practiceTestId: '',
+          month: (new Date().getMonth()).toString(),
+          year: new Date().getFullYear().toString(),
+          scores: [],
+        })
     }
   }, [studentId, students, reset, setValue]);
   
@@ -197,6 +208,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
       setOpen(false);
       form.reset();
     } catch (error: any) {
+      console.error("Error in onSubmit:", error);
       toast({
         title: 'Error Adding Score',
         description: error.message || 'An unexpected error occurred.',
@@ -215,7 +227,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
           Add Test Score
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] flex flex-col h-full sm:h-auto max-h-[95svh]">
+      <DialogContent className="sm:max-w-[600px] flex flex-col max-h-[90svh]">
         <DialogHeader>
           <DialogTitle>Add New Test Score</DialogTitle>
           <DialogDescription>
@@ -262,7 +274,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                             <FormControl>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select test type" />
-                            </SelectTrigger>
+                            </Trigger>
                             </FormControl>
                             <SelectContent>
                             <SelectItem value="Practice Test">Practice Test</SelectItem>
@@ -401,7 +413,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                     )}
                 </>
                 )}
-                 <DialogFooter className="bg-background pt-4 sticky bottom-0 -mx-6 px-6 pb-6 border-t">
+                 <DialogFooter className="bg-background pt-4 sticky bottom-0 -mx-6 px-6 -mb-6 pb-6 border-t">
                     <DialogClose asChild>
                         <Button type="button" variant="ghost">Cancel</Button>
                     </DialogClose>
