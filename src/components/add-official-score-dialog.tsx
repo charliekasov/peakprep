@@ -139,7 +139,6 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
   const isStanineTest = useMemo(() => studentTestType?.includes('SSAT') || studentTestType?.includes('ISEE'), [studentTestType]);
 
   useEffect(() => {
-    // When student changes, reset the form fields but keep studentId
     if (studentId) {
         const student = students.find(s => s.id === studentId);
         const testType = student?.['Test Type'] || '';
@@ -154,7 +153,6 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
             year: new Date().getFullYear().toString(),
             scores: config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : [],
         });
-        
     }
   }, [studentId, students, reset]);
   
@@ -163,7 +161,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     try {
       const monthIndex = parseInt(values.month, 10);
       const year = parseInt(values.year, 10);
-      const testDate = new Date(year, monthIndex, 15); // Use 15th to avoid timezone issues
+      const testDate = new Date(year, monthIndex, 15);
 
       const isOfficial = values.testTypeSelection.startsWith('Official');
       
@@ -174,12 +172,12 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
       };
 
       if (isOfficial) {
-         payload.testType = values.testTypeSelection;
+         payload.testType = studentTestType;
          payload.assignmentId = values.officialTestName; 
       } else {
         const practiceAssignment = assignments.find(a => a.id === values.practiceTestId);
-        payload.assignmentId = values.practiceTestId;
         payload.testType = practiceAssignment?.['Test Type'];
+        payload.assignmentId = values.practiceTestId;
       }
       
       if(!payload.assignmentId) {
