@@ -104,7 +104,7 @@ export function AddOfficialScoreDialog({
   const filteredPracticeTests = useMemo(() => {
     if (!selectedStudent) return [];
     return assignments.filter(
-      (a) => a['Test Type'] === selectedStudent['Test Type']
+      (a) => a['Test Type'] === selectedStudent['Test Type'] && a.isPracticeTest
     );
   }, [selectedStudent, assignments]);
 
@@ -265,7 +265,7 @@ export function AddOfficialScoreDialog({
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a practice test" />
-                        </SelectTrigger>
+                        </Trigger>
                       </FormControl>
                       <SelectContent>
                         {filteredPracticeTests.map((assignment) => (
