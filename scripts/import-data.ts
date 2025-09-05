@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview A script to import data from a Google Sheet into Firestore.
  *
@@ -256,36 +257,6 @@ async function importCollectionFromSheet(collectionName: string, sheetNameOrName
   // Import new data
   const importBatch = db.batch();
   
-  // --- New Logic for creating assignments from submissions ---
-  const assignmentsRef = db.collection('assignments');
-  const existingAssignments = new Set<string>();
-  if (collectionName === 'submissions') {
-      console.log('Scanning submissions to create practice test assignments...');
-      for (const item of jsonData) {
-          if (item['isPracticeTest'] === 'TRUE' && item['Full Assignment Name'] && !existingAssignments.has(item['Full Assignment Name'])) {
-              const newAssignment = {
-                  'Full Assignment Name': item['Full Assignment Name'],
-                  'isPracticeTest': true,
-                  'Source': item['Source'],
-                  'Test Type': item['Test Type'],
-                  'Difficulty': item['Difficulty'] || 'Medium',
-                  'Subject': item['Subject'] || 'Practice Test',
-                  'Broad Category': item['Broad Category'] || 'Full Test',
-                  'Link': item['Link'] || null
-              };
-              
-              // Use a consistent ID based on the name to avoid duplicates
-              const docId = newAssignment['Full Assignment Name'].replace(/[^a-zA-Z0-9]/g, '');
-              const docRef = assignmentsRef.doc(docId);
-              importBatch.set(docRef, newAssignment);
-              existingAssignments.add(item['Full Assignment Name']);
-          }
-      }
-      console.log(`Created ${existingAssignments.size} new practice test assignments.`);
-  }
-  // --- End New Logic ---
-
-
   for (const item of jsonData) {
     // Skip empty rows that might have been parsed
     if (Object.keys(item).length === 0) continue;
@@ -308,14 +279,15 @@ async function importCollectionFromSheet(collectionName: string, sheetNameOrName
 
 async function main() {
   console.log('Starting Firestore data import from Google Sheets...');
-  // Import students and assignments first
+  // Note: We are no longer importing assignments or submissions from sheets.
+  // This is now handled by the hardcoded assignments-data.ts file and manual entry.
+  // We only import students now.
   await importCollectionFromSheet('students', SHEET_NAMES.students);
-  await importCollectionFromSheet('assignments', SHEET_NAMES.assignments);
-  
-  // Then import submissions, which will also create practice test assignments
-  await importCollectionFromSheet('submissions', SHEET_NAMES.submissions);
+  // await importCollectionFromSheet('assignments', SHEET_NAMES.assignments);
+  // await importCollectionFromSheet('submissions', SHEET_NAMES.submissions);
   
   console.log('\nData import process finished.');
+  console.log('NOTE: Assignments and submissions are no longer imported from this script.');
 }
 
 main().catch(console.error);

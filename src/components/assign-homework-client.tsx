@@ -47,12 +47,19 @@ interface AssignHomeworkClientProps {
 }
 
 interface AssignmentOptions {
-  sections?: string[] | string;
+  sections?: string[];
   timing?: 'timed' | 'untimed';
 }
 
-const SAT_SECTIONS = ['Reading + Writing', 'Math'];
-const SSAT_SECTIONS = ['Verbal', 'Quantitative 1', 'Reading', 'Quantitative 2'];
+const SECTIONS_BY_TEST_TYPE: Record<string, string[]> = {
+    'SAT': ['Reading + Writing', 'Math'],
+    'ACT': ['English', 'Math', 'Reading', 'Science'],
+    'Upper Level SSAT': ['Verbal Reasoning', 'Quantitative 1', 'Reading Comprehension', 'Quantitative 2'],
+    'Middle Level SSAT': ['Verbal Reasoning', 'Quantitative 1', 'Reading Comprehension', 'Quantitative 2'],
+    'Upper Level ISEE': ['Verbal', 'Quantitative Reasoning', 'Reading Comprehension', 'Math Achievement'],
+    'Middle Level ISEE': ['Verbal', 'Quantitative Reasoning', 'Reading Comprehension', 'Math Achievement'],
+};
+
 
 export function AssignHomeworkClient({ students, assignments, submissions }: AssignHomeworkClientProps) {
   const [view, setView] = useState<'assignments' | 'email'>('assignments');
@@ -106,9 +113,14 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       if (assignment['isPracticeTest']) {
         let details = [];
         if (options.sections && Array.isArray(options.sections) && options.sections.length > 0) {
-          details.push(options.sections.join(', '));
-        } else if (options.sections && typeof options.sections === 'string' && options.sections !== 'Whole Test') {
-            details.push(options.sections);
+          const allSectionsForTest = SECTIONS_BY_TEST_TYPE[assignment['Test Type'] || ''] || [];
+          if(options.sections.length === allSectionsForTest.length) {
+            details.push('Whole Test');
+          } else {
+            details.push(options.sections.join(', '));
+          }
+        } else {
+            details.push('Whole Test');
         }
 
         if (options.timing) {
@@ -131,7 +143,8 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     }
     
     const assignedItemsText = assignedAssignmentTitles.map(title => {
-        const assignment = assignments.find(a => a['Full Assignment Name'] === title.split(' (')[0]);
+        const assignmentName = title.split(' (')[0];
+        const assignment = assignments.find(a => a['Full Assignment Name'] === assignmentName);
         if (assignment && assignment['Link']) {
             return `${title}: ${assignment['Link']}`;
         }
@@ -140,8 +153,9 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
 
 
     const firstName = selectedStudent.name.split(' ')[0];
-    const message = `Hi ${firstName},\n\n${assignedItemsText}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
+    const message = `Hi ${firstName},\n\nHere is your homework:\n\n${assignedItemsText}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
     setEmailMessage(message);
+    setEmailSubject(`Homework for ${new Date().toLocaleDateString('en-US', { weekday: 'long' })}`);
 
   }, [selectedStudent, assignedAssignmentTitles, assignments]);
 
@@ -193,7 +207,9 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     } else {
       if (assignment['isPracticeTest']) {
         setConfiguringAssignment(assignment);
-        setTempOptions({ timing: 'timed', sections: 'Whole Test' }); 
+        const sections = SECTIONS_BY_TEST_TYPE[assignment['Test Type'] || ''] || [];
+        // Default to whole test
+        setTempOptions({ timing: 'timed', sections: sections }); 
       } else {
         newSet.set(assignment.id, {});
         setSelectedAssignments(newSet);
@@ -241,20 +257,9 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     setIsSubmitting(true);
     try {
       const assignmentsPayload = Array.from(selectedAssignments.entries()).map(([id, options]) => {
-        const assignment = assignments.find(a => a.id === id)!;
-        let sections: string[] = [];
-
-        if(assignment['isPracticeTest']) {
-          if (Array.isArray(options.sections)) {
-            sections = options.sections;
-          } else if (typeof options.sections === 'string' && options.sections !== 'Whole Test') {
-            sections = [options.sections];
-          }
-        }
-        
         return {
           id,
-          sections: sections.length > 0 ? sections : undefined,
+          sections: options.sections,
           timing: options.timing,
         };
       });
@@ -290,9 +295,10 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   
   const renderConfigurationDialog = () => {
     if (!configuringAssignment || !selectedStudent) return null;
-    const isSAT = selectedStudent['Test Type'] === 'SAT';
-    const isSSAT = selectedStudent['Test Type'] === 'Upper Level SSAT';
     
+    const testSections = SECTIONS_BY_TEST_TYPE[configuringAssignment['Test Type'] || ''] || [];
+    const isSAT = configuringAssignment['Test Type'] === 'SAT';
+
     return (
        <Dialog open={!!configuringAssignment} onOpenChange={(isOpen) => !isOpen && handleCancelConfiguration()}>
           <DialogContent>
@@ -301,53 +307,60 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
               <DialogDescription>Select sections and timing for this practice test.</DialogDescription>
             </DialogHeader>
             <div className="space-y-6 py-4">
-              {isSAT && (
-                 <div className="space-y-2">
-                   <Label>Sections</Label>
+              <div className="space-y-2">
+                <Label>Sections</Label>
+                {isSAT ? (
                     <RadioGroup
-                        value={Array.isArray(tempOptions.sections) ? 'Whole Test' : tempOptions.sections}
-                        defaultValue="Whole Test"
-                        onValueChange={(value) => setTempOptions(prev => ({ ...prev, sections: value }))}
+                        value={(tempOptions.sections?.length || 0) === testSections.length ? 'Whole Test' : tempOptions.sections?.[0]}
+                        onValueChange={(value) => {
+                            const newSections = value === 'Whole Test' ? testSections : [value];
+                            setTempOptions(prev => ({ ...prev, sections: newSections }));
+                        }}
                     >
                       <div className="flex items-center space-x-2">
-                         <RadioGroupItem value="Whole Test" id="sat-whole" />
-                         <Label htmlFor="sat-whole">Whole Test</Label>
+                         <RadioGroupItem value="Whole Test" id="whole-test" />
+                         <Label htmlFor="whole-test">Whole Test</Label>
                       </div>
-                      {SAT_SECTIONS.map(section => (
+                      {testSections.map(section => (
                          <div key={section} className="flex items-center space-x-2">
-                             <RadioGroupItem value={section} id={`sat-${section}`} />
-                             <Label htmlFor={`sat-${section}`}>{section}</Label>
+                             <RadioGroupItem value={section} id={`section-${section}`} />
+                             <Label htmlFor={`section-${section}`}>{section}</Label>
                          </div>
                       ))}
                     </RadioGroup>
-                 </div>
-              )}
-              {isSSAT && (
+                ) : (
                   <div className="space-y-2">
-                      <Label>Sections (select all that apply)</Label>
-                      <div className="space-y-2">
-                          {SSAT_SECTIONS.map(section => (
-                              <div key={section} className="flex items-center space-x-2">
-                                <Checkbox
-                                    id={`ssat-${section}`}
-                                    checked={(Array.isArray(tempOptions.sections) && tempOptions.sections.includes(section))}
-                                    onCheckedChange={(checked) => {
-                                      setTempOptions(prev => {
-                                        const currentSections = Array.isArray(prev.sections) ? prev.sections : [];
-                                        if (checked) {
-                                          return { ...prev, sections: [...currentSections, section].filter(s => s !== 'Whole Test') };
-                                        } else {
-                                          return { ...prev, sections: currentSections.filter(s => s !== section) };
-                                        }
-                                      })
-                                    }}
-                                />
-                                <Label htmlFor={`ssat-${section}`}>{section}</Label>
-                              </div>
-                          ))}
+                      <div className="flex items-center space-x-2">
+                          <Checkbox
+                              id="whole-test"
+                              checked={(tempOptions.sections?.length || 0) === testSections.length}
+                              onCheckedChange={(checked) => {
+                                  setTempOptions(prev => ({...prev, sections: checked ? testSections : []}))
+                              }}
+                          />
+                          <Label htmlFor="whole-test">Whole Test</Label>
                       </div>
+                      {testSections.map(section => (
+                          <div key={section} className="flex items-center space-x-2 pl-6">
+                            <Checkbox
+                                id={`section-${section}`}
+                                checked={tempOptions.sections?.includes(section)}
+                                onCheckedChange={(checked) => {
+                                  setTempOptions(prev => {
+                                    const currentSections = prev.sections || [];
+                                    const newSections = checked 
+                                        ? [...currentSections, section]
+                                        : currentSections.filter(s => s !== section);
+                                    return { ...prev, sections: newSections };
+                                  })
+                                }}
+                            />
+                            <Label htmlFor={`section-${section}`}>{section}</Label>
+                          </div>
+                      ))}
                   </div>
-              )}
+                )}
+              </div>
               <div className="space-y-2">
                   <Label>Timing</Label>
                    <RadioGroup
@@ -370,7 +383,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
               <DialogClose asChild>
                  <Button variant="ghost" onClick={handleCancelConfiguration}>Cancel</Button>
               </DialogClose>
-              <Button onClick={handleSaveConfiguration}>Save</Button>
+              <Button onClick={handleSaveConfiguration} disabled={(tempOptions.sections?.length || 0) === 0}>Save</Button>
             </DialogFooter>
           </DialogContent>
        </Dialog>
@@ -666,5 +679,3 @@ function PracticeTestTable({ assignments, selectedAssignments, studentSubmission
       </ScrollArea>
   )
 }
-
-    
