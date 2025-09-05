@@ -93,9 +93,9 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
         assignment: assignmentMap.get(s.assignmentId),
       }))
       .filter(s => {
-          if (!s.assignment) return false;
-          // For official tests from the new dialog, the source might be 'Official'
+          // For official tests, the source is 'Official' which we check for in the set
           if (s.isOfficial) return selectedSources.has('Official');
+          if (!s.assignment) return false;
           return selectedSources.has(s.assignment.Source || '');
       })
       .sort((a, b) => a.submittedAt.getTime() - b.submittedAt.getTime());
@@ -104,7 +104,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
   const chartData = useMemo(() => {
     return studentSubmissions.map(s => {
       const dataPoint: { [key: string]: any } = {
-        name: s.isOfficial ? s.assignmentId : s.assignment?.['Full Assignment Name'] || 'Unknown Test',
+        name: s.isOfficial ? s.officialTestName : s.assignment?.['Full Assignment Name'] || 'Unknown Test',
         date: s.submittedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       };
       s.scores?.forEach(score => {
@@ -236,7 +236,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
               {[...studentSubmissions].reverse().map((submission) => (
                 <TableRow key={submission.id}>
                   <TableCell className="font-medium">
-                    {submission.isOfficial ? submission.assignmentId : submission.assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
+                    {submission.isOfficial ? submission.officialTestName : submission.assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
                   </TableCell>
                   <TableCell>
                      {submission.isOfficial ? 'Official' : submission.assignment?.Source || 'N/A'}

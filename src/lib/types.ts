@@ -49,9 +49,12 @@ export interface FirebaseSubmission {
   submittedAt: Timestamp;
   scores?: { section: string; score: number }[];
   isOfficial?: boolean;
+  officialTestName?: string;
 }
 
 export type Submission = Omit<FirebaseSubmission, 'submittedAt' | 'id'> & {
     id: string;
     submittedAt: Date;
 }
+
+    

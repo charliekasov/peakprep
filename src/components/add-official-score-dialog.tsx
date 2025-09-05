@@ -109,7 +109,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     resolver: zodResolver(formSchema),
     defaultValues: {
       studentId: '',
-      testTypeSelection: 'Practice Test',
+      testTypeSelection: '',
       officialTestName: '',
       practiceTestId: '',
       month: (new Date().getMonth()).toString(),
@@ -118,7 +118,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     },
   });
 
-  const { watch, resetField, setValue, reset } = form;
+  const { watch, resetField, setValue, reset, trigger } = form;
   const studentId = watch('studentId');
   const testTypeSelection = watch('testTypeSelection');
   const scores = watch('scores') || [];
@@ -154,10 +154,10 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
             year: new Date().getFullYear().toString(),
             scores: config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : [],
         });
+        
     }
   }, [studentId, students, reset]);
   
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
@@ -175,13 +175,23 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
 
       if (isOfficial) {
          payload.testType = values.testTypeSelection;
-         payload.assignmentId = values.officialTestName; // Pass name to be used to find/create
+         payload.assignmentId = values.officialTestName; 
       } else {
         const practiceAssignment = assignments.find(a => a.id === values.practiceTestId);
         payload.assignmentId = values.practiceTestId;
         payload.testType = practiceAssignment?.['Test Type'];
       }
       
+      if(!payload.assignmentId) {
+        toast({
+          title: 'Missing Information',
+          description: 'Please select a practice test or enter an official test name.',
+          variant: 'destructive',
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       await handleAddTestScore(payload);
 
       toast({
@@ -226,7 +236,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Student</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a student" />
@@ -414,3 +424,5 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
+
+    

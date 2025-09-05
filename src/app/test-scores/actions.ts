@@ -78,7 +78,6 @@ export async function handleAddTestScore(input: unknown) {
         finalAssignmentId = await findOrCreateOfficialTestAssignment(assignmentId, testType);
     }
     
-
     const submissionsRef = collection(db, 'submissions');
     const submissionData = {
       studentId,
@@ -88,17 +87,15 @@ export async function handleAddTestScore(input: unknown) {
       submittedAt: testDate,
       isOfficial,
     };
-
+    
+    // For official tests, we want to display the user-provided name (e.g. "May 2024 SAT")
+    // instead of the auto-generated assignment ID. We'll store the real ID in a separate
+    // field to maintain the relation, but use the friendly name for display.
+    // Let's adjust the data model slightly.
     if (isOfficial) {
-       // When saving an official test, we store the user-provided name
-       // in the assignmentId field for display purposes, but link it
-       // to the actual (potentially new) assignment document via finalAssignmentId.
-       // The UI will then know to display assignmentId if isOfficial is true.
-       submissionData.assignmentId = assignmentId; // The user-provided name
-       // We should actually save the real ID to a different field, or adjust our model.
-       // For now, let's adjust the submission logic:
-       const officialTestDocId = await findOrCreateOfficialTestAssignment(assignmentId, testType);
-       submissionData.assignmentId = officialTestDocId;
+       // `assignmentId` holds the real doc ID, `officialTestName` holds the display name.
+       submissionData.assignmentId = finalAssignmentId;
+       (submissionData as any).officialTestName = assignmentId;
     }
 
 

@@ -16,6 +16,7 @@ function fromFirebase(doc: DocumentSnapshot): Submission {
     submittedAt: (data.submittedAt as Timestamp)?.toDate() || new Date(),
     scores: data.scores || [],
     isOfficial: data.isOfficial || false,
+    officialTestName: data.officialTestName
   };
 
   // --- Dynamic Score Transformation ---
@@ -70,3 +71,5 @@ export async function updateSubmission(submissionId: string, updates: Partial<{ 
   
   return Promise.resolve();
 }
+
+    
