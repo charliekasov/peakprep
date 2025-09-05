@@ -49,15 +49,42 @@ const scoreSchema = z.object({
   score: z.coerce.number(),
 });
 
-const formSchema = z.object({
-  studentId: z.string().min(1, 'Student is required.'),
-  testTypeSelection: z.string().min(1, 'Test type is required.'),
-  officialTestName: z.string().optional(),
-  practiceTestId: z.string().optional(),
-  month: z.string().min(1, 'Month is required.'),
-  year: z.string().min(1, 'Year is required.'),
-  scores: z.array(scoreSchema).optional(),
-});
+// Refined schema with conditional validation
+const formSchema = z
+  .object({
+    studentId: z.string().min(1, 'Student is required.'),
+    testTypeSelection: z.string().min(1, 'Test type is required.'),
+    officialTestName: z.string().optional(),
+    practiceTestId: z.string().optional(),
+    month: z.string().min(1, 'Month is required.'),
+    year: z.string().min(1, 'Year is required.'),
+    scores: z.array(scoreSchema).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.testTypeSelection.startsWith('Official')) {
+        return !!data.officialTestName && data.officialTestName.length > 0;
+      }
+      return true;
+    },
+    {
+      message: 'Test name is required for official tests.',
+      path: ['officialTestName'],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.testTypeSelection === 'Practice Test') {
+        return !!data.practiceTestId && data.practiceTestId.length > 0;
+      }
+      return true;
+    },
+    {
+      message: 'Please select a practice test.',
+      path: ['practiceTestId'],
+    }
+  );
+
 
 const getStanine = (percentile: number) => {
   if (percentile >= 96) return 9;
@@ -182,16 +209,11 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
       const isOfficial = values.testTypeSelection !== 'Practice Test';
       
       const assignmentId = isOfficial ? values.officialTestName : values.practiceTestId;
-      if (!assignmentId) {
-          toast({ title: 'Missing Information', description: 'Please select a practice test or enter an official test name.', variant: 'destructive'});
-          setIsSubmitting(false);
-          return;
-      }
-
+      
       const payload = {
         studentId: values.studentId,
         testType: studentTestType,
-        assignmentId: assignmentId,
+        assignmentId: assignmentId!,
         testDate,
         scores: values.scores || [],
         isOfficial: isOfficial,
@@ -381,22 +403,27 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                                     <Controller
                                         key={section.name}
                                         control={form.control}
-                                        name={`scores.${index}.score`}
-                                        defaultValue={section.default}
+                                        name={`scores.${index}`}
+                                        defaultValue={{ section: section.name, score: section.default }}
                                         render={({ field }) => (
                                         <FormItem>
                                             <div className="flex items-center justify-between">
                                                 <FormLabel>{section.name}</FormLabel>
-                                                {isStanineTest && scores[index]?.score > 0 && (
+                                                {isStanineTest && field.value?.score > 0 && (
                                                     <span className="text-sm font-medium text-muted-foreground">
-                                                    Stanine: {getStanine(scores[index].score)}
+                                                    Stanine: {getStanine(field.value.score)}
                                                     </span>
                                                 )}
                                             </div>
                                             <FormControl>
                                                 <Stepper
-                                                    value={field.value}
-                                                    onValueChange={field.onChange}
+                                                    value={field.value?.score || section.default}
+                                                    onValueChange={(newScore) => {
+                                                        field.onChange({
+                                                            section: section.name,
+                                                            score: newScore
+                                                        });
+                                                    }}
                                                     min={section.min}
                                                     max={section.max}
                                                     step={section.step}
@@ -428,3 +455,5 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
+
+    
