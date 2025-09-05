@@ -102,9 +102,11 @@ export function AddOfficialScoreDialog({
   }, [selectedStudentId, students]);
 
   const filteredPracticeTests = useMemo(() => {
-    if (!selectedStudent) return [];
+    if (!selectedStudent) {
+      return [];
+    }
     return assignments.filter(
-      (a) => a['Test Type'] === selectedStudent['Test Type'] && a.isPracticeTest
+      (a) => a['Test Type'] === selectedStudent?.['Test Type'] && a.isPracticeTest
     );
   }, [selectedStudent, assignments]);
 
@@ -126,17 +128,14 @@ export function AddOfficialScoreDialog({
   async function onSubmit(values: z.infer<typeof testScoreSchema>) {
     setIsSubmitting(true);
     try {
-      // Create a mutable copy to adjust
       const payload = { ...values };
 
       if (values.testType === PRACTICE_TEST_ID) {
         payload.testType = assignments.find(a => a.id === values.assignmentId)?.['Full Assignment Name'] || 'Practice Test';
       } else {
-        // It's an official test, no assignmentId should be sent
         delete payload.assignmentId;
       }
       
-      // Re-map scores to ensure correct section names and values
       payload.scores = sections.map((section, index) => ({
         section,
         score: values.scores[index]?.score || 0,
@@ -188,7 +187,6 @@ export function AddOfficialScoreDialog({
                   <Select
                     onValueChange={(value) => {
                         field.onChange(value);
-                        // Reset dependent fields
                         form.setValue('testType', '');
                         form.setValue('assignmentId', '');
                         form.setValue('scores', []);
