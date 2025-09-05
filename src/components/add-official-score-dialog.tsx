@@ -39,8 +39,8 @@ import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { PlusCircle, Loader2, CalendarIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { handleAddOfficialScore } from '@/app/test-scores/actions';
-import type { Student } from '@/lib/types';
+import { handleAddTestScore } from '@/app/test-scores/actions';
+import type { Student, Assignment } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -51,57 +51,76 @@ const scoreSchema = z.object({
     .min(1, 'Score is required.'),
 });
 
-const officialScoreSchema = z.object({
+const testScoreSchema = z.object({
   studentId: z.string().min(1, 'Student is required.'),
   testType: z.string().min(1, 'Test type is required.'),
+  assignmentId: z.string().optional(),
   testDate: z.date({ required_error: 'Test date is required.' }),
   scores: z.array(scoreSchema),
 });
 
-const TEST_TYPES: { [key: string]: string[] } = {
+const OFFICIAL_TEST_TYPES: { [key: string]: string[] } = {
   'Official SAT': ['Reading + Writing', 'Math'],
   'Official PSAT': ['Reading + Writing', 'Math'],
   'Official SSAT': ['Verbal', 'Quantitative', 'Reading'],
 };
 
-interface AddOfficialScoreDialogProps {
+const PRACTICE_TEST_ID = 'practice-test';
+
+interface AddTestScoreDialogProps {
   students: Student[];
+  assignments: Assignment[];
   onScoreAdded: () => void;
 }
 
-export function AddOfficialScoreDialog({ students, onScoreAdded }: AddOfficialScoreDialogProps) {
+export function AddTestScoreDialog({
+  students,
+  assignments,
+  onScoreAdded,
+}: AddTestScoreDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof officialScoreSchema>>({
-    resolver: zodResolver(officialScoreSchema),
+  const form = useForm<z.infer<typeof testScoreSchema>>({
+    resolver: zodResolver(testScoreSchema),
     defaultValues: {
       studentId: '',
       testType: '',
+      assignmentId: '',
       scores: [],
     },
   });
 
   const selectedTestType = form.watch('testType');
-  const sections = TEST_TYPES[selectedTestType] || [];
+  const selectedAssignmentId = form.watch('assignmentId');
 
-  async function onSubmit(values: z.infer<typeof officialScoreSchema>) {
+  const sections =
+    selectedTestType === PRACTICE_TEST_ID
+      ? assignments.find((a) => a.id === selectedAssignmentId)?.['Test Type'] === 'SAT' ? ['Reading + Writing', 'Math'] : ['Verbal', 'Quantitative', 'Reading']
+      : OFFICIAL_TEST_TYPES[selectedTestType] || [];
+
+  async function onSubmit(values: z.infer<typeof testScoreSchema>) {
     setIsSubmitting(true);
     try {
-      // Ensure scores only include the relevant sections
       const payload = {
         ...values,
+        // Ensure we only pass the assignmentId if a practice test was selected
+        assignmentId: values.testType === PRACTICE_TEST_ID ? values.assignmentId : undefined,
+        // If it's a practice test, the "type" is the assignment name for the backend
+        testType: values.testType === PRACTICE_TEST_ID 
+          ? assignments.find(a => a.id === values.assignmentId)?.['Full Assignment Name'] 
+          : values.testType,
         scores: sections.map((section, index) => ({
           section,
           score: values.scores[index].score,
         })),
       };
 
-      await handleAddOfficialScore(payload);
+      await handleAddTestScore(payload);
       toast({
         title: 'Success!',
-        description: 'Official test score has been added.',
+        description: 'Test score has been added.',
       });
       onScoreAdded();
       form.reset();
@@ -122,28 +141,28 @@ export function AddOfficialScoreDialog({ students, onScoreAdded }: AddOfficialSc
       <DialogTrigger asChild>
         <Button>
           <PlusCircle className="mr-2 h-4 w-4" />
-          Add Official Score
+          Add Test Score
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Official Test Score</DialogTitle>
+          <DialogTitle>Add New Test Score</DialogTitle>
           <DialogDescription>
-            Manually enter scores for an official test a student has taken.
+            Enter scores for an official test or an unassigned practice test.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="studentId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Student</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a student" />
@@ -166,15 +185,21 @@ export function AddOfficialScoreDialog({ students, onScoreAdded }: AddOfficialSc
               name="testType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Test Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormLabel>Test Category</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a test type" />
+                        <SelectValue placeholder="Select a category" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Object.keys(TEST_TYPES).map((type) => (
+                      <SelectItem value={PRACTICE_TEST_ID}>
+                        Practice Test
+                      </SelectItem>
+                      {Object.keys(OFFICIAL_TEST_TYPES).map((type) => (
                         <SelectItem key={type} value={type}>
                           {type}
                         </SelectItem>
@@ -185,6 +210,35 @@ export function AddOfficialScoreDialog({ students, onScoreAdded }: AddOfficialSc
                 </FormItem>
               )}
             />
+            {selectedTestType === PRACTICE_TEST_ID && (
+              <FormField
+                control={form.control}
+                name="assignmentId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Practice Test</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a practice test" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {assignments.map((assignment) => (
+                          <SelectItem key={assignment.id} value={assignment.id}>
+                            {assignment['Full Assignment Name']}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="testDate"
@@ -226,7 +280,6 @@ export function AddOfficialScoreDialog({ students, onScoreAdded }: AddOfficialSc
                 </FormItem>
               )}
             />
-
             {sections.length > 0 && (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {sections.map((section, index) => (
@@ -238,11 +291,7 @@ export function AddOfficialScoreDialog({ students, onScoreAdded }: AddOfficialSc
                       <FormItem>
                         <FormLabel>{section}</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="Score"
-                            {...field}
-                          />
+                          <Input type="number" placeholder="Score" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -252,11 +301,10 @@ export function AddOfficialScoreDialog({ students, onScoreAdded }: AddOfficialSc
               </div>
             )}
             <DialogFooter className="pt-4">
-              <Button
-                type="submit"
-                disabled={isSubmitting || !selectedTestType}
-              >
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button type="submit" disabled={isSubmitting || !selectedTestType}>
+                {isSubmitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Save Score
               </Button>
             </DialogFooter>

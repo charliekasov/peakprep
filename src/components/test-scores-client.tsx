@@ -28,7 +28,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Line, LineChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
-import { AddOfficialScoreDialog } from './add-official-score-dialog';
+import { AddTestScoreDialog } from './add-test-score-dialog';
 
 interface TestScoresClientProps {
   students: Student[];
@@ -73,6 +73,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
 
   const studentMap = useMemo(() => new Map(students.map(s => [s.id, s])), [students]);
   const assignmentMap = useMemo(() => new Map(assignments.map(a => [a.id, a])), [assignments]);
+  const practiceTests = useMemo(() => assignments.filter(a => a.isPracticeTest), [assignments]);
 
   const scoredSubmissions = useMemo(() => {
     return submissions.filter(s => {
@@ -154,7 +155,11 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                </SelectContent>
              </Select>
            </div>
-           <AddOfficialScoreDialog students={students} onScoreAdded={onScoreAdd} />
+           <AddTestScoreDialog 
+              students={students} 
+              assignments={practiceTests}
+              onScoreAdded={onScoreAdd} 
+            />
         </div>
       </div>
 
