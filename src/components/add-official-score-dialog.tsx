@@ -67,17 +67,17 @@ const OFFICIAL_TEST_TYPES: { [key: string]: string[] } = {
 
 const PRACTICE_TEST_ID = 'practice-test';
 
-interface AddTestScoreDialogProps {
+interface AddOfficialScoreDialogProps {
   students: Student[];
   assignments: Assignment[];
   onScoreAdded: () => void;
 }
 
-export function AddTestScoreDialog({
+export function AddOfficialScoreDialog({
   students,
   assignments,
   onScoreAdded,
-}: AddTestScoreDialogProps) {
+}: AddOfficialScoreDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
