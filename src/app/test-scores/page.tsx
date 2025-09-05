@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useData } from '@/context/data-provider';
 
 export default function TestScoresPage() {
-  const { students, assignments, submissions, isLoading } = useData();
+  const { students, assignments, submissions, isLoading, refetchData } = useData();
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -24,6 +24,7 @@ export default function TestScoresPage() {
           students={students}
           assignments={assignments}
           submissions={submissions}
+          onScoreAdd={refetchData}
         />
        )}
     </div>

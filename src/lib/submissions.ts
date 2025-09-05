@@ -1,3 +1,4 @@
+
 'use client';
 
 import { collection, getDocs, query, where, updateDoc, doc } from 'firebase/firestore';
@@ -14,6 +15,7 @@ function fromFirebase(doc: DocumentSnapshot): Submission {
     id: doc.id,
     submittedAt: (data.submittedAt as Timestamp)?.toDate() || new Date(),
     scores: data.scores || [],
+    isOfficial: data.isOfficial || false,
   };
 
   // --- Dynamic Score Transformation ---

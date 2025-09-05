@@ -28,14 +28,17 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Line, LineChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { AddOfficialScoreDialog } from './add-official-score-dialog';
 
 interface TestScoresClientProps {
   students: Student[];
   assignments: Assignment[];
   submissions: Submission[];
+  onScoreAdd: () => void;
 }
 
 const sourceColors: { [key: string]: string } = {
+  'Official': '#16a34a', // green-600
   'Bluebook': '#3b82f6', // blue-500
   'Test Innovators': '#60a5fa', // blue-400
   'Test Innovators Official Upper Level': '#93c5fd', // blue-300
@@ -52,7 +55,7 @@ const sectionColors: { [key: string]: string } = {
 }
 
 
-export function TestScoresClient({ students, assignments, submissions }: TestScoresClientProps) {
+export function TestScoresClient({ students, assignments, submissions, onScoreAdd }: TestScoresClientProps) {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   
@@ -74,7 +77,7 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
   const scoredSubmissions = useMemo(() => {
     return submissions.filter(s => {
        const assignment = assignmentMap.get(s.assignmentId);
-       return assignment?.isPracticeTest &&
+       return (assignment?.isPracticeTest || s.isOfficial) &&
          s.status === 'Completed' &&
          s.scores &&
          s.scores.length > 0;
@@ -89,14 +92,14 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
         ...s,
         assignment: assignmentMap.get(s.assignmentId),
       }))
-      .filter(s => s.assignment && selectedSources.has(s.assignment.source || ''))
+      .filter(s => s.assignment && selectedSources.has(s.assignment.Source || ''))
       .sort((a, b) => a.submittedAt.getTime() - b.submittedAt.getTime());
   }, [selectedStudentId, scoredSubmissions, assignmentMap, selectedSources]);
 
   const chartData = useMemo(() => {
     return studentSubmissions.map(s => {
       const dataPoint: { [key: string]: any } = {
-        name: s.assignment?.title || 'Unknown Test',
+        name: s.assignment?.['Full Assignment Name'] || 'Unknown Test',
         date: s.submittedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       };
       s.scores?.forEach(score => {
@@ -136,19 +139,22 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Test Scores</h1>
-        <div className="w-full sm:w-64">
-          <Select onValueChange={setSelectedStudentId} value={selectedStudentId || ''}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select a student..." />
-            </SelectTrigger>
-            <SelectContent>
-              {students.map(student => (
-                <SelectItem key={student.id} value={student.id}>
-                  {student.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex items-center gap-2">
+           <div className="w-full sm:w-64">
+             <Select onValueChange={setSelectedStudentId} value={selectedStudentId || ''}>
+               <SelectTrigger>
+                 <SelectValue placeholder="Select a student..." />
+               </SelectTrigger>
+               <SelectContent>
+                 {students.map(student => (
+                   <SelectItem key={student.id} value={student.id}>
+                     {student.name}
+                   </SelectItem>
+                 ))}
+               </SelectContent>
+             </Select>
+           </div>
+           <AddOfficialScoreDialog students={students} onScoreAdded={onScoreAdd} />
         </div>
       </div>
 
@@ -156,7 +162,7 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
         <CardHeader>
           <CardTitle>Score Visualization for {selectedStudent?.name || '...'}</CardTitle>
           <CardDescription>
-            Practice test scores over time. Use the checkboxes to filter by test source.
+            Practice and official test scores over time. Use the checkboxes to filter by test source.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -167,7 +173,7 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
                   id={`source-${source}`}
                   checked={selectedSources.has(source)}
                   onCheckedChange={() => handleSourceToggle(source)}
-                  style={{ backgroundColor: selectedSources.has(source) ? sourceColors[source] : undefined }}
+                  style={{ backgroundColor: selectedSources.has(source) ? sourceColors[source] : undefined, borderColor: sourceColors[source] }}
                 />
                 <Label htmlFor={`source-${source}`}>{source}</Label>
               </div>
@@ -189,7 +195,7 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
                             type="monotone"
                             dataKey={section} 
                             stroke={sectionColors[section] || Object.values(sourceColors)[index % Object.keys(sourceColors).length]}
-                            strokeDasharray="5 5"
+                            strokeWidth={2}
                             activeDot={{ r: 8 }}
                          />
                     ))}
@@ -206,9 +212,9 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
       
       <Card>
         <CardHeader>
-          <CardTitle>Recent Scores Log</CardTitle>
+          <CardTitle>Scores Log</CardTitle>
           <CardDescription>
-            A log of recently entered practice test scores for {selectedStudent?.name || '...'}.
+            A log of recently entered practice and official test scores for {selectedStudent?.name || '...'}.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -222,13 +228,13 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
               </TableRow>
             </TableHeader>
             <TableBody>
-              {studentSubmissions.map((submission) => (
+              {[...studentSubmissions].reverse().map((submission) => (
                 <TableRow key={submission.id}>
                   <TableCell className="font-medium">
-                    {submission.assignment?.title || 'Unknown Assignment'}
+                    {submission.assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
                   </TableCell>
                   <TableCell>
-                    {submission.assignment?.source || 'N/A'}
+                    {submission.assignment?.Source || 'N/A'}
                   </TableCell>
                   <TableCell>
                     {submission.submittedAt.toLocaleDateString()}

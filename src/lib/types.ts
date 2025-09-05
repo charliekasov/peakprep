@@ -1,3 +1,4 @@
+
 import type { Timestamp } from 'firebase/firestore';
 
 export interface Student {
@@ -31,6 +32,7 @@ export interface FirebaseAssignment {
   'Test Type'?: string;
   'Source'?: string;
   'isPracticeTest'?: boolean;
+  'isOfficialTest'?: boolean;
 }
 
 export type Assignment = FirebaseAssignment & {
@@ -46,11 +48,10 @@ export interface FirebaseSubmission {
   status: SubmissionStatus;
   submittedAt: Timestamp;
   scores?: { section: string; score: number }[];
+  isOfficial?: boolean;
 }
 
 export type Submission = Omit<FirebaseSubmission, 'submittedAt' | 'id'> & {
     id: string;
     submittedAt: Date;
 }
-
-    
