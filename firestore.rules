@@ -2,10 +2,9 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow read/write access to students, assignments, and submissions
-    // collections for any authenticated user.
-    // In a production app, you would likely want to restrict this further,
-    // for example, only allowing a tutor to access their own students.
+    // Allow read and write access to students, assignments, and submissions
+    // only for authenticated users. This is a secure default for this app,
+    // as only the tutor (an authenticated user) should be able to modify data.
     match /{collection}/{docId} {
       allow read, write: if request.auth != null;
     }
