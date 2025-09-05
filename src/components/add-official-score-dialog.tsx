@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -61,6 +61,7 @@ const testScoreSchema = z.object({
 
 const OFFICIAL_TEST_TYPES: { [key: string]: string[] } = {
   'Official SAT': ['Reading + Writing', 'Math'],
+  'Official ACT': ['English', 'Math', 'Reading', 'Science'],
   'Official PSAT': ['Reading + Writing', 'Math'],
   'Official SSAT': ['Verbal', 'Quantitative', 'Reading'],
 };
@@ -92,30 +93,55 @@ export function AddOfficialScoreDialog({
     },
   });
 
+  const selectedStudentId = form.watch('studentId');
   const selectedTestType = form.watch('testType');
   const selectedAssignmentId = form.watch('assignmentId');
 
-  const sections =
-    selectedTestType === PRACTICE_TEST_ID
-      ? assignments.find((a) => a.id === selectedAssignmentId)?.['Test Type'] === 'SAT' ? ['Reading + Writing', 'Math'] : ['Verbal', 'Quantitative', 'Reading']
-      : OFFICIAL_TEST_TYPES[selectedTestType] || [];
+  const selectedStudent = useMemo(() => {
+    return students.find((s) => s.id === selectedStudentId);
+  }, [selectedStudentId, students]);
+
+  const filteredPracticeTests = useMemo(() => {
+    if (!selectedStudent) return [];
+    return assignments.filter(
+      (a) => a['Test Type'] === selectedStudent['Test Type']
+    );
+  }, [selectedStudent, assignments]);
+
+  const sections = useMemo(() => {
+    if (selectedTestType === PRACTICE_TEST_ID) {
+      const assignment = assignments.find((a) => a.id === selectedAssignmentId);
+      if (!assignment) return [];
+      const testType = assignment['Test Type'];
+      if (testType === 'SAT' || testType === 'PSAT') return ['Reading + Writing', 'Math'];
+      if (testType === 'ACT') return ['English', 'Math', 'Reading', 'Science'];
+      if (testType?.includes('SSAT')) return ['Verbal', 'Quantitative', 'Reading'];
+      if (testType?.includes('ISEE')) return ['Verbal', 'Quantitative Reasoning', 'Reading Comprehension', 'Math Achievement'];
+      return [];
+    }
+    return OFFICIAL_TEST_TYPES[selectedTestType] || [];
+  }, [selectedTestType, selectedAssignmentId, assignments]);
+  
 
   async function onSubmit(values: z.infer<typeof testScoreSchema>) {
     setIsSubmitting(true);
     try {
-      const payload = {
-        ...values,
-        // Ensure we only pass the assignmentId if a practice test was selected
-        assignmentId: values.testType === PRACTICE_TEST_ID ? values.assignmentId : undefined,
-        // If it's a practice test, the "type" is the assignment name for the backend
-        testType: values.testType === PRACTICE_TEST_ID 
-          ? assignments.find(a => a.id === values.assignmentId)?.['Full Assignment Name'] 
-          : values.testType,
-        scores: sections.map((section, index) => ({
-          section,
-          score: values.scores[index].score,
-        })),
-      };
+      // Create a mutable copy to adjust
+      const payload = { ...values };
+
+      if (values.testType === PRACTICE_TEST_ID) {
+        payload.testType = assignments.find(a => a.id === values.assignmentId)?.['Full Assignment Name'] || 'Practice Test';
+      } else {
+        // It's an official test, no assignmentId should be sent
+        delete payload.assignmentId;
+      }
+      
+      // Re-map scores to ensure correct section names and values
+      payload.scores = sections.map((section, index) => ({
+        section,
+        score: values.scores[index]?.score || 0,
+      }));
+
 
       await handleAddTestScore(payload);
       toast({
@@ -160,7 +186,13 @@ export function AddOfficialScoreDialog({
                 <FormItem>
                   <FormLabel>Student</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                        field.onChange(value);
+                        // Reset dependent fields
+                        form.setValue('testType', '');
+                        form.setValue('assignmentId', '');
+                        form.setValue('scores', []);
+                    }}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -180,6 +212,8 @@ export function AddOfficialScoreDialog({
                 </FormItem>
               )}
             />
+            {selectedStudentId && (
+            <>
             <FormField
               control={form.control}
               name="testType"
@@ -187,7 +221,11 @@ export function AddOfficialScoreDialog({
                 <FormItem>
                   <FormLabel>Test Category</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                        field.onChange(value);
+                        form.setValue('assignmentId', '');
+                        form.setValue('scores', []);
+                    }}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -218,7 +256,10 @@ export function AddOfficialScoreDialog({
                   <FormItem>
                     <FormLabel>Practice Test</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        form.setValue('scores', []);
+                      }}
                       defaultValue={field.value}
                     >
                       <FormControl>
@@ -227,7 +268,7 @@ export function AddOfficialScoreDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {assignments.map((assignment) => (
+                        {filteredPracticeTests.map((assignment) => (
                           <SelectItem key={assignment.id} value={assignment.id}>
                             {assignment['Full Assignment Name']}
                           </SelectItem>
@@ -300,8 +341,10 @@ export function AddOfficialScoreDialog({
                 ))}
               </div>
             )}
+            </>
+            )}
             <DialogFooter className="pt-4">
-              <Button type="submit" disabled={isSubmitting || !selectedTestType}>
+              <Button type="submit" disabled={isSubmitting || !selectedTestType || (selectedTestType === PRACTICE_TEST_ID && !selectedAssignmentId)}>
                 {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
