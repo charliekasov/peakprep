@@ -18,6 +18,7 @@ const testScoreSchema = z.object({
   assignmentId: z.string().min(1, 'Test identifier is required.'),
   testDate: z.date({ required_error: 'Test date is required.' }),
   scores: z.array(scoreSchema),
+  isOfficial: z.boolean(),
 });
 
 async function findOrCreateOfficialTestAssignment(testName: string, testType: string) {
@@ -31,12 +32,14 @@ async function findOrCreateOfficialTestAssignment(testName: string, testType: st
   const querySnapshot = await getDocs(q);
 
   if (!querySnapshot.empty) {
+    // Return the ID of the existing official test assignment
     return querySnapshot.docs[0].id;
   } else {
+    // Create a new official test assignment if it doesn't exist
     console.log(`Official test "${testName}" not found. Creating a new assignment entry.`);
     const newAssignment = {
       'Full Assignment Name': testName,
-      'isPracticeTest': true,
+      'isPracticeTest': false, // Official tests are not practice tests in this context
       'isOfficialTest': true,
       'Source': 'Official',
       'Test Type': testType,
@@ -52,25 +55,24 @@ export async function handleAddTestScore(input: unknown) {
   const validatedInput = testScoreSchema.safeParse(input);
 
   if (!validatedInput.success) {
+    const firstError = validatedInput.error.errors[0];
     console.error(
       'Invalid input for handleAddTestScore:',
-      validatedInput.error.flatten()
+      `Field: ${firstError.path.join('.')} - Message: ${firstError.message}`
     );
-    const firstError = validatedInput.error.errors[0];
     throw new Error(
       `Invalid input: ${firstError.path.join('.')} - ${firstError.message}`
     );
   }
 
-  const { studentId, testType, assignmentId, testDate, scores } = validatedInput.data;
-  const isOfficial = !assignmentId.includes("-"); // A simple check: practice tests have generated IDs with hyphens.
-
+  const { studentId, testType, assignmentId, testDate, scores, isOfficial } = validatedInput.data;
+  
   try {
     let finalAssignmentId = assignmentId;
     let officialTestDisplayName;
 
     if (isOfficial) {
-      officialTestDisplayName = assignmentId;
+      officialTestDisplayName = assignmentId; // The user-provided name
       finalAssignmentId = await findOrCreateOfficialTestAssignment(assignmentId, testType);
     }
     
@@ -97,5 +99,3 @@ export async function handleAddTestScore(input: unknown) {
     throw new Error('Failed to add test score.');
   }
 }
-
-    
