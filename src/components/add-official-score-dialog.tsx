@@ -120,8 +120,8 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
 
   const { watch, reset, setValue } = form;
   const studentId = watch('studentId');
-  const testTypeSelection = watch('testTypeSelection');
   const scores = watch('scores') || [];
+  const testTypeSelection = watch('testTypeSelection');
 
   const selectedStudent = useMemo(() => students.find(s => s.id === studentId), [studentId, students]);
   const studentTestType = selectedStudent?.['Test Type'];
@@ -155,7 +155,6 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
         });
         setValue('testTypeSelection', 'Practice Test');
     } else {
-        // Reset form if no student is selected
         reset({
           studentId: '',
           testTypeSelection: '',
@@ -167,7 +166,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
         })
     }
   }, [studentId, students, reset, setValue]);
-  
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!studentTestType) {
         toast({ title: 'Error', description: 'Could not determine test type for student.', variant: 'destructive'});
@@ -178,7 +177,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     try {
       const monthIndex = parseInt(values.month, 10);
       const year = parseInt(values.year, 10);
-      const testDate = new Date(year, monthIndex, 15); // Use 15th to avoid timezone issues
+      const testDate = new Date(year, monthIndex, 15);
 
       const isOfficial = values.testTypeSelection !== 'Practice Test';
       
@@ -249,7 +248,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                             <SelectValue placeholder="Select a student" />
                         </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent position="popper">
                         {students.map((student) => (
                             <SelectItem key={student.id} value={student.id}>
                             {student.name}
@@ -299,7 +298,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                                 <SelectValue placeholder="Select a practice test" />
                                 </SelectTrigger>
                             </FormControl>
-                            <SelectContent>
+                            <SelectContent position="popper">
                                 {filteredPracticeTests.map((test) => (
                                 <SelectItem key={test.id} value={test.id}>
                                     {test['Full Assignment Name']}
@@ -429,3 +428,5 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
+
+    

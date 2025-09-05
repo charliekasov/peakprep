@@ -47,7 +47,6 @@ async function findOrCreateOfficialTestAssignment(testName: string, testType: st
       'Source': 'Official',
       'Test Type': testType,
       'Subject': 'Official Test',
-       // Add other default fields if necessary
       'Broad Category': 'Official Test',
       'Difficulty': 'Medium',
       'Link': ''
@@ -71,9 +70,8 @@ export async function handleAddTestScore(input: unknown) {
   try {
     let finalAssignmentId = assignmentId;
     
-    // If it's an official test, the `assignmentId` is actually the test name.
-    // We need to find or create a corresponding assignment document.
     if (isOfficial) {
+      // For official tests, the 'assignmentId' from the form is the test name.
       finalAssignmentId = await findOrCreateOfficialTestAssignment(assignmentId, testType);
     }
     
@@ -84,21 +82,25 @@ export async function handleAddTestScore(input: unknown) {
       status: 'Completed' as SubmissionStatus,
       submittedAt: testDate,
       isOfficial,
-      // Store the user-provided name for display purposes if it's official
+      // Store the user-entered name for official tests for display purposes.
       ...(isOfficial && { officialTestName: assignmentId }),
     };
 
     const submissionsRef = collection(db, 'submissions');
     await addDoc(submissionsRef, submissionData);
 
+    // Revalidate all paths that might show this new data.
     revalidatePath('/test-scores');
     revalidatePath('/');
     revalidatePath('/assignments');
+    revalidatePath('/needs-review');
+
 
     return { success: true, message: 'Test score added successfully.' };
   } catch (error: any) {
     console.error('Error adding test score:', error);
-    // Propagate a more specific error message if possible
     throw new Error(error.message || 'Failed to add test score.');
   }
 }
+
+    

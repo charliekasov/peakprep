@@ -52,6 +52,12 @@ const sectionColors: { [key: string]: string } = {
   'Verbal Reasoning': '#ffc658',
   'Quantitative Reasoning': '#ff8042',
   'Reading Comprehension': '#0088FE',
+  'English': '#8884d8',
+  'Reading': '#82ca9d',
+  'Science': '#ffc658',
+  'Verbal': '#ff8042',
+  'Quantitative': '#0088FE',
+  'Math Achievement': '#ff7300',
 }
 
 
@@ -93,7 +99,6 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
         assignment: assignmentMap.get(s.assignmentId),
       }))
       .filter(s => {
-          // For official tests, the source is 'Official' which we check for in the set
           if (s.isOfficial) return selectedSources.has('Official');
           if (!s.assignment) return false;
           return selectedSources.has(s.assignment.Source || '');
@@ -139,6 +144,14 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
   if (!isMounted) {
     return null; // or a loading skeleton
   }
+
+  const yAxisDomain = useMemo(() => {
+    const testType = selectedStudent?.['Test Type'];
+    if (testType === 'SAT') return [200, 800];
+    if (testType === 'ACT') return [1, 36];
+    if (testType?.includes('SSAT') || testType?.includes('ISEE')) return [1, 99];
+    return ['auto', 'auto']; // Default domain
+  }, [selectedStudent]);
 
   return (
     <>
@@ -191,7 +204,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                 <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
-                    <YAxis type="number" domain={[200, 800]} ticks={[200, 300, 400, 500, 600, 700, 800]} />
+                    <YAxis type="number" domain={yAxisDomain} />
                     <Tooltip />
                     <Legend />
                     {allSections.map((section, index) => (
@@ -199,7 +212,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                             key={section} 
                             type="monotone"
                             dataKey={section} 
-                            stroke={sectionColors[section] || Object.values(sourceColors)[index % Object.keys(sourceColors).length]}
+                            stroke={sectionColors[section] || '#8884d8'}
                             strokeWidth={2}
                             activeDot={{ r: 8 }}
                          />
@@ -258,5 +271,3 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
     </>
   );
 }
-
-    
