@@ -42,17 +42,11 @@ import { useData } from '@/context/data-provider';
 const studentSchema = z.object({
   'Student Name': z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   'Student Email': z.string().email({ message: 'Please enter a valid email address.' }),
-  'Parent Email 1': z.string().optional(),
-  'Parent Email 2': z.string().optional(),
+  'Parent Email 1': z.union([z.string().email(), z.literal('')]).optional(),
+  'Parent Email 2': z.union([z.string().email(), z.literal('')]).optional(),
   'Test Type': z.string().min(1, { message: 'Please select a test type.' }),
   'Upcoming Test Date': z.string().optional(),
   profile: z.string().optional(),
-}).refine(data => !data['Parent Email 1'] || z.string().email().safeParse(data['Parent Email 1']).success, {
-    message: "Invalid email",
-    path: ['Parent Email 1'],
-}).refine(data => !data['Parent Email 2'] || z.string().email().safeParse(data['Parent Email 2']).success, {
-    message: "Invalid email",
-    path: ['Parent Email 2'],
 });
 
 
