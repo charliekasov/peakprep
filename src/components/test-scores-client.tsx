@@ -252,8 +252,8 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                           if (!dataPoint) return label;
                           return (
                             <div>
-                                <p className="font-bold">{label}</p>
-                                <p className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</p>
+                                <div className="font-bold">{label}</div>
+                                <div className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</div>
                             </div>
                           )
                       }}
