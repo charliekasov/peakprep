@@ -31,13 +31,27 @@ import { Button } from '@/components/ui/button';
 import { Line, LineChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { AddOfficialScoreDialog } from './add-official-score-dialog';
 import { EditScoreDialog } from './edit-score-dialog';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Loader2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { useToast } from '@/hooks/use-toast';
+import { handleDeleteTestScore } from '@/app/test-scores/actions';
+
 
 interface TestScoresClientProps {
   students: Student[];
@@ -81,6 +95,9 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [editingSubmission, setEditingSubmission] = useState<Submission | null>(null);
+  const [deletingSubmission, setDeletingSubmission] = useState<Submission | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
   
   useEffect(() => {
     setIsMounted(true);
@@ -175,6 +192,21 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
       }
       return newSet;
     });
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingSubmission) return;
+    setIsDeleting(true);
+    try {
+      await handleDeleteTestScore({ submissionId: deletingSubmission.id });
+      toast({ title: 'Success', description: 'Test score deleted successfully.' });
+      onScoreAdd(); // Refetch data
+      setDeletingSubmission(null);
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message || 'Failed to delete score.', variant: 'destructive' });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const yAxisDomain = useMemo(() => {
@@ -328,6 +360,13 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                         <DropdownMenuItem onClick={() => setEditingSubmission(submission)}>
                           Edit
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => setDeletingSubmission(submission)}
+                        >
+                          Delete
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -337,6 +376,8 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
           </Table>
         </CardContent>
       </Card>
+
+      {/* Edit Dialog */}
       {editingSubmission && selectedStudent && (
         <EditScoreDialog
           submission={editingSubmission}
@@ -353,6 +394,25 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
           }}
         />
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingSubmission} onOpenChange={(isOpen) => !isOpen && setDeletingSubmission(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the test score entry.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeletingSubmission(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} disabled={isDeleting}>
+              {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

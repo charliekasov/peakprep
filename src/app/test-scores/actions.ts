@@ -1,7 +1,7 @@
 
 'use client';
 
-import { addDoc, collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { addDoc, collection, query, where, getDocs, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { z } from 'zod';
 import { db } from '@/lib/firebase';
 import type { SubmissionStatus } from '@/lib/types';
@@ -24,6 +24,10 @@ const updateTestScoreSchema = z.object({
   submissionId: z.string(),
   testDate: z.date(),
   scores: z.array(scoreSchema),
+});
+
+const deleteTestScoreSchema = z.object({
+  submissionId: z.string(),
 });
 
 
@@ -86,7 +90,7 @@ export async function handleAddTestScore(input: unknown) {
       scores: scores || [],
       status: 'Completed' as SubmissionStatus,
       submittedAt: testDate,
-      isOfficial,
+      isOfficial: isOfficial,
       // Store the user-entered name for official tests for display purposes.
       ...(isOfficial && { officialTestName: assignmentId }),
     };
@@ -123,5 +127,27 @@ export async function handleUpdateTestScore(input: unknown) {
   } catch (error: any) {
     console.error('Error updating test score:', error);
     throw new Error(error.message || 'Failed to update test score.');
+  }
+}
+
+
+export async function handleDeleteTestScore(input: unknown) {
+  const validatedInput = deleteTestScoreSchema.safeParse(input);
+
+  if (!validatedInput.success) {
+    const errorMessages = validatedInput.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+    console.error('Invalid input for handleDeleteTestScore:', errorMessages);
+    throw new Error(`Invalid input: ${errorMessages}`);
+  }
+
+  const { submissionId } = validatedInput.data;
+
+  try {
+    const submissionRef = doc(db, 'submissions', submissionId);
+    await deleteDoc(submissionRef);
+    return { success: true, message: 'Test score deleted successfully.' };
+  } catch (error: any) {
+    console.error('Error deleting test score:', error);
+    throw new Error(error.message || 'Failed to delete test score.');
   }
 }
