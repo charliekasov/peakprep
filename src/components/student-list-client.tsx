@@ -37,7 +37,7 @@ import { EditStudentSheet } from '@/components/edit-student-sheet';
 import { cn } from '@/lib/utils';
 import { MoreHorizontal, Archive, ArchiveRestore } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { handleArchiveStudent, handleUnarchiveStudent } from '@/app/students/actions';
+import { archiveStudent, unarchiveStudent } from '@/lib/students';
 import { useData } from '@/context/data-provider';
 
 interface StudentListClientProps {
@@ -66,10 +66,10 @@ export function StudentListClient({ students }: StudentListClientProps) {
   const onArchiveAction = async (student: Student) => {
     try {
       if (student.status === 'active') {
-        await handleArchiveStudent(student.id);
+        await archiveStudent(student.id);
         toast({ title: 'Student Archived', description: `${student.name} has been moved to the archive.`});
       } else {
-        await handleUnarchiveStudent(student.id);
+        await unarchiveStudent(student.id);
         toast({ title: 'Student Restored', description: `${student.name} has been moved back to active.`});
       }
       refetchData();
@@ -119,9 +119,9 @@ export function StudentListClient({ students }: StudentListClientProps) {
                         selectedStudent?.id === student.id && "bg-muted hover:bg-muted"
                     )}
                 >
-                  <TableCell className="font-medium">{student['Student Name']}</TableCell>
-                  <TableCell>{student['Test Type'] || 'N/A'}</TableCell>
-                  <TableCell>{student['Upcoming Test Date'] || 'N/A'}</TableCell>
+                  <TableCell className="font-medium">{student['Student Name'] || student.name}</TableCell>
+                  <TableCell>{student['Test Type'] || student.testType || 'N/A'}</TableCell>
+                  <TableCell>{student['Upcoming Test Date'] || student.upcomingTestDate || 'N/A'}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

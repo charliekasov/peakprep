@@ -35,7 +35,7 @@ import {
 } from '@/components/ui/select';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { handleUpdateStudent } from '@/app/students/actions';
+import { updateStudent } from '@/lib/students';
 import { useData } from '@/context/data-provider';
 import type { Student } from '@/lib/types';
 
@@ -76,12 +76,12 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
 
   useEffect(() => {
     form.reset({
-      'Student Name': student['Student Name'] || '',
-      'Student Email': student['Student Email'] || '',
-      'Parent Email 1': student['Parent Email 1'] || '',
-      'Parent Email 2': student['Parent Email 2'] || '',
-      'Test Type': student['Test Type'] || '',
-      'Upcoming Test Date': student['Upcoming Test Date'] || '',
+      'Student Name': student['Student Name'] || student.name || '',
+      'Student Email': student['Student Email'] || student.email || '',
+      'Parent Email 1': student['Parent Email 1'] || student.parentEmail1 || '',
+      'Parent Email 2': student['Parent Email 2'] || student.parentEmail2 || '',
+      'Test Type': student['Test Type'] || student.testType || '',
+      'Upcoming Test Date': student['Upcoming Test Date'] || student.upcomingTestDate || '',
       profile: student.profile || '',
     });
   }, [student, form]);
@@ -89,7 +89,11 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
   async function onSubmit(values: z.infer<typeof studentSchema>) {
     setIsSubmitting(true);
     try {
-      await handleUpdateStudent(student.id, values);
+      const studentData = { ...values };
+      if (studentData['Parent Email 1'] === '') delete studentData['Parent Email 1'];
+      if (studentData['Parent Email 2'] === '') delete studentData['Parent Email 2'];
+
+      await updateStudent(student.id, studentData);
       toast({
         title: 'Student Updated',
         description: `${values['Student Name']} has been successfully updated.`,

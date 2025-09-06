@@ -36,7 +36,7 @@ import {
 } from '@/components/ui/select';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { handleAddStudent } from '@/app/students/actions';
+import { addStudent } from '@/lib/students';
 import { useData } from '@/context/data-provider';
 
 const studentSchema = z.object({
@@ -72,7 +72,22 @@ export function AddStudentSheet() {
   async function onSubmit(values: z.infer<typeof studentSchema>) {
     setIsSubmitting(true);
     try {
-      await handleAddStudent(values);
+      const submissionData = { ...values };
+      if (submissionData['Parent Email 1'] === '') delete submissionData['Parent Email 1'];
+      if (submissionData['Parent Email 2'] === '') delete submissionData['Parent Email 2'];
+
+      // Map to old field names for backwards compatibility if needed, though lib handles it
+      const studentData = {
+          name: submissionData['Student Name'],
+          email: submissionData['Student Email'],
+          parentEmail1: submissionData['Parent Email 1'],
+          parentEmail2: submissionData['Parent Email 2'],
+          testType: submissionData['Test Type'],
+          upcomingTestDate: submissionData['Upcoming Test Date'],
+          ...submissionData,
+      };
+
+      await addStudent(studentData);
       toast({
         title: 'Student Added',
         description: `${values['Student Name']} has been successfully added.`,
