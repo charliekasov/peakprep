@@ -8,12 +8,19 @@ import { revalidatePath } from 'next/cache';
 const studentSchema = z.object({
   'Student Name': z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   'Student Email': z.string().email({ message: 'Please enter a valid email address.' }),
-  'Parent Email 1': z.union([z.string().email(), z.literal('')]).optional(),
-  'Parent Email 2': z.union([z.string().email(), z.literal('')]).optional(),
+  'Parent Email 1': z.string().optional(),
+  'Parent Email 2': z.string().optional(),
   'Test Type': z.string().optional(),
   'Upcoming Test Date': z.string().optional(),
   profile: z.string().optional(),
+}).refine(data => !data['Parent Email 1'] || z.string().email().safeParse(data['Parent Email 1']).success, {
+    message: "Invalid email format for Parent Email 1.",
+    path: ['Parent Email 1'],
+}).refine(data => !data['Parent Email 2'] || z.string().email().safeParse(data['Parent Email 2']).success, {
+    message: "Invalid email format for Parent Email 2.",
+    path: ['Parent Email 2'],
 });
+
 
 export async function handleAddStudent(data: unknown) {
   const validatedFields = studentSchema.safeParse(data);
