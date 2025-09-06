@@ -268,7 +268,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                             <SelectValue placeholder="Select a student" />
                         </SelectTrigger>
                         </FormControl>
-                        <SelectContent position="popper">
+                        <SelectContent position="popper" className="z-[100]" sideOffset={4}>
                         {students.map((student) => (
                             <SelectItem key={student.id} value={student.id}>
                             {student.name}
