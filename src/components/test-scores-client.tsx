@@ -38,13 +38,19 @@ interface TestScoresClientProps {
 }
 
 const sourceColors: { [key: string]: string } = {
-  'Official': '#16a34a', // green-600
-  'Bluebook': '#3b82f6', // blue-500
-  'Test Innovators': '#60a5fa', // blue-400
-  'Test Innovators Official Upper Level': '#93c5fd', // blue-300
-  'Official PSAT': '#a7f3d0', // green-200
-  'Official SAT': '#34d399', // green-400
+    'Official': '#16a34a', // green-600
+    'Bluebook': '#3b82f6', // blue-500
+    'Test Innovators': '#60a5fa', // blue-400
+    'Test Innovators Official Upper Level': '#93c5fd', // blue-300
+    'Official PSAT': '#a7f3d0', // green-200
+    'College Board': '#6ee7b7', // green-300
+    'Official SAT': '#34d399', // green-400
+    'ACT': '#f9a8d4', // pink-300
+    'Official ACT Practice': '#f472b6', // pink-400
+    'Test Innovators Official Middle Level': '#a5b4fc', // indigo-300
+    'Test Innovators Official': '#818cf8', // indigo-400
 };
+
 
 const sectionColors: { [key: string]: string } = {
   'Reading + Writing': '#8884d8',
@@ -73,12 +79,27 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
   }, [students, selectedStudentId]);
 
 
-  const [selectedSources, setSelectedSources] = useState<Set<string>>(
-    new Set(Object.keys(sourceColors))
-  );
-
   const studentMap = useMemo(() => new Map(students.map(s => [s.id, s])), [students]);
   const assignmentMap = useMemo(() => new Map(assignments.map(a => [a.id, a])), [assignments]);
+  const selectedStudent = useMemo(() => studentMap.get(selectedStudentId || ''), [selectedStudentId, studentMap]);
+
+  const availableSources = useMemo(() => {
+    if (!selectedStudent) return [];
+    const testType = selectedStudent['Test Type'];
+    const sources = new Set<string>();
+    assignments.forEach(assignment => {
+      if (assignment['Test Type'] === testType && assignment.Source) {
+        sources.add(assignment.Source);
+      }
+    });
+    return ['Official', ...Array.from(sources)];
+  }, [selectedStudent, assignments]);
+
+  const [selectedSources, setSelectedSources] = useState<Set<string>>(new Set(availableSources));
+  
+  useEffect(() => {
+      setSelectedSources(new Set(availableSources));
+  }, [availableSources]);
   
   const scoredSubmissions = useMemo(() => {
     return submissions.filter(s => {
@@ -139,8 +160,6 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
     });
   };
 
-  const selectedStudent = studentMap.get(selectedStudentId || '');
-  
   const yAxisDomain = useMemo(() => {
     const testType = selectedStudent?.['Test Type'];
     if (testType === 'SAT') return [200, 800];
@@ -185,7 +204,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            {Object.keys(sourceColors).map(source => (
+            {availableSources.map(source => (
               <div key={source} className="flex items-center space-x-2">
                 <Checkbox
                   id={`source-${source}`}
