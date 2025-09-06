@@ -253,7 +253,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
             Record an official or practice test score for a student.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex-1 overflow-y-auto -mr-6 pr-6">
+        <div className="flex-1 overflow-y-auto -mr-6 pr-6 overflow-x-visible">
             <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -453,3 +453,5 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
+
+    
