@@ -128,7 +128,7 @@ const TEST_CONFIG: any = {
 
 export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: AddOfficialScoreDialogProps) {
   const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -218,12 +218,12 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
       };
 
       await handleAddTestScore(payload);
+      onScoreAdd();
 
       toast({
         title: 'Score Added',
         description: 'The test score has been successfully recorded.',
       });
-      onScoreAdd();
       setOpen(false);
       form.reset();
     } catch (error: any) {
@@ -258,7 +258,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
             <div className="px-6 flex-1 min-h-0">
                 <div className="max-h-full overflow-y-auto -mx-6 px-6">
                     <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pb-4">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pb-4">
                         <FormField
                         control={form.control}
                         name="studentId"
@@ -464,5 +464,3 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
-
-    
