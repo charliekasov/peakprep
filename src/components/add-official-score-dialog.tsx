@@ -161,7 +161,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     return TEST_CONFIG[studentTestType];
   }, [studentTestType]);
   
-  const isStanineTest = useMemo(() => studentTestType?.includes('SSAT') || studentTestType?.includes('ISEE'), [studentTestType]);
+  const isStanineTest = useMemo(() => studentTestType?.includes('ISEE'), [studentTestType]);
 
   useEffect(() => {
     if (studentId) {
@@ -469,5 +469,3 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
-
-    
