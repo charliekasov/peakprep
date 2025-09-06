@@ -104,7 +104,7 @@ export function StudentListClient({ students }: StudentListClientProps) {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead>Test Type</TableHead>
+                <TableHead>Test Types</TableHead>
                 <TableHead>Upcoming Test Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -120,7 +120,7 @@ export function StudentListClient({ students }: StudentListClientProps) {
                     )}
                 >
                   <TableCell className="font-medium">{student['Student Name'] || student.name}</TableCell>
-                  <TableCell>{student['Test Type'] || student.testType || 'N/A'}</TableCell>
+                  <TableCell>{student['Test Types']?.join(', ') || student.testType || 'N/A'}</TableCell>
                   <TableCell>{student['Upcoming Test Date'] || student.upcomingTestDate || 'N/A'}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>

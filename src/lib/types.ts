@@ -7,7 +7,7 @@ export interface Student {
   'Student Email': string;
   'Parent Email 1'?: string;
   'Parent Email 2'?: string;
-  'Test Type'?: string;
+  'Test Types'?: string[]; // Changed from 'Test Type'
   'Target Score'?: string;
   'Rate'?: number;
   'Frequency'?: string;
@@ -17,12 +17,12 @@ export interface Student {
   profile?: string; 
   status: 'active' | 'archived';
 
-  // For backwards compatibility
+  // For backwards compatibility and easier access
   name: string;
   email: string;
   parentEmail1?: string;
   parentEmail2?: string;
-  testType?: string;
+  testTypes?: string[]; // Changed from testType
   upcomingTestDate?: string;
 }
 

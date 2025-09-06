@@ -8,13 +8,16 @@ import type { Student } from './types';
 // Helper function to map Firestore data to our Student type
 function fromFirestore(doc: any): Student {
   const data = doc.data();
+  // Ensure testTypes is an array for consistency
+  const testTypes = Array.isArray(data['Test Types']) ? data['Test Types'] : (data['Test Type'] ? [data['Test Type']] : []);
+
   const student: Partial<Student> = {
     id: doc.id,
     'Student Name': data['Student Name'],
     'Student Email': data['Student Email'],
     'Parent Email 1': data['Parent Email 1'],
     'Parent Email 2': data['Parent Email 2'],
-    'Test Type': data['Test Type'],
+    'Test Types': testTypes,
     'Target Score': data['Target Score'],
     'Rate': data['Rate'],
     'Frequency': data['Frequency'],
@@ -24,12 +27,12 @@ function fromFirestore(doc: any): Student {
     profile: data.profile,
     status: data.status || 'active', // Default to active if not set
     
-    // For backwards compatibility with components that might still use the old names
+    // For backwards compatibility and easier access
     name: data['Student Name'],
     email: data['Student Email'],
     parentEmail1: data['Parent Email 1'],
     parentEmail2: data['Parent Email 2'],
-    testType: data['Test Type'],
+    testTypes: testTypes,
     upcomingTestDate: data['Upcoming Test Date'],
   };
   return student as Student;
