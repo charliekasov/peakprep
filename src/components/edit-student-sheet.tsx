@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -14,7 +14,6 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from '@/components/ui/sheet';
 import {
   Form,
@@ -34,10 +33,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { PlusCircle, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { handleAddStudent } from '@/app/students/actions';
+import { handleUpdateStudent } from '@/app/students/actions';
 import { useData } from '@/context/data-provider';
+import type { Student } from '@/lib/types';
+
+interface EditStudentSheetProps {
+  student: Student;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
 
 const studentSchema = z.object({
   'Student Name': z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -49,9 +55,7 @@ const studentSchema = z.object({
   profile: z.string().min(10, { message: 'Profile must be at least 10 characters.' }),
 });
 
-
-export function AddStudentSheet() {
-  const [open, setOpen] = useState(false);
+export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentSheetProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { refetchData } = useData();
@@ -59,31 +63,42 @@ export function AddStudentSheet() {
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
-      'Student Name': '',
-      'Student Email': '',
-      'Parent Email 1': '',
-      'Parent Email 2': '',
-      'Test Type': '',
-      'Upcoming Test Date': '',
-      profile: '',
+      'Student Name': student['Student Name'] || '',
+      'Student Email': student['Student Email'] || '',
+      'Parent Email 1': student['Parent Email 1'] || '',
+      'Parent Email 2': student['Parent Email 2'] || '',
+      'Test Type': student['Test Type'] || '',
+      'Upcoming Test Date': student['Upcoming Test Date'] || '',
+      profile: student.profile || '',
     },
   });
+
+  useEffect(() => {
+    form.reset({
+      'Student Name': student['Student Name'] || '',
+      'Student Email': student['Student Email'] || '',
+      'Parent Email 1': student['Parent Email 1'] || '',
+      'Parent Email 2': student['Parent Email 2'] || '',
+      'Test Type': student['Test Type'] || '',
+      'Upcoming Test Date': student['Upcoming Test Date'] || '',
+      profile: student.profile || '',
+    });
+  }, [student, form]);
 
   async function onSubmit(values: z.infer<typeof studentSchema>) {
     setIsSubmitting(true);
     try {
-      await handleAddStudent(values);
+      await handleUpdateStudent(student.id, values);
       toast({
-        title: 'Student Added',
-        description: `${values['Student Name']} has been successfully added.`,
+        title: 'Student Updated',
+        description: `${values['Student Name']} has been successfully updated.`,
       });
       refetchData();
-      form.reset();
-      setOpen(false);
+      onOpenChange(false);
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to add student. Please try again.',
+        description: 'Failed to update student. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -92,18 +107,12 @@ export function AddStudentSheet() {
   }
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          New Student
-        </Button>
-      </SheetTrigger>
+    <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Add New Student</SheetTitle>
+          <SheetTitle>Edit Student</SheetTitle>
           <SheetDescription>
-            Fill out the form below to add a new student to your roster.
+            Update the details for {student.name}.
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
@@ -178,7 +187,7 @@ export function AddStudentSheet() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Test Type</FormLabel>
-                   <Select onValueChange={field.onChange} defaultValue={field.value}>
+                   <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select a test type" />
@@ -242,7 +251,7 @@ export function AddStudentSheet() {
                 {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Save Student
+                Save Changes
               </Button>
             </SheetFooter>
           </form>

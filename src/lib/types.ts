@@ -15,6 +15,9 @@ export interface Student {
   'Projected End Date'?: string;
   'Upcoming Test Date'?: string;
   profile?: string; 
+  status: 'active' | 'archived';
+
+  // For backwards compatibility
   name: string;
   email: string;
   parentEmail1?: string;
@@ -56,5 +59,3 @@ export type Submission = Omit<FirebaseSubmission, 'submittedAt' | 'id'> & {
     id: string;
     submittedAt: Date;
 }
-
-    

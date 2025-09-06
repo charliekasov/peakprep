@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Card,
   CardHeader,
@@ -17,64 +17,28 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+    Tabs,
+    TabsList,
+    TabsTrigger,
+} from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import type { Student } from '@/lib/types';
 import { AddStudentSheet } from '@/components/add-student-sheet';
+import { EditStudentSheet } from '@/components/edit-student-sheet';
 import { cn } from '@/lib/utils';
-
-function StudentDetails({ student }: { student: Student }) {
-    if (!student) return null;
-  
-    return (
-      <Card className="mt-4 animate-in fade-in">
-        <CardHeader>
-          <CardTitle>{student['Student Name']}</CardTitle>
-          <CardDescription>
-             Detailed information for {student['Student Name']}.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-            <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Student Email</p>
-                <p>{student['Student Email'] || 'N/A'}</p>
-            </div>
-             <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Parent Email 1</p>
-                <p>{student['Parent Email 1'] || 'N/A'}</p>
-            </div>
-             <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Parent Email 2</p>
-                <p>{student['Parent Email 2'] || 'N/A'}</p>
-            </div>
-            <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Target Score</p>
-                <p>{student['Target Score'] || 'N/A'}</p>
-            </div>
-             <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Rate</p>
-                <p>{student['Rate'] ? `$${student['Rate']}` : 'N/A'}</p>
-            </div>
-            <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Frequency</p>
-                <p>{student['Frequency'] || 'N/A'}</p>
-            </div>
-             <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Start Date</p>
-                <p>{student['Start Date'] || 'N/A'}</p>
-            </div>
-             <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Projected End Date</p>
-                <p>{student['Projected End Date'] || 'N/A'}</p>
-            </div>
-            <div className="space-y-1 md:col-span-2">
-                <p className="text-sm font-medium text-muted-foreground">Profile</p>
-                <p className="whitespace-pre-wrap">{student.profile || 'N/A'}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-}
+import { MoreHorizontal, Archive, ArchiveRestore } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { handleArchiveStudent, handleUnarchiveStudent } from '@/app/students/actions';
+import { useData } from '@/context/data-provider';
 
 interface StudentListClientProps {
     students: Student[];
@@ -82,12 +46,35 @@ interface StudentListClientProps {
 
 export function StudentListClient({ students }: StudentListClientProps) {
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-  
+  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
+  const [view, setView] = useState<'active' | 'archived'>('active');
+  const { toast } = useToast();
+  const { refetchData } = useData();
+
+  const filteredStudents = useMemo(() => {
+    return students.filter(s => s.status === view);
+  }, [students, view]);
+
   const handleRowClick = (student: Student) => {
     if (selectedStudent?.id === student.id) {
-      setSelectedStudent(null); // Deselect if the same student is clicked
+      setSelectedStudent(null);
     } else {
       setSelectedStudent(student);
+    }
+  };
+
+  const onArchiveAction = async (student: Student) => {
+    try {
+      if (student.status === 'active') {
+        await handleArchiveStudent(student.id);
+        toast({ title: 'Student Archived', description: `${student.name} has been moved to the archive.`});
+      } else {
+        await handleUnarchiveStudent(student.id);
+        toast({ title: 'Student Restored', description: `${student.name} has been moved back to active.`});
+      }
+      refetchData();
+    } catch (error: any) {
+        toast({ title: 'Error', description: error.message, variant: 'destructive'});
     }
   };
 
@@ -103,8 +90,14 @@ export function StudentListClient({ students }: StudentListClientProps) {
         <CardHeader>
           <CardTitle>All Students</CardTitle>
           <CardDescription>
-            A list of all your current students. Click a row to see more details.
+            A list of all your students. Click a row to see more details.
           </CardDescription>
+          <Tabs value={view} onValueChange={(value) => setView(value as any)} className="pt-4">
+            <TabsList>
+                <TabsTrigger value="active">Active</TabsTrigger>
+                <TabsTrigger value="archived">Archived</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </CardHeader>
         <CardContent>
           <Table>
@@ -113,10 +106,11 @@ export function StudentListClient({ students }: StudentListClientProps) {
                 <TableHead>Name</TableHead>
                 <TableHead>Test Type</TableHead>
                 <TableHead>Upcoming Test Date</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(students as any[]).map((student: any) => (
+              {filteredStudents.map((student: Student) => (
                 <TableRow 
                     key={student.id} 
                     onClick={() => handleRowClick(student)}
@@ -128,6 +122,29 @@ export function StudentListClient({ students }: StudentListClientProps) {
                   <TableCell className="font-medium">{student['Student Name']}</TableCell>
                   <TableCell>{student['Test Type'] || 'N/A'}</TableCell>
                   <TableCell>{student['Upcoming Test Date'] || 'N/A'}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Actions</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+                            <DropdownMenuItem onSelect={() => setEditingStudent(student)}>
+                                Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                             <DropdownMenuItem onSelect={() => onArchiveAction(student)}>
+                                {student.status === 'active' ? (
+                                    <><Archive className="mr-2 h-4 w-4" /> Archive</>
+                                ) : (
+                                    <><ArchiveRestore className="mr-2 h-4 w-4" /> Unarchive</>
+                                )}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -135,7 +152,44 @@ export function StudentListClient({ students }: StudentListClientProps) {
         </CardContent>
       </Card>
 
-      {selectedStudent && <StudentDetails student={selectedStudent} />}
+      {selectedStudent && (
+        <Card className="mt-4 animate-in fade-in">
+            <CardHeader>
+                <CardTitle>{selectedStudent.name}</CardTitle>
+                <CardDescription>
+                    Detailed information for {selectedStudent.name}.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                    <div className="space-y-1">
+                        <p className="text-sm font-medium text-muted-foreground">Email</p>
+                        <p>{selectedStudent.email || 'N/A'}</p>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-sm font-medium text-muted-foreground">Parent Email 1</p>
+                        <p>{selectedStudent.parentEmail1 || 'N/A'}</p>
+                    </div>
+                     <div className="space-y-1">
+                        <p className="text-sm font-medium text-muted-foreground">Parent Email 2</p>
+                        <p>{selectedStudent.parentEmail2 || 'N/A'}</p>
+                    </div>
+                     <div className="space-y-1">
+                        <p className="text-sm font-medium text-muted-foreground">Profile</p>
+                        <p className="whitespace-pre-wrap">{selectedStudent.profile || 'N/A'}</p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+      )}
+
+      {editingStudent && (
+        <EditStudentSheet 
+            student={editingStudent}
+            isOpen={!!editingStudent}
+            onOpenChange={(isOpen) => !isOpen && setEditingStudent(null)}
+        />
+      )}
     </>
   );
 }

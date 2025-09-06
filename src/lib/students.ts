@@ -1,6 +1,7 @@
+
 'use client';
 
-import { collection, getDocs, getDoc, doc, addDoc } from 'firebase/firestore';
+import { collection, getDocs, getDoc, doc, addDoc, updateDoc, writeBatch } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Student } from './types';
 
@@ -20,7 +21,8 @@ function fromFirestore(doc: any): Student {
     'Start Date': data['Start Date'],
     'Projected End Date': data['Projected End Date'],
     'Upcoming Test Date': data['Upcoming Test Date'],
-    profile: data['profile'],
+    profile: data.profile,
+    status: data.status || 'active', // Default to active if not set
     
     // For backwards compatibility with components that might still use the old names
     name: data['Student Name'],
@@ -56,8 +58,26 @@ export async function getStudentsCount(): Promise<number> {
   return studentsSnapshot.size;
 }
 
-export async function addStudent(student: Omit<Student, 'id'>): Promise<string> {
+export async function addStudent(student: Omit<Student, 'id' | 'status'>): Promise<string> {
   const studentsCollection = collection(db, 'students');
-  const docRef = await addDoc(studentsCollection, student);
+  const docRef = await addDoc(studentsCollection, {
+    ...student,
+    status: 'active'
+  });
   return docRef.id;
+}
+
+export async function updateStudent(id: string, student: Partial<Omit<Student, 'id' | 'status'>>) {
+  const studentRef = doc(db, 'students', id);
+  await updateDoc(studentRef, student);
+}
+
+export async function archiveStudent(id: string) {
+    const studentRef = doc(db, 'students', id);
+    await updateDoc(studentRef, { status: 'archived' });
+}
+
+export async function unarchiveStudent(id: string) {
+    const studentRef = doc(db, 'students', id);
+    await updateDoc(studentRef, { status: 'active' });
 }
