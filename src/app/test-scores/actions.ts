@@ -1,5 +1,7 @@
 
-import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
+'use client';
+
+import { addDoc, collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { z } from 'zod';
 import { db } from '@/lib/firebase';
 import type { SubmissionStatus } from '@/lib/types';
@@ -16,6 +18,12 @@ const testScoreSchema = z.object({
   testDate: z.date({ required_error: 'Test date is required.' }),
   scores: z.array(scoreSchema).optional(),
   isOfficial: z.boolean(),
+});
+
+const updateTestScoreSchema = z.object({
+  submissionId: z.string(),
+  testDate: z.date(),
+  scores: z.array(scoreSchema),
 });
 
 
@@ -90,5 +98,30 @@ export async function handleAddTestScore(input: unknown) {
   } catch (error: any) {
     console.error('Error adding test score:', error);
     throw new Error(error.message || 'Failed to add test score.');
+  }
+}
+
+
+export async function handleUpdateTestScore(input: unknown) {
+  const validatedInput = updateTestScoreSchema.safeParse(input);
+
+  if (!validatedInput.success) {
+    const errorMessages = validatedInput.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+    console.error('Invalid input for handleUpdateTestScore:', errorMessages);
+    throw new Error(`Invalid input: ${errorMessages}`);
+  }
+
+  const { submissionId, testDate, scores } = validatedInput.data;
+
+  try {
+    const submissionRef = doc(db, 'submissions', submissionId);
+    await updateDoc(submissionRef, {
+      submittedAt: testDate,
+      scores: scores,
+    });
+    return { success: true, message: 'Test score updated successfully.' };
+  } catch (error: any) {
+    console.error('Error updating test score:', error);
+    throw new Error(error.message || 'Failed to update test score.');
   }
 }

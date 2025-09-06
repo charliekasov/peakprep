@@ -27,8 +27,17 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { Line, LineChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { AddOfficialScoreDialog } from './add-official-score-dialog';
+import { EditScoreDialog } from './edit-score-dialog';
+import { MoreHorizontal } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface TestScoresClientProps {
   students: Student[];
@@ -48,7 +57,8 @@ const sourceColors: { [key: string]: string } = {
     'ACT': '#f9a8d4', // pink-300
     'Official ACT Practice': '#f472b6', // pink-400
     'Test Innovators Official Middle Level': '#a5b4fc', // indigo-300
-    'Test Innovators Official': '#818cf8', // indigo-400
+    'Test Innovators Official': '#818cf8', // indigo-400,
+    'Tutorverse': '#c4b5fd', // violet-300
 };
 
 
@@ -70,6 +80,7 @@ const sectionColors: { [key: string]: string } = {
 export function TestScoresClient({ students, assignments, submissions, onScoreAdd }: TestScoresClientProps) {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [editingSubmission, setEditingSubmission] = useState<Submission | null>(null);
   
   useEffect(() => {
     setIsMounted(true);
@@ -87,13 +98,18 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
     if (!selectedStudent) return [];
     const testType = selectedStudent['Test Type'];
     const sources = new Set<string>();
-    assignments.forEach(assignment => {
-      if (assignment['Test Type'] === testType && assignment.Source) {
+    submissions.forEach(sub => {
+      const assignment = assignmentMap.get(sub.assignmentId);
+      if (assignment?.['Test Type'] === testType && assignment.Source) {
         sources.add(assignment.Source);
       }
+      if (sub.isOfficial && assignment?.['Test Type'] === testType) {
+        sources.add('Official');
+      }
     });
-    return ['Official', ...Array.from(sources)];
-  }, [selectedStudent, assignments]);
+    return Array.from(sources);
+  }, [selectedStudent, assignments, submissions, assignmentMap]);
+
 
   const [selectedSources, setSelectedSources] = useState<Set<string>>(new Set(availableSources));
   
@@ -121,8 +137,8 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
       }))
       .filter(s => {
           if (s.isOfficial) return selectedSources.has('Official');
-          if (!s.assignment) return false;
-          return selectedSources.has(s.assignment.Source || '');
+          if (!s.assignment || !s.assignment.Source) return false;
+          return selectedSources.has(s.assignment.Source);
       })
       .sort((a, b) => a.submittedAt.getTime() - b.submittedAt.getTime());
   }, [selectedStudentId, scoredSubmissions, assignmentMap, selectedSources]);
@@ -132,6 +148,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
       const dataPoint: { [key: string]: any } = {
         name: s.isOfficial ? s.officialTestName : s.assignment?.['Full Assignment Name'] || 'Unknown Test',
         date: s.submittedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        source: s.isOfficial ? 'Official' : s.assignment?.Source,
       };
       s.scores?.forEach(score => {
         dataPoint[score.section] = score.score;
@@ -224,9 +241,25 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis type="number" domain={yAxisDomain} />
-                    <Tooltip />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--background))',
+                        borderColor: 'hsl(var(--border))'
+                      }}
+                      formatter={(value, name) => [value, name]}
+                      labelFormatter={(label, payload) => {
+                          const dataPoint = payload?.[0]?.payload;
+                          if (!dataPoint) return label;
+                          return (
+                            <div>
+                                <p className="font-bold">{label}</p>
+                                <p className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</p>
+                            </div>
+                          )
+                      }}
+                    />
                     <Legend />
-                    {allSections.map((section, index) => (
+                    {allSections.map((section) => (
                         <Line 
                             key={section} 
                             type="monotone"
@@ -262,6 +295,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                 <TableHead>Source</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Scores</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -281,12 +315,43 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                       ?.map((s) => `${s.section}: ${s.score}`)
                       .join(', ')}
                   </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setEditingSubmission(submission)}>
+                          Edit
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+      {editingSubmission && selectedStudent && (
+        <EditScoreDialog
+          submission={editingSubmission}
+          student={selectedStudent}
+          isOpen={!!editingSubmission}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setEditingSubmission(null);
+            }
+          }}
+          onScoreUpdate={() => {
+            onScoreAdd(); // refetch data
+            setEditingSubmission(null); // close dialog
+          }}
+        />
+      )}
     </>
   );
 }
