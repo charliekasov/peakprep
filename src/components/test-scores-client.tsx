@@ -69,7 +69,10 @@ const sourceColors: { [key: string]: string } = {
     'College Board': '#6ee7b7', // green-300
     'Official SAT': '#34d399', // green-400
     'ACT': '#f9a8d4', // pink-300
-    'Official ACT Practice': '#f472b6', // pink-400
+    'Official ACT Practice': '#f472b6', // pink-400,
+    'Official ACT': '#f472b6',
+    'Test Innovators Enhanced ACT': '#f9a8d4',
+    'Test Innovators Middle Level Practice Test': '#a5b4fc',
     'Test Innovators Official Middle Level': '#a5b4fc', // indigo-300
     'Test Innovators Official': '#818cf8', // indigo-400,
     'Tutorverse': '#c4b5fd', // violet-300
@@ -113,19 +116,21 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
 
   const availableSources = useMemo(() => {
     if (!selectedStudent) return [];
-    const testType = selectedStudent['Test Type'];
+    const testTypes = selectedStudent['Test Types'] || [];
     const sources = new Set<string>();
     submissions.forEach(sub => {
       const assignment = assignmentMap.get(sub.assignmentId);
-      if (assignment?.['Test Type'] === testType && assignment.Source) {
+      if (!assignment) return; // Safeguard against missing assignments
+
+      if (assignment.Source && testTypes.includes(assignment['Test Type']!)) {
         sources.add(assignment.Source);
       }
-      if (sub.isOfficial && assignment?.['Test Type'] === testType) {
+      if (sub.isOfficial && testTypes.includes(assignment['Test Type']!)) {
         sources.add('Official');
       }
     });
     return Array.from(sources);
-  }, [selectedStudent, assignments, submissions, assignmentMap]);
+  }, [selectedStudent, submissions, assignmentMap]);
 
 
   const [selectedSources, setSelectedSources] = useState<Set<string>>(new Set(availableSources));
@@ -210,7 +215,8 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
   };
 
   const yAxisDomain = useMemo(() => {
-    const testType = selectedStudent?.['Test Type'];
+    // For simplicity, we just check the first test type. This could be enhanced.
+    const testType = selectedStudent?.['Test Types']?.[0];
     if (testType === 'SAT') return [200, 800];
     if (testType === 'ACT') return [1, 36];
     if (testType?.includes('SSAT') || testType?.includes('ISEE')) return [1, 99];
@@ -283,11 +289,11 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                           const dataPoint = payload?.[0]?.payload;
                           if (!dataPoint) return label;
                           return (
-                            <>
+                            <Fragment>
                                 <span className="font-bold">{label}</span>
                                 <br />
                                 <span className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</span>
-                            </>
+                            </Fragment>
                           )
                       }}
                     />
@@ -416,3 +422,5 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
     </>
   );
 }
+
+    
