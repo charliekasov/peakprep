@@ -146,7 +146,6 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
 
   const { watch, reset, setValue } = form;
   const studentId = watch('studentId');
-  const scores = watch('scores') || [];
   const testTypeSelection = watch('testTypeSelection');
 
   const selectedStudent = useMemo(() => students.find(s => s.id === studentId), [studentId, students]);

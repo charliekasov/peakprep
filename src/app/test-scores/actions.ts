@@ -1,6 +1,5 @@
 
 import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { db } from '@/lib/firebase';
 import type { SubmissionStatus } from '@/lib/types';
