@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Fragment } from 'react';
 import type { Student, Assignment, Submission } from '@/lib/types';
 import {
   Card,
@@ -251,10 +251,11 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                           const dataPoint = payload?.[0]?.payload;
                           if (!dataPoint) return label;
                           return (
-                            <div>
-                                <div className="font-bold">{label}</div>
-                                <div className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</div>
-                            </div>
+                            <>
+                                <span className="font-bold">{label}</span>
+                                <br />
+                                <span className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</span>
+                            </>
                           )
                       }}
                     />
