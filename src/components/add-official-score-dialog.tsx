@@ -253,7 +253,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
             Record an official or practice test score for a student.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex-1 overflow-y-auto -mr-6 pr-6 overflow-x-visible">
+        <div className="flex-1 overflow-y-auto -mr-6 pr-6">
             <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -268,7 +268,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                             <SelectValue placeholder="Select a student" />
                         </SelectTrigger>
                         </FormControl>
-                        <SelectContent position="popper" className="z-[100]" sideOffset={4}>
+                        <SelectContent>
                         {students.map((student) => (
                             <SelectItem key={student.id} value={student.id}>
                             {student.name}
@@ -318,7 +318,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                                 <SelectValue placeholder="Select a practice test" />
                                 </SelectTrigger>
                             </FormControl>
-                            <SelectContent position="popper">
+                            <SelectContent>
                                 {filteredPracticeTests.map((test) => (
                                 <SelectItem key={test.id} value={test.id}>
                                     {test['Full Assignment Name']}
@@ -453,5 +453,3 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
-
-    
