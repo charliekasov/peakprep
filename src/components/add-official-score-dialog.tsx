@@ -258,7 +258,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
             <div className="px-6 flex-1 min-h-0">
                 <div className="max-h-full overflow-y-auto -mx-6 px-6">
                     <Form {...form}>
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pb-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pb-4">
                         <FormField
                         control={form.control}
                         name="studentId"
@@ -326,7 +326,12 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                                         <SelectValue placeholder="Select a practice test" />
                                         </SelectTrigger>
                                     </FormControl>
-                                    <SelectContent position="popper">
+                                    <SelectContent 
+                                        position="popper"
+                                        side="bottom"
+                                        align="start"
+                                        className="w-[var(--radix-select-trigger-width)] max-h-[200px]"
+                                    >
                                         {filteredPracticeTests.map((test) => (
                                         <SelectItem key={test.id} value={test.id}>
                                             {test['Full Assignment Name']}
@@ -454,7 +459,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                 <DialogClose asChild>
                     <Button type="button" variant="ghost">Cancel</Button>
                 </DialogClose>
-                <Button type="button" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+                <Button type="button" onClick={form.handleSubmit(onSubmit)} disabled={isSubmitting}>
                     {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Save Score
                 </Button>
@@ -464,3 +469,5 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
+
+    
