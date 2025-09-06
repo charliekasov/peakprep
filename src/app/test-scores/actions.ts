@@ -1,6 +1,4 @@
 
-'use server';
-
 import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
@@ -88,13 +86,6 @@ export async function handleAddTestScore(input: unknown) {
 
     const submissionsRef = collection(db, 'submissions');
     await addDoc(submissionsRef, submissionData);
-
-    // Revalidate all paths that might show this new data.
-    revalidatePath('/test-scores');
-    revalidatePath('/');
-    revalidatePath('/assignments');
-    revalidatePath('/needs-review');
-
 
     return { success: true, message: 'Test score added successfully.' };
   } catch (error: any) {

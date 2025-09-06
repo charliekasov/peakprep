@@ -49,7 +49,6 @@ const scoreSchema = z.object({
   score: z.coerce.number(),
 });
 
-// Refined schema with conditional validation
 const formSchema = z
   .object({
     studentId: z.string().min(1, 'Student is required.'),
@@ -455,5 +454,3 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
-
-    
