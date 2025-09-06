@@ -128,7 +128,7 @@ const TEST_CONFIG: any = {
 
 export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: AddOfficialScoreDialogProps) {
   const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting = useState(false);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -144,7 +144,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     },
   });
 
-  const { watch, reset, setValue } = form;
+  const { watch, reset, setValue, handleSubmit } = form;
   const studentId = watch('studentId');
   const testTypeSelection = watch('testTypeSelection');
 
@@ -246,144 +246,41 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
           Add Test Score
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] flex flex-col max-h-[90svh]">
-        <DialogHeader>
-          <DialogTitle>Add New Test Score</DialogTitle>
-          <DialogDescription>
-            Record an official or practice test score for a student.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex-1 overflow-y-auto -mr-6 pr-6">
-            <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                control={form.control}
-                name="studentId"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Student</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select a student" />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent position="popper">
-                        {students.map((student) => (
-                            <SelectItem key={student.id} value={student.id}>
-                            {student.name}
-                            </SelectItem>
-                        ))}
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-
-                {studentId && studentTestType && (
-                <>
-                    <FormField
-                    control={form.control}
-                    name="testTypeSelection"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Test Type</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select test type" />
-                            </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                            <SelectItem value="Practice Test">Practice Test</SelectItem>
-                            <SelectItem value={`Official ${studentTestType}`}>{`Official ${studentTestType}`}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-
-                    {testTypeSelection === 'Practice Test' ? (
-                    <FormField
-                        control={form.control}
-                        name="practiceTestId"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Practice Test</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                                <SelectTrigger>
-                                <SelectValue placeholder="Select a practice test" />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                {filteredPracticeTests.map((test) => (
-                                <SelectItem key={test.id} value={test.id}>
-                                    {test['Full Assignment Name']}
-                                </SelectItem>
-                                ))}
-                            </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    ) : testTypeSelection.startsWith('Official') ? (
-                    <FormField
-                        control={form.control}
-                        name="officialTestName"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Test Name / Date</FormLabel>
-                            <FormControl>
-                            <Input placeholder="e.g., May 2024 Digital SAT" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    ) : null}
-
-                    <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="month"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Month</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select month" />
-                                </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                {MONTHS.map((month, index) => (
-                                    <SelectItem key={month} value={index.toString()}>{month}</SelectItem>
-                                ))}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
+      <DialogContent className="sm:max-w-[600px] max-h-[90svh] p-0">
+        <div className="flex flex-col max-h-[90svh]">
+            <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0">
+                <DialogTitle>Add New Test Score</DialogTitle>
+                <DialogDescription>
+                Record an official or practice test score for a student.
+                </DialogDescription>
+            </DialogHeader>
+            
+            <div className="px-6 flex-1 min-h-0">
+                <div className="max-h-full overflow-y-auto -mx-6 px-6">
+                    <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pb-4">
                         <FormField
                         control={form.control}
-                        name="year"
+                        name="studentId"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Year</FormLabel>
+                            <FormLabel>Student</FormLabel>
                             <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select year" />
+                                    <SelectValue placeholder="Select a student" />
                                 </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
-                                {YEARS.map(year => (
-                                    <SelectItem key={year} value={year}>{year}</SelectItem>
+                                <SelectContent 
+                                    position="popper" 
+                                    side="bottom"
+                                    align="start"
+                                    className="w-[var(--radix-select-trigger-width)] max-h-[200px]"
+                                >
+                                {students.map((student) => (
+                                    <SelectItem key={student.id} value={student.id}>
+                                    {student.name}
+                                    </SelectItem>
                                 ))}
                                 </SelectContent>
                             </Select>
@@ -391,65 +288,181 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                             </FormItem>
                         )}
                         />
-                    </div>
-                    
-                    {currentTestConfig && (
-                        <div className="space-y-4 pt-4">
-                            <FormLabel>Scores</FormLabel>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 rounded-md border p-4">
-                                {currentTestConfig.sections.map((section: any, index: number) => (
-                                    <Controller
-                                        key={section.name}
-                                        control={form.control}
-                                        name={`scores.${index}`}
-                                        defaultValue={{ section: section.name, score: section.default }}
-                                        render={({ field }) => (
-                                        <FormItem>
-                                            <div className="flex items-center justify-between">
-                                                <FormLabel>{section.name}</FormLabel>
-                                                {isStanineTest && field.value?.score > 0 && (
-                                                    <span className="text-sm font-medium text-muted-foreground">
-                                                    Stanine: {getStanine(field.value.score)}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <FormControl>
-                                                <Stepper
-                                                    value={field.value?.score || section.default}
-                                                    onValueChange={(newScore) => {
-                                                        field.onChange({
-                                                            section: section.name,
-                                                            score: newScore
-                                                        });
-                                                    }}
-                                                    min={section.min}
-                                                    max={section.max}
-                                                    step={section.step}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                        )}
-                                    />
-                                ))}
+
+                        {studentId && studentTestType && (
+                        <>
+                            <FormField
+                            control={form.control}
+                            name="testTypeSelection"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Test Type</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select test type" />
+                                    </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                    <SelectItem value="Practice Test">Practice Test</SelectItem>
+                                    <SelectItem value={`Official ${studentTestType}`}>{`Official ${studentTestType}`}</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+
+                            {testTypeSelection === 'Practice Test' ? (
+                            <FormField
+                                control={form.control}
+                                name="practiceTestId"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Practice Test</FormLabel>
+                                    <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                        <SelectValue placeholder="Select a practice test" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent position="popper">
+                                        {filteredPracticeTests.map((test) => (
+                                        <SelectItem key={test.id} value={test.id}>
+                                            {test['Full Assignment Name']}
+                                        </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            ) : testTypeSelection.startsWith('Official') ? (
+                            <FormField
+                                control={form.control}
+                                name="officialTestName"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Test Name / Date</FormLabel>
+                                    <FormControl>
+                                    <Input placeholder="e.g., May 2024 Digital SAT" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            ) : null}
+
+                            <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="month"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Month</FormLabel>
+                                    <Select onValueChange={field.onChange} value={field.value}>
+                                        <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select month" />
+                                        </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                        {MONTHS.map((month, index) => (
+                                            <SelectItem key={month} value={index.toString()}>{month}</SelectItem>
+                                        ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                                />
+                                <FormField
+                                control={form.control}
+                                name="year"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Year</FormLabel>
+                                    <Select onValueChange={field.onChange} value={field.value}>
+                                        <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select year" />
+                                        </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                        {YEARS.map(year => (
+                                            <SelectItem key={year} value={year}>{year}</SelectItem>
+                                        ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                                />
                             </div>
-                        </div>
-                    )}
-                </>
-                )}
-                 <DialogFooter className="bg-background pt-4 sticky bottom-0 -mx-6 px-6 -mb-6 pb-6 border-t">
-                    <DialogClose asChild>
-                        <Button type="button" variant="ghost">Cancel</Button>
-                    </DialogClose>
-                    <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Save Score
-                    </Button>
-                </DialogFooter>
-            </form>
-            </Form>
+                            
+                            {currentTestConfig && (
+                                <div className="space-y-4 pt-4">
+                                    <FormLabel>Scores</FormLabel>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 rounded-md border p-4">
+                                        {currentTestConfig.sections.map((section: any, index: number) => (
+                                            <Controller
+                                                key={section.name}
+                                                control={form.control}
+                                                name={`scores.${index}`}
+                                                defaultValue={{ section: section.name, score: section.default }}
+                                                render={({ field }) => (
+                                                <FormItem>
+                                                    <div className="flex items-center justify-between">
+                                                        <FormLabel>{section.name}</FormLabel>
+                                                        {isStanineTest && field.value?.score > 0 && (
+                                                            <span className="text-sm font-medium text-muted-foreground">
+                                                            Stanine: {getStanine(field.value.score)}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <FormControl>
+                                                        <Stepper
+                                                            value={field.value?.score || section.default}
+                                                            onValueChange={(newScore) => {
+                                                                field.onChange({
+                                                                    section: section.name,
+                                                                    score: newScore
+                                                                });
+                                                            }}
+                                                            min={section.min}
+                                                            max={section.max}
+                                                            step={section.step}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                                )}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                        )}
+                        </form>
+                    </Form>
+                </div>
+            </div>
+            
+            <DialogFooter className="px-6 py-4 border-t flex-shrink-0">
+                <DialogClose asChild>
+                    <Button type="button" variant="ghost">Cancel</Button>
+                </DialogClose>
+                <Button type="button" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Save Score
+                </Button>
+            </DialogFooter>
         </div>
       </DialogContent>
     </Dialog>
   );
 }
+
+    
