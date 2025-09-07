@@ -126,6 +126,238 @@ const getStanine = (percentile: number) => {
   return 1;
 };
 
+// New Component for a single test type's display
+function TestTypeDisplay({
+  testType,
+  student,
+  submissions,
+  assignments,
+  onEdit,
+  onDelete
+}: {
+  testType: string;
+  student: Student;
+  submissions: (Submission & { assignment?: Assignment })[];
+  assignments: Assignment[];
+  onEdit: (submission: Submission) => void;
+  onDelete: (submission: Submission) => void;
+}) {
+  const assignmentMap = useMemo(() => new Map(assignments.map(a => [a.id, a])), [assignments]);
+  
+  const relevantSubmissions = useMemo(() => {
+    return submissions.filter(s => {
+      const assignment = s.assignment || assignmentMap.get(s.assignmentId);
+      return assignment?.['Test Type'] === testType;
+    })
+  }, [submissions, testType, assignmentMap]);
+  
+  const availableSources = useMemo(() => {
+    const sources = new Set<string>();
+    relevantSubmissions.forEach(sub => {
+      if (sub.isOfficial) {
+        sources.add('Official');
+      } else if (sub.assignment?.Source) {
+        sources.add(sub.assignment.Source);
+      }
+    });
+    return Array.from(sources);
+  }, [relevantSubmissions]);
+
+  const [selectedSources, setSelectedSources] = useState<Set<string>>(new Set(availableSources));
+  
+  useEffect(() => {
+    setSelectedSources(new Set(availableSources));
+  }, [availableSources]);
+
+  const filteredSubmissions = useMemo(() => {
+    return relevantSubmissions
+      .filter(s => {
+          if (s.isOfficial) return selectedSources.has('Official');
+          if (!s.assignment || !s.assignment.Source) return false;
+          return selectedSources.has(s.assignment.Source);
+      })
+      .sort((a, b) => a.submittedAt.getTime() - b.submittedAt.getTime());
+  }, [relevantSubmissions, selectedSources]);
+
+  const chartData = useMemo(() => {
+    return filteredSubmissions.map(s => {
+      const dataPoint: { [key: string]: any } = {
+        name: s.isOfficial ? s.officialTestName : s.assignment?.['Full Assignment Name'] || 'Unknown Test',
+        date: s.submittedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        source: s.isOfficial ? 'Official' : s.assignment?.Source,
+        testType: s.assignment?.['Test Type'],
+      };
+      s.scores?.forEach(score => {
+        dataPoint[score.section] = score.score;
+      });
+      return dataPoint;
+    });
+  }, [filteredSubmissions]);
+  
+  const allSections = useMemo(() => {
+    return TEST_CONFIG[testType]?.sections.map((sec: any) => sec.name) || [];
+  }, [testType]);
+
+  const yAxisDomain = useMemo(() => {
+    if (testType === 'SAT') return [200, 800];
+    if (testType === 'ACT') return [1, 36];
+    if (testType?.includes('SSAT') || testType?.includes('ISEE')) return [1, 99];
+    return ['auto', 'auto']; // Default domain
+  }, [testType]);
+
+  const handleSourceToggle = (source: string) => {
+    setSelectedSources(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(source)) {
+        newSet.delete(source);
+      } else {
+        newSet.add(source);
+      }
+      return newSet;
+    });
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{testType} Scores</CardTitle>
+        <CardDescription>
+          Practice and official test scores over time. Use the checkboxes to filter by test source.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          {availableSources.map(source => (
+            <div key={source} className="flex items-center space-x-2">
+              <Checkbox
+                id={`source-${testType}-${source}`}
+                checked={selectedSources.has(source)}
+                onCheckedChange={() => handleSourceToggle(source)}
+                style={{ backgroundColor: selectedSources.has(source) ? sourceColors[source] : undefined, borderColor: sourceColors[source] }}
+              />
+              <Label htmlFor={`source-${testType}-${source}`}>{source}</Label>
+            </div>
+          ))}
+        </div>
+
+        <div className="h-96 w-full">
+          {chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis type="number" domain={yAxisDomain} />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--background))',
+                      borderColor: 'hsl(var(--border))'
+                    }}
+                    formatter={(value: number, name: string, props) => {
+                        const isStanineTest = props.payload.testType?.includes('ISEE');
+                        if (isStanineTest) {
+                          return `${value} (Stanine: ${getStanine(value)})`;
+                        }
+                        return value;
+                    }}
+                    labelFormatter={(label, payload) => {
+                        const dataPoint = payload?.[0]?.payload;
+                        if (!dataPoint) return label;
+                        return (
+                          <Fragment>
+                              <span className="font-bold">{label}</span>
+                              <br />
+                              <span className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</span>
+                          </Fragment>
+                        )
+                    }}
+                  />
+                  <Legend />
+                  {allSections.map((section: string) => (
+                      <Line 
+                          key={section} 
+                          type="monotone"
+                          dataKey={section} 
+                          stroke={sectionColors[section] || '#8884d8'}
+                          strokeWidth={2}
+                          activeDot={{ r: 8 }}
+                       />
+                  ))}
+              </LineChart>
+              </ResponsiveContainer>
+          ) : (
+              <div className="flex h-full items-center justify-center rounded-lg border border-dashed text-muted-foreground">
+                  <p>No {testType} scores to display for {student.name}.</p>
+              </div>
+          )}
+        </div>
+      
+        <Card>
+          <CardHeader>
+            <CardTitle>{testType} Scores Log</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Test</TableHead>
+                  <TableHead>Source</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Scores</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {[...filteredSubmissions].reverse().map((submission) => {
+                  const isStanineTest = submission.assignment?.['Test Type']?.includes('ISEE');
+                  return (
+                  <TableRow key={submission.id}>
+                    <TableCell className="font-medium">
+                      {submission.isOfficial ? submission.officialTestName : submission.assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
+                    </TableCell>
+                    <TableCell>
+                       {submission.isOfficial ? 'Official' : submission.assignment?.Source || 'N/A'}
+                    </TableCell>
+                    <TableCell>
+                      {submission.submittedAt.toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {submission.scores
+                        ?.map((s) => `${s.section}: ${s.score}${isStanineTest ? ` (Stanine: ${getStanine(s.score)})` : ''}`)
+                        .join(', ')}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => onEdit(submission)}>
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => onDelete(submission)}
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                )})}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </CardContent>
+    </Card>
+  )
+}
+
 
 export function TestScoresClient({ students, assignments, submissions, onScoreAdd }: TestScoresClientProps) {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
@@ -147,93 +379,25 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
   const assignmentMap = useMemo(() => new Map(assignments.map(a => [a.id, a])), [assignments]);
   const selectedStudent = useMemo(() => studentMap.get(selectedStudentId || ''), [selectedStudentId, studentMap]);
 
-  const availableSources = useMemo(() => {
-    if (!selectedStudent) return [];
-    const testTypes = selectedStudent['Test Types'] || [];
-    const sources = new Set<string>();
-    submissions.forEach(sub => {
-      const assignment = assignmentMap.get(sub.assignmentId);
-      if (!assignment) return; // Safeguard against missing assignments
-
-      if (assignment.Source && testTypes.includes(assignment['Test Type']!)) {
-        sources.add(assignment.Source);
-      }
-      if (sub.isOfficial && testTypes.includes(assignment['Test Type']!)) {
-        sources.add('Official');
-      }
-    });
-    return Array.from(sources);
-  }, [selectedStudent, submissions, assignmentMap]);
-
-
-  const [selectedSources, setSelectedSources] = useState<Set<string>>(new Set(availableSources));
-  
-  useEffect(() => {
-      setSelectedSources(new Set(availableSources));
-  }, [availableSources]);
-  
-  const scoredSubmissions = useMemo(() => {
-    return submissions.filter(s => {
-       const assignment = assignmentMap.get(s.assignmentId);
-       return (assignment?.isPracticeTest || s.isOfficial) &&
-         s.status === 'Completed' &&
-         s.scores &&
-         s.scores.length > 0;
-     });
-  }, [submissions, assignmentMap]);
+  const studentTestTypes = useMemo(() => selectedStudent?.['Test Types'] || [], [selectedStudent]);
 
   const studentSubmissions = useMemo(() => {
     if (!selectedStudentId) return [];
-    return scoredSubmissions
-      .filter(s => s.studentId === selectedStudentId)
+    return submissions
+      .filter(s => {
+         const assignment = assignmentMap.get(s.assignmentId);
+         return s.studentId === selectedStudentId &&
+          (assignment?.isPracticeTest || s.isOfficial) &&
+           s.status === 'Completed' &&
+           s.scores &&
+           s.scores.length > 0;
+       })
       .map(s => ({
         ...s,
         assignment: assignmentMap.get(s.assignmentId),
-      }))
-      .filter(s => {
-          if (s.isOfficial) return selectedSources.has('Official');
-          if (!s.assignment || !s.assignment.Source) return false;
-          return selectedSources.has(s.assignment.Source);
-      })
-      .sort((a, b) => a.submittedAt.getTime() - b.submittedAt.getTime());
-  }, [selectedStudentId, scoredSubmissions, assignmentMap, selectedSources]);
+      }));
+  }, [selectedStudentId, submissions, assignmentMap]);
 
-  const chartData = useMemo(() => {
-    return studentSubmissions.map(s => {
-      const dataPoint: { [key: string]: any } = {
-        name: s.isOfficial ? s.officialTestName : s.assignment?.['Full Assignment Name'] || 'Unknown Test',
-        date: s.submittedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        source: s.isOfficial ? 'Official' : s.assignment?.Source,
-        testType: s.assignment?.['Test Type'],
-      };
-      s.scores?.forEach(score => {
-        dataPoint[score.section] = score.score;
-      });
-      return dataPoint;
-    });
-  }, [studentSubmissions]);
-
-  const allSections = useMemo(() => {
-    if (!selectedStudent) return [];
-    const testTypes = selectedStudent['Test Types'] || [];
-    const sections = new Set<string>();
-    testTypes.forEach(tt => {
-      TEST_CONFIG[tt]?.sections.forEach((sec: any) => sections.add(sec.name));
-    });
-    return Array.from(sections);
-  }, [selectedStudent]);
-
-  const handleSourceToggle = (source: string) => {
-    setSelectedSources(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(source)) {
-        newSet.delete(source);
-      } else {
-        newSet.add(source);
-      }
-      return newSet;
-    });
-  };
 
   const confirmDelete = async () => {
     if (!deletingSubmission) return;
@@ -249,22 +413,13 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
       setIsDeleting(false);
     }
   };
-
-  const yAxisDomain = useMemo(() => {
-    // For simplicity, we just check the first test type. This could be enhanced.
-    const testType = selectedStudent?.['Test Types']?.[0];
-    if (testType === 'SAT') return [200, 800];
-    if (testType === 'ACT') return [1, 36];
-    if (testType?.includes('SSAT') || testType?.includes('ISEE')) return [1, 99];
-    return ['auto', 'auto']; // Default domain
-  }, [selectedStudent]);
   
   if (!isMounted) {
     return null; // or a loading skeleton
   }
 
   return (
-    <>
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Test Scores</h1>
         <div className="flex items-center gap-2">
@@ -285,147 +440,27 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
            <AddOfficialScoreDialog students={students} assignments={assignments} onScoreAdd={onScoreAdd} />
         </div>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Score Visualization for {selectedStudent?.name || '...'}</CardTitle>
-          <CardDescription>
-            Practice and official test scores over time. Use the checkboxes to filter by test source.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            {availableSources.map(source => (
-              <div key={source} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`source-${source}`}
-                  checked={selectedSources.has(source)}
-                  onCheckedChange={() => handleSourceToggle(source)}
-                  style={{ backgroundColor: selectedSources.has(source) ? sourceColors[source] : undefined, borderColor: sourceColors[source] }}
-                />
-                <Label htmlFor={`source-${source}`}>{source}</Label>
-              </div>
-            ))}
-          </div>
-
-          <div className="h-96 w-full">
-            {chartData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis type="number" domain={yAxisDomain} />
-                    <Tooltip 
-                      contentStyle={{
-                        backgroundColor: 'hsl(var(--background))',
-                        borderColor: 'hsl(var(--border))'
-                      }}
-                      formatter={(value: number, name: string, props) => {
-                          const isStanineTest = props.payload.testType?.includes('ISEE');
-                          if (isStanineTest) {
-                            return `${value} (Stanine: ${getStanine(value)})`;
-                          }
-                          return value;
-                      }}
-                      labelFormatter={(label, payload) => {
-                          const dataPoint = payload?.[0]?.payload;
-                          if (!dataPoint) return label;
-                          return (
-                            <Fragment>
-                                <span className="font-bold">{label}</span>
-                                <br />
-                                <span className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</span>
-                            </Fragment>
-                          )
-                      }}
-                    />
-                    <Legend />
-                    {allSections.map((section) => (
-                        <Line 
-                            key={section} 
-                            type="monotone"
-                            dataKey={section} 
-                            stroke={sectionColors[section] || '#8884d8'}
-                            strokeWidth={2}
-                            activeDot={{ r: 8 }}
-                         />
-                    ))}
-                </LineChart>
-                </ResponsiveContainer>
-            ) : (
-                <div className="flex h-full items-center justify-center rounded-lg border border-dashed text-muted-foreground">
-                    <p>No test scores to display for {selectedStudent?.name || 'this student'}.</p>
-                </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Scores Log</CardTitle>
-          <CardDescription>
-            A log of recently entered practice and official test scores for {selectedStudent?.name || '...'}.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Test</TableHead>
-                <TableHead>Source</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Scores</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {[...studentSubmissions].reverse().map((submission) => {
-                const isStanineTest = submission.assignment?.['Test Type']?.includes('ISEE');
-                return (
-                <TableRow key={submission.id}>
-                  <TableCell className="font-medium">
-                    {submission.isOfficial ? submission.officialTestName : submission.assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
-                  </TableCell>
-                  <TableCell>
-                     {submission.isOfficial ? 'Official' : submission.assignment?.Source || 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    {submission.submittedAt.toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    {submission.scores
-                      ?.map((s) => `${s.section}: ${s.score}${isStanineTest ? ` (Stanine: ${getStanine(s.score)})` : ''}`)
-                      .join(', ')}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setEditingSubmission(submission)}>
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => setDeletingSubmission(submission)}
-                        >
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              )})}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      {selectedStudent ? (
+        studentTestTypes.map(testType => (
+          <TestTypeDisplay
+            key={testType}
+            testType={testType}
+            student={selectedStudent}
+            submissions={studentSubmissions}
+            assignments={assignments}
+            onEdit={setEditingSubmission}
+            onDelete={setDeletingSubmission}
+          />
+        ))
+      ) : (
+        <Card>
+            <CardContent className="flex h-96 items-center justify-center rounded-lg border border-dashed text-muted-foreground">
+                <p>Select a student to view their test scores.</p>
+            </CardContent>
+        </Card>
+      )}
+
 
       {/* Edit Dialog */}
       {editingSubmission && selectedStudent && (
@@ -463,7 +498,8 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
+}
 
     
