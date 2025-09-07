@@ -146,23 +146,21 @@ function TestTypeDisplay({
   
   const relevantSubmissions = useMemo(() => {
     return submissions.filter(s => {
-      // Check practice tests
       const assignment = s.assignment || assignmentMap.get(s.assignmentId);
+      
+      // Handle practice tests
       if (assignment?.['Test Type'] === testType) {
         return true;
       }
-      // Check official tests
-      if (s.isOfficial && student['Test Types']?.includes(testType)) {
-         // This is a bit of a workaround: for official tests, the test type isn't on the submission.
-         // We check if the official test name includes the test type string.
-         // e.g. "January 2024 Upper Level SSAT" includes "Upper Level SSAT"
-         if (s.officialTestName?.includes(testType)) {
-           return true;
-         }
+      
+      // Handle official tests
+      if (s.isOfficial && s.officialTestName?.includes(testType)) {
+        return true;
       }
+
       return false;
-    })
-  }, [submissions, testType, assignmentMap, student]);
+    });
+  }, [submissions, testType, assignmentMap]);
   
   const availableSources = useMemo(() => {
     const sources = new Set<string>();
@@ -281,11 +279,11 @@ function TestTypeDisplay({
                         const dataPoint = payload?.[0]?.payload;
                         if (!dataPoint) return label;
                         return (
-                          <Fragment>
+                          <>
                               <span className="font-bold">{label}</span>
                               <br />
                               <span className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</span>
-                          </Fragment>
+                          </>
                         )
                     }}
                   />
@@ -327,7 +325,7 @@ function TestTypeDisplay({
               <TableBody>
                 {[...filteredSubmissions].reverse().map((submission) => {
                   const assignment = submission.assignment || assignmentMap.get(submission.assignmentId);
-                  const isStanineTest = assignment?.['Test Type']?.includes('ISEE');
+                  const isStanineTest = testType?.includes('ISEE');
                   return (
                   <TableRow key={submission.id}>
                     <TableCell className="font-medium">
@@ -528,6 +526,5 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
     </div>
   );
 }
-
 
     
