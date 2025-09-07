@@ -395,7 +395,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                   </TableCell>
                   <TableCell>
                     {submission.scores
-                      ?.map((s) => `${s.section}: ${s.score}${isStanineTest ? ` (${getStanine(s.score)})` : ''}`)
+                      ?.map((s) => `${s.section}: ${s.score}${isStanineTest ? ` (Stanine: ${getStanine(s.score)})` : ''}`)
                       .join(', ')}
                   </TableCell>
                   <TableCell className="text-right">
@@ -465,4 +465,5 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
       </AlertDialog>
     </>
   );
-}
+
+    
