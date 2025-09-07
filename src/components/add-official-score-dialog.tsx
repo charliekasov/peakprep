@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { PlusCircle, Loader2 } from 'lucide-react';
+import { PlusCircle, Loader2, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { handleAddTestScore } from '@/app/test-scores/actions';
 import type { Student, Assignment } from '@/lib/types';
@@ -133,6 +133,7 @@ const TEST_CONFIG: any = {
 export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: AddOfficialScoreDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showDayInput, setShowDayInput] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -212,6 +213,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
           scores: [],
         });
     }
+    setShowDayInput(false);
   }, [studentId, students, reset, setValue]);
   
   useEffect(() => {
@@ -376,74 +378,91 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                             />
                             ) : null}
 
-                            <div className="grid grid-cols-3 gap-4">
-                            <FormField
-                                control={form.control}
-                                name="month"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Month</FormLabel>
-                                    <Select onValueChange={field.onChange} value={field.value}>
-                                        <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Month" />
-                                        </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                        {MONTHS.map((month) => (
-                                            <SelectItem key={month.value} value={month.value}>{month.name}</SelectItem>
-                                        ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                                />
+                            <div className="grid grid-cols-2 gap-4 items-end">
+                              <FormField
+                                  control={form.control}
+                                  name="month"
+                                  render={({ field }) => (
+                                      <FormItem>
+                                      <FormLabel>Month</FormLabel>
+                                      <Select onValueChange={field.onChange} value={field.value}>
+                                          <FormControl>
+                                          <SelectTrigger>
+                                              <SelectValue placeholder="Month" />
+                                          </SelectTrigger>
+                                          </FormControl>
+                                          <SelectContent>
+                                          {MONTHS.map((month) => (
+                                              <SelectItem key={month.value} value={month.value}>{month.name}</SelectItem>
+                                          ))}
+                                          </SelectContent>
+                                      </Select>
+                                      <FormMessage />
+                                      </FormItem>
+                                  )}
+                                  />
+                              <FormField
+                                  control={form.control}
+                                  name="year"
+                                  render={({ field }) => (
+                                      <FormItem>
+                                      <FormLabel>Year</FormLabel>
+                                      <Select onValueChange={field.onChange} value={field.value}>
+                                          <FormControl>
+                                          <SelectTrigger>
+                                              <SelectValue placeholder="Year" />
+                                          </SelectTrigger>
+                                          </FormControl>
+                                          <SelectContent>
+                                          {YEARS.map(year => (
+                                              <SelectItem key={year} value={year}>{year}</SelectItem>
+                                          ))}
+                                          </SelectContent>
+                                      </Select>
+                                      <FormMessage />
+                                      </FormItem>
+                                  )}
+                                  />
+                            </div>
+                            
+                            {showDayInput ? (
                                 <FormField
                                     control={form.control}
                                     name="day"
                                     render={({ field }) => (
                                         <FormItem>
-                                        <FormLabel>Day (Opt.)</FormLabel>
-                                        <Select onValueChange={field.onChange} value={field.value ?? ''}>
-                                            <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Day" />
-                                            </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                            {dayOptions.map(day => (
-                                                <SelectItem key={day} value={day}>{day}</SelectItem>
-                                            ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <FormLabel>Day</FormLabel>
+                                        <div className="flex items-center gap-2">
+                                          <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                                              <FormControl>
+                                              <SelectTrigger>
+                                                  <SelectValue placeholder="Day" />
+                                              </SelectTrigger>
+                                              </FormControl>
+                                              <SelectContent>
+                                              {dayOptions.map(day => (
+                                                  <SelectItem key={day} value={day}>{day}</SelectItem>
+                                              ))}
+                                              </SelectContent>
+                                          </Select>
+                                          <Button variant="ghost" size="icon" type="button" onClick={() => {
+                                              setShowDayInput(false);
+                                              form.setValue('day', '');
+                                          }}>
+                                              <XCircle className="h-4 w-4 text-muted-foreground" />
+                                          </Button>
+                                        </div>
                                         <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                                <FormField
-                                control={form.control}
-                                name="year"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Year</FormLabel>
-                                    <Select onValueChange={field.onChange} value={field.value}>
-                                        <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Year" />
-                                        </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                        {YEARS.map(year => (
-                                            <SelectItem key={year} value={year}>{year}</SelectItem>
-                                        ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                                />
-                            </div>
+                            ) : (
+                                <Button type="button" variant="outline" size="sm" className="text-xs w-fit" onClick={() => setShowDayInput(true)}>
+                                    <PlusCircle className="mr-2 h-3 w-3" />
+                                    Add Day
+                                </Button>
+                            )}
+
                             
                             {currentTestConfig && (
                                 <div className="space-y-4 pt-4">
