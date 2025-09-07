@@ -51,8 +51,27 @@ interface NeedsReviewClientProps {
   submissions: EnrichedSubmission[];
 }
 
-const SAT_SECTIONS = ['Reading + Writing', 'Math'];
-const SSAT_SECTIONS = ['Verbal', 'Quantitative', 'Reading'];
+const TEST_CONFIG: any = {
+  'SAT': {
+    sections: ['Reading + Writing', 'Math'],
+  },
+  'ACT': {
+    sections: ['English', 'Math', 'Reading', 'Science'],
+  },
+  'Upper Level SSAT': {
+    sections: ['Verbal', 'Reading', 'Quantitative'],
+  },
+   'Middle Level SSAT': {
+    sections: ['Verbal', 'Reading', 'Quantitative'],
+  },
+  'Upper Level ISEE': {
+    sections: ['Verbal Reasoning', 'Quantitative Reasoning', 'Reading Comprehension', 'Math Achievement'],
+  },
+  'Middle Level ISEE': {
+    sections: ['Verbal Reasoning', 'Quantitative Reasoning', 'Reading Comprehension', 'Math Achievement'],
+  }
+};
+
 
 const scoreSchema = z.object({
   section: z.string(),
@@ -92,7 +111,7 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
   const { toast } = useToast();
   const { refetchData } = useData();
 
-  const sections = selectedSubmission?.assignment?.['Test Type'] === 'SAT' ? SAT_SECTIONS : SSAT_SECTIONS;
+  const sections = selectedSubmission?.assignment?.['Test Type'] ? TEST_CONFIG[selectedSubmission.assignment['Test Type']]?.sections : [];
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -103,13 +122,13 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
   
   const handleOpenDialog = (submission: EnrichedSubmission) => {
     setSelectedSubmission(submission);
-    const scoreSections = submission.assignment?.['Test Type'] === 'SAT' ? SAT_SECTIONS : SSAT_SECTIONS;
+    const scoreSections = submission.assignment?.['Test Type'] ? TEST_CONFIG[submission.assignment['Test Type']]?.sections : [];
     
     // Check if there are existing scores to populate the form
     const existingScoresMap = new Map(submission.scores?.map(s => [s.section, s.score]));
 
     form.reset({
-      scores: scoreSections.map(section => ({ 
+      scores: scoreSections.map((section: string) => ({ 
         section, 
         score: existingScoresMap.get(section) || 0,
       }))
