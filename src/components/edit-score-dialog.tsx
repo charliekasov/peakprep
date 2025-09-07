@@ -102,7 +102,7 @@ export function EditScoreDialog({ submission, student, isOpen, onOpenChange, onS
     },
   });
 
-  const studentTestType = useMemo(() => student?.['Test Type'], [student]);
+  const studentTestType = useMemo(() => student?.['Test Types']?.[0], [student]);
   const currentTestConfig = useMemo(() => {
     if (!studentTestType) return null;
     return TEST_CONFIG[studentTestType];

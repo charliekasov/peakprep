@@ -57,6 +57,7 @@ const formSchema = z
     practiceTestId: z.string().optional(),
     month: z.string().min(1, 'Month is required.'),
     year: z.string().min(1, 'Year is required.'),
+    day: z.string().optional(),
     scores: z.array(scoreSchema).optional(),
   })
   .refine(
@@ -98,9 +99,12 @@ const getStanine = (percentile: number) => {
 };
 
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  { name: 'January', value: '0' }, { name: 'February', value: '1' }, { name: 'March', value: '2' }, 
+  { name: 'April', value: '3' }, { name: 'May', value: '4' }, { name: 'June', value: '5' },
+  { name: 'July', value: '6' }, { name: 'August', value: '7' }, { name: 'September', value: '8' },
+  { name: 'October', value: '9' }, { name: 'November', value: '10' }, { name: 'December', value: '11' }
 ];
+
 
 const YEARS = Array.from({ length: 10 }, (_, i) => (new Date().getFullYear() - 5 + i).toString());
 
@@ -140,6 +144,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
       practiceTestId: '',
       month: (new Date().getMonth()).toString(),
       year: new Date().getFullYear().toString(),
+      day: '',
       scores: [],
     },
   });
@@ -150,8 +155,20 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
 
   const selectedStudent = useMemo(() => students.find(s => s.id === studentId), [studentId, students]);
   const studentTestTypes = useMemo(() => selectedStudent?.['Test Types'] || [], [selectedStudent]);
-  // For now, we'll base the dialog on the *first* test type.
+  // For now, we'll base the dialog on the *first* test type. This should be improved.
   const primaryTestType = useMemo(() => studentTestTypes[0], [studentTestTypes]);
+
+  const month = watch('month');
+  const year = watch('year');
+
+  const daysInMonth = useMemo(() => {
+    if (month && year) {
+        return new Date(parseInt(year), parseInt(month) + 1, 0).getDate();
+    }
+    return 31;
+  }, [month, year]);
+  
+  const dayOptions = Array.from({ length: daysInMonth }, (_, i) => (i + 1).toString());
 
 
   const filteredPracticeTests = useMemo(() => {
@@ -179,6 +196,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
             officialTestName: '',
             month: (new Date().getMonth()).toString(),
             year: new Date().getFullYear().toString(),
+            day: '',
             scores: config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : [],
         });
         setValue('testTypeSelection', 'Practice Test');
@@ -190,10 +208,19 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
           practiceTestId: '',
           month: (new Date().getMonth()).toString(),
           year: new Date().getFullYear().toString(),
+          day: '',
           scores: [],
         });
     }
   }, [studentId, students, reset, setValue]);
+  
+  useEffect(() => {
+    if (testTypeSelection.startsWith('Official') && month && year) {
+        const monthName = MONTHS.find(m => m.value === month)?.name;
+        setValue('officialTestName', `${monthName} ${year} ${primaryTestType}`);
+    }
+  }, [testTypeSelection, month, year, primaryTestType, setValue]);
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!primaryTestType) {
@@ -204,8 +231,9 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     setIsSubmitting(true);
     try {
       const monthIndex = parseInt(values.month, 10);
-      const year = parseInt(values.year, 10);
-      const testDate = new Date(year, monthIndex, 15);
+      const yearInt = parseInt(values.year, 10);
+      const dayInt = values.day ? parseInt(values.day, 10) : 15; // Default to middle of month if no day
+      const testDate = new Date(yearInt, monthIndex, dayInt);
 
       const isOfficial = values.testTypeSelection !== 'Practice Test';
       
@@ -346,23 +374,9 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                                 </FormItem>
                                 )}
                             />
-                            ) : testTypeSelection.startsWith('Official') ? (
-                            <FormField
-                                control={form.control}
-                                name="officialTestName"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Test Name / Date</FormLabel>
-                                    <FormControl>
-                                    <Input placeholder="e.g., May 2024 Digital SAT" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
                             ) : null}
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-3 gap-4">
                             <FormField
                                 control={form.control}
                                 name="month"
@@ -372,18 +386,41 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                                     <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select month" />
+                                            <SelectValue placeholder="Month" />
                                         </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                        {MONTHS.map((month, index) => (
-                                            <SelectItem key={month} value={index.toString()}>{month}</SelectItem>
+                                        {MONTHS.map((month) => (
+                                            <SelectItem key={month.value} value={month.value}>{month.name}</SelectItem>
                                         ))}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
                                     </FormItem>
                                 )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="day"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Day (Opt.)</FormLabel>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Day" />
+                                            </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                            <SelectItem value="">--</SelectItem>
+                                            {dayOptions.map(day => (
+                                                <SelectItem key={day} value={day}>{day}</SelectItem>
+                                            ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
                                 />
                                 <FormField
                                 control={form.control}
@@ -394,7 +431,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                                     <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select year" />
+                                            <SelectValue placeholder="Year" />
                                         </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
@@ -472,5 +509,3 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
-
-    
