@@ -149,24 +149,27 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
   const testTypeSelection = watch('testTypeSelection');
 
   const selectedStudent = useMemo(() => students.find(s => s.id === studentId), [studentId, students]);
-  const studentTestType = selectedStudent?.['Test Type'];
+  const studentTestTypes = useMemo(() => selectedStudent?.['Test Types'] || [], [selectedStudent]);
+  // For now, we'll base the dialog on the *first* test type.
+  const primaryTestType = useMemo(() => studentTestTypes[0], [studentTestTypes]);
+
 
   const filteredPracticeTests = useMemo(() => {
-    if (!studentTestType) return [];
-    return assignments.filter(a => a.isPracticeTest && a['Test Type'] === studentTestType);
-  }, [studentTestType, assignments]);
+    if (!primaryTestType) return [];
+    return assignments.filter(a => a.isPracticeTest && a['Test Type'] === primaryTestType);
+  }, [primaryTestType, assignments]);
 
   const currentTestConfig = useMemo(() => {
-    if (!studentTestType) return null;
-    return TEST_CONFIG[studentTestType];
-  }, [studentTestType]);
+    if (!primaryTestType) return null;
+    return TEST_CONFIG[primaryTestType];
+  }, [primaryTestType]);
   
-  const isStanineTest = useMemo(() => studentTestType?.includes('ISEE'), [studentTestType]);
+  const isStanineTest = useMemo(() => primaryTestType?.includes('ISEE'), [primaryTestType]);
 
   useEffect(() => {
     if (studentId) {
         const student = students.find(s => s.id === studentId);
-        const testType = student?.['Test Type'] || '';
+        const testType = student?.['Test Types']?.[0] || '';
         const config = TEST_CONFIG[testType];
         
         reset({
@@ -193,7 +196,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
   }, [studentId, students, reset, setValue]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!studentTestType) {
+    if (!primaryTestType) {
         toast({ title: 'Error', description: 'Could not determine test type for student.', variant: 'destructive'});
         return;
     }
@@ -210,7 +213,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
       
       const payload = {
         studentId: values.studentId,
-        testType: studentTestType,
+        testType: primaryTestType,
         assignmentId: assignmentId!,
         testDate,
         scores: values.scores || [],
@@ -289,7 +292,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                         )}
                         />
 
-                        {studentId && studentTestType && (
+                        {studentId && primaryTestType && (
                         <>
                             <FormField
                             control={form.control}
@@ -305,7 +308,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                                     </FormControl>
                                     <SelectContent>
                                     <SelectItem value="Practice Test">Practice Test</SelectItem>
-                                    <SelectItem value={`Official ${studentTestType}`}>{`Official ${studentTestType}`}</SelectItem>
+                                    <SelectItem value={`Official ${primaryTestType}`}>{`Official ${primaryTestType}`}</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -469,3 +472,5 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
+
+    
