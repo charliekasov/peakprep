@@ -93,6 +93,39 @@ const sectionColors: { [key: string]: string } = {
   'Math Achievement': '#ff7300',
 }
 
+const TEST_CONFIG: any = {
+  'SAT': {
+    sections: [{ name: 'Reading + Writing', min: 200, max: 800, step: 10, default: 600 }, { name: 'Math', min: 200, max: 800, step: 10, default: 600 }],
+  },
+  'ACT': {
+    sections: [{ name: 'English', min: 1, max: 36, step: 1, default: 27 }, { name: 'Math', min: 1, max: 36, step: 1, default: 27 }, { name: 'Reading', min: 1, max: 36, step: 1, default: 27 }, { name: 'Science', min: 1, max: 36, step: 1, default: 27 }],
+  },
+  'Upper Level SSAT': {
+    sections: [{ name: 'Verbal', min: 1, max: 99, step: 1, default: 65 }, { name: 'Reading', min: 1, max: 99, step: 1, default: 65 }, { name: 'Quantitative', min: 1, max: 99, step: 1, default: 65 }],
+  },
+   'Middle Level SSAT': {
+    sections: [{ name: 'Verbal', min: 1, max: 99, step: 1, default: 65 }, { name: 'Reading', min: 1, max: 99, step: 1, default: 65 }, { name: 'Quantitative', min: 1, max: 99, step: 1, default: 65 }],
+  },
+  'Upper Level ISEE': {
+    sections: [{ name: 'Verbal Reasoning', min: 1, max: 99, step: 1, default: 65 }, { name: 'Quantitative Reasoning', min: 1, max: 99, step: 1, default: 65 }, { name: 'Reading Comprehension', min: 1, max: 99, step: 1, default: 65 }, { name: 'Math Achievement', min: 1, max: 99, step: 1, default: 65 }],
+  },
+  'Middle Level ISEE': {
+    sections: [{ name: 'Verbal Reasoning', min: 1, max: 99, step: 1, default: 65 }, { name: 'Quantitative Reasoning', min: 1, max: 99, step: 1, default: 65 }, { name: 'Reading Comprehension', min: 1, max: 99, step: 1, default: 65 }, { name: 'Math Achievement', min: 1, max: 99, step: 1, default: 65 }],
+  }
+};
+
+const getStanine = (percentile: number) => {
+  if (percentile >= 96) return 9;
+  if (percentile >= 89) return 8;
+  if (percentile >= 77) return 7;
+  if (percentile >= 60) return 6;
+  if (percentile >= 40) return 5;
+  if (percentile >= 23) return 4;
+  if (percentile >= 11) return 3;
+  if (percentile >= 4) return 2;
+  return 1;
+};
+
 
 export function TestScoresClient({ students, assignments, submissions, onScoreAdd }: TestScoresClientProps) {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
@@ -171,6 +204,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
         name: s.isOfficial ? s.officialTestName : s.assignment?.['Full Assignment Name'] || 'Unknown Test',
         date: s.submittedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
         source: s.isOfficial ? 'Official' : s.assignment?.Source,
+        testType: s.assignment?.['Test Type'],
       };
       s.scores?.forEach(score => {
         dataPoint[score.section] = score.score;
@@ -180,12 +214,14 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
   }, [studentSubmissions]);
 
   const allSections = useMemo(() => {
+    if (!selectedStudent) return [];
+    const testTypes = selectedStudent['Test Types'] || [];
     const sections = new Set<string>();
-    studentSubmissions.forEach(s => {
-      s.scores?.forEach(score => sections.add(score.section));
+    testTypes.forEach(tt => {
+      TEST_CONFIG[tt]?.sections.forEach((sec: any) => sections.add(sec.name));
     });
     return Array.from(sections);
-  }, [studentSubmissions]);
+  }, [selectedStudent]);
 
   const handleSourceToggle = (source: string) => {
     setSelectedSources(prev => {
@@ -284,15 +320,20 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                         backgroundColor: 'hsl(var(--background))',
                         borderColor: 'hsl(var(--border))'
                       }}
-                      formatter={(value, name) => [value, name]}
+                      formatter={(value: number, name: string, props) => {
+                          const isStanineTest = props.payload.testType?.includes('ISEE');
+                          if (isStanineTest) {
+                            return `${value} (Stanine: ${getStanine(value)})`;
+                          }
+                          return value;
+                      }}
                       labelFormatter={(label, payload) => {
                           const dataPoint = payload?.[0]?.payload;
                           if (!dataPoint) return label;
                           return (
                             <Fragment>
-                                <span className="font-bold">{label}</span>
-                                <br />
-                                <span className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</span>
+                                <div className="font-bold">{label}</div>
+                                <div className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</div>
                             </Fragment>
                           )
                       }}
@@ -338,7 +379,9 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
               </TableRow>
             </TableHeader>
             <TableBody>
-              {[...studentSubmissions].reverse().map((submission) => (
+              {[...studentSubmissions].reverse().map((submission) => {
+                const isStanineTest = submission.assignment?.['Test Type']?.includes('ISEE');
+                return (
                 <TableRow key={submission.id}>
                   <TableCell className="font-medium">
                     {submission.isOfficial ? submission.officialTestName : submission.assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
@@ -351,7 +394,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                   </TableCell>
                   <TableCell>
                     {submission.scores
-                      ?.map((s) => `${s.section}: ${s.score}`)
+                      ?.map((s) => `${s.section}: ${s.score}${isStanineTest ? ` (${getStanine(s.score)})` : ''}`)
                       .join(', ')}
                   </TableCell>
                   <TableCell className="text-right">
@@ -377,7 +420,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))}
+              )})}
             </TableBody>
           </Table>
         </CardContent>
@@ -422,5 +465,3 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
     </>
   );
 }
-
-    
