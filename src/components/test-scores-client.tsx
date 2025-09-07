@@ -146,10 +146,23 @@ function TestTypeDisplay({
   
   const relevantSubmissions = useMemo(() => {
     return submissions.filter(s => {
+      // Check practice tests
       const assignment = s.assignment || assignmentMap.get(s.assignmentId);
-      return assignment?.['Test Type'] === testType;
+      if (assignment?.['Test Type'] === testType) {
+        return true;
+      }
+      // Check official tests
+      if (s.isOfficial && student['Test Types']?.includes(testType)) {
+         // This is a bit of a workaround: for official tests, the test type isn't on the submission.
+         // We check if the official test name includes the test type string.
+         // e.g. "January 2024 Upper Level SSAT" includes "Upper Level SSAT"
+         if (s.officialTestName?.includes(testType)) {
+           return true;
+         }
+      }
+      return false;
     })
-  }, [submissions, testType, assignmentMap]);
+  }, [submissions, testType, assignmentMap, student]);
   
   const availableSources = useMemo(() => {
     const sources = new Set<string>();
@@ -181,18 +194,19 @@ function TestTypeDisplay({
 
   const chartData = useMemo(() => {
     return filteredSubmissions.map(s => {
+      const assignment = s.assignment || assignmentMap.get(s.assignmentId);
       const dataPoint: { [key: string]: any } = {
-        name: s.isOfficial ? s.officialTestName : s.assignment?.['Full Assignment Name'] || 'Unknown Test',
+        name: s.isOfficial ? s.officialTestName : assignment?.['Full Assignment Name'] || 'Unknown Test',
         date: s.submittedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        source: s.isOfficial ? 'Official' : s.assignment?.Source,
-        testType: s.assignment?.['Test Type'],
+        source: s.isOfficial ? 'Official' : assignment?.Source,
+        testType: assignment?.['Test Type'],
       };
       s.scores?.forEach(score => {
         dataPoint[score.section] = score.score;
       });
       return dataPoint;
     });
-  }, [filteredSubmissions]);
+  }, [filteredSubmissions, assignmentMap]);
   
   const allSections = useMemo(() => {
     return TEST_CONFIG[testType]?.sections.map((sec: any) => sec.name) || [];
@@ -216,6 +230,10 @@ function TestTypeDisplay({
       return newSet;
     });
   };
+
+  if (relevantSubmissions.length === 0) {
+    return null; // Don't render this component if there are no scores for this test type
+  }
 
   return (
     <Card>
@@ -286,7 +304,7 @@ function TestTypeDisplay({
               </ResponsiveContainer>
           ) : (
               <div className="flex h-full items-center justify-center rounded-lg border border-dashed text-muted-foreground">
-                  <p>No {testType} scores to display for {student.name}.</p>
+                  <p>No {testType} scores to display for the selected sources.</p>
               </div>
           )}
         </div>
@@ -308,14 +326,15 @@ function TestTypeDisplay({
               </TableHeader>
               <TableBody>
                 {[...filteredSubmissions].reverse().map((submission) => {
-                  const isStanineTest = submission.assignment?.['Test Type']?.includes('ISEE');
+                  const assignment = submission.assignment || assignmentMap.get(submission.assignmentId);
+                  const isStanineTest = assignment?.['Test Type']?.includes('ISEE');
                   return (
                   <TableRow key={submission.id}>
                     <TableCell className="font-medium">
-                      {submission.isOfficial ? submission.officialTestName : submission.assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
+                      {submission.isOfficial ? submission.officialTestName : assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
                     </TableCell>
                     <TableCell>
-                       {submission.isOfficial ? 'Official' : submission.assignment?.Source || 'N/A'}
+                       {submission.isOfficial ? 'Official' : assignment?.Source || 'N/A'}
                     </TableCell>
                     <TableCell>
                       {submission.submittedAt.toLocaleDateString()}
@@ -442,17 +461,25 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
       </div>
       
       {selectedStudent ? (
-        studentTestTypes.map(testType => (
-          <TestTypeDisplay
-            key={testType}
-            testType={testType}
-            student={selectedStudent}
-            submissions={studentSubmissions}
-            assignments={assignments}
-            onEdit={setEditingSubmission}
-            onDelete={setDeletingSubmission}
-          />
-        ))
+        studentTestTypes.length > 0 ? (
+          studentTestTypes.map(testType => (
+            <TestTypeDisplay
+              key={testType}
+              testType={testType}
+              student={selectedStudent}
+              submissions={studentSubmissions}
+              assignments={assignments}
+              onEdit={setEditingSubmission}
+              onDelete={setDeletingSubmission}
+            />
+          ))
+        ) : (
+          <Card>
+            <CardContent className="flex h-96 items-center justify-center rounded-lg border border-dashed text-muted-foreground">
+                <p>{selectedStudent.name} is not currently preparing for any tests.</p>
+            </CardContent>
+          </Card>
+        )
       ) : (
         <Card>
             <CardContent className="flex h-96 items-center justify-center rounded-lg border border-dashed text-muted-foreground">
@@ -501,5 +528,6 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
     </div>
   );
 }
+
 
     
