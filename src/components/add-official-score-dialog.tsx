@@ -405,14 +405,13 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                                     render={({ field }) => (
                                         <FormItem>
                                         <FormLabel>Day (Opt.)</FormLabel>
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value ?? ''}>
                                             <FormControl>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Day" />
                                             </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                            <SelectItem value="">--</SelectItem>
                                             {dayOptions.map(day => (
                                                 <SelectItem key={day} value={day}>{day}</SelectItem>
                                             ))}
