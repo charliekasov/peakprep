@@ -190,19 +190,24 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
         const student = students.find(s => s.id === studentId);
         const testTypes = student?.['Test Types'] || [];
         const firstTestType = testTypes[0] || '';
-        setValue('testType', firstTestType); // Default to the first test type
-        // Reset and set new defaults when student changes
         const config = TEST_CONFIG[firstTestType];
-        setValue('scores', config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : []);
-        setValue('testTypeSelection', 'Practice Test');
-        setValue('practiceTestId', '');
-        setValue('officialTestName', '');
 
+        reset({
+            studentId: studentId,
+            testType: firstTestType,
+            testTypeSelection: 'Practice Test',
+            practiceTestId: '',
+            officialTestName: '',
+            month: (new Date().getMonth()).toString(),
+            year: new Date().getFullYear().toString(),
+            day: '',
+            scores: config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : [],
+        });
     } else {
         reset();
     }
     setShowDayInput(false);
-  }, [studentId, students, reset, setValue]);
+  }, [studentId, students, reset]);
 
   useEffect(() => {
     if (selectedTestType) {

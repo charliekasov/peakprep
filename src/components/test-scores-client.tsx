@@ -482,11 +482,13 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
 
     return (
       <Tabs defaultValue={studentTestTypes[0]} className="w-full">
-        <TabsList>
-          {studentTestTypes.map(tt => (
-            <TabsTrigger key={tt} value={tt}>{tt}</TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="mb-4">
+            <TabsList>
+            {studentTestTypes.map(tt => (
+                <TabsTrigger key={tt} value={tt}>{tt}</TabsTrigger>
+            ))}
+            </TabsList>
+        </div>
         {studentTestTypes.map(tt => (
             <TabsContent key={tt} value={tt}>
                  <TestTypeDisplay
