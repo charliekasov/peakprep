@@ -52,6 +52,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { handleDeleteTestScore } from '@/app/test-scores/actions';
 import { useRouter } from 'next/navigation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 
 interface TestScoresClientProps {
@@ -445,6 +446,63 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
     return null; // or a loading skeleton
   }
 
+  const renderContent = () => {
+    if (!selectedStudent) {
+      return (
+        <Card>
+          <CardContent className="flex h-96 items-center justify-center rounded-lg border border-dashed text-muted-foreground">
+            <p>Select a student to view their test scores.</p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (studentTestTypes.length === 0) {
+      return (
+        <Card>
+          <CardContent className="flex h-96 items-center justify-center rounded-lg border border-dashed text-muted-foreground">
+            <p>{selectedStudent.name} is not currently preparing for any tests.</p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (studentTestTypes.length === 1) {
+      return (
+        <TestTypeDisplay
+          testType={studentTestTypes[0]}
+          student={selectedStudent}
+          submissions={studentSubmissions}
+          assignments={assignments}
+          onEdit={setEditingSubmission}
+          onDelete={setDeletingSubmission}
+        />
+      );
+    }
+
+    return (
+      <Tabs defaultValue={studentTestTypes[0]} className="w-full">
+        <TabsList>
+          {studentTestTypes.map(tt => (
+            <TabsTrigger key={tt} value={tt}>{tt}</TabsTrigger>
+          ))}
+        </TabsList>
+        {studentTestTypes.map(tt => (
+            <TabsContent key={tt} value={tt}>
+                 <TestTypeDisplay
+                    testType={tt}
+                    student={selectedStudent!}
+                    submissions={studentSubmissions}
+                    assignments={assignments}
+                    onEdit={setEditingSubmission}
+                    onDelete={setDeletingSubmission}
+                />
+            </TabsContent>
+        ))}
+      </Tabs>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -468,33 +526,7 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
         </div>
       </div>
       
-      {selectedStudent ? (
-        studentTestTypes.length > 0 ? (
-          studentTestTypes.map(testType => (
-            <TestTypeDisplay
-              key={testType}
-              testType={testType}
-              student={selectedStudent}
-              submissions={studentSubmissions}
-              assignments={assignments}
-              onEdit={setEditingSubmission}
-              onDelete={setDeletingSubmission}
-            />
-          ))
-        ) : (
-          <Card>
-            <CardContent className="flex h-96 items-center justify-center rounded-lg border border-dashed text-muted-foreground">
-                <p>{selectedStudent.name} is not currently preparing for any tests.</p>
-            </CardContent>
-          </Card>
-        )
-      ) : (
-        <Card>
-            <CardContent className="flex h-96 items-center justify-center rounded-lg border border-dashed text-muted-foreground">
-                <p>Select a student to view their test scores.</p>
-            </CardContent>
-        </Card>
-      )}
+      {renderContent()}
 
 
       {/* Edit Dialog */}

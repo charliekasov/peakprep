@@ -191,6 +191,13 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
         const testTypes = student?.['Test Types'] || [];
         const firstTestType = testTypes[0] || '';
         setValue('testType', firstTestType); // Default to the first test type
+        // Reset and set new defaults when student changes
+        const config = TEST_CONFIG[firstTestType];
+        setValue('scores', config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : []);
+        setValue('testTypeSelection', 'Practice Test');
+        setValue('practiceTestId', '');
+        setValue('officialTestName', '');
+
     } else {
         reset();
     }
@@ -543,5 +550,3 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
-
-    
