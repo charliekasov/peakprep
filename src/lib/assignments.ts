@@ -1,4 +1,6 @@
 
+'use client';
+
 import { collection, getDocs, getDoc, doc } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Assignment } from './types';

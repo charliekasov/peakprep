@@ -1,9 +1,22 @@
 
-import { getAssignments } from '@/lib/assignments';
-import { AssignmentsClient } from '@/components/assignments-client';
+'use client';
 
-export default async function AssignmentsPage() {
-  const assignments = await getAssignments();
+import { useAssignments } from '@/hooks/use-assignments';
+import { AssignmentsClient } from '@/components/assignments-client';
+import { Skeleton } from '@/components/ui/skeleton';
+
+
+export default function AssignmentsPage() {
+  const { assignments, loading } = useAssignments();
+
+  if (loading) {
+    return (
+        <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+            <Skeleton className="h-12 w-1/4" />
+            <Skeleton className="h-96 w-full" />
+        </div>
+    );
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

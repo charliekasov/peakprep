@@ -1,4 +1,6 @@
 
+'use client';
+
 import { Suspense } from 'react';
 import {
   Card,
@@ -23,9 +25,9 @@ import {
 import { StudentPerformanceChart } from '@/components/student-performance-chart';
 import type { Submission, Student, Assignment } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getStudents, getStudentsCount } from '@/lib/students';
-import { getAssignments, getAssignmentsCount } from '@/lib/assignments';
-import { getNeedsReviewSubmissions } from '@/lib/submissions';
+import { useStudents } from '@/hooks/use-students';
+import { useAssignments } from '@/hooks/use-assignments';
+import { useSubmissions } from '@/hooks/use-submissions';
 
 
 function StatCard({ title, value, icon: Icon, isLoading }: { title: string, value: number, icon: React.ElementType, isLoading?: boolean }) {
@@ -50,10 +52,18 @@ function StatCardSkeleton() {
     return <Skeleton className="h-28 w-full" />
 }
 
-async function NeedsReviewTable() {
-    const needsReview = await getNeedsReviewSubmissions();
-    const students = await getStudents();
-    const assignments = await getAssignments();
+function NeedsReviewTable() {
+    const { submissions, loading: submissionsLoading } = useSubmissions();
+    const { students, loading: studentsLoading } = useStudents();
+    const { assignments, loading: assignmentsLoading } = useAssignments();
+
+    if (submissionsLoading || studentsLoading || assignmentsLoading) {
+        return <NeedsReviewTableSkeleton/>
+    }
+
+    const needsReview = submissions
+        .filter(s => ['Assigned', 'Incomplete'].includes(s.status))
+        .sort((a,b) => a.submittedAt.getTime() - b.submittedAt.getTime());
 
     return (
          <Table>
@@ -97,11 +107,14 @@ function NeedsReviewTableSkeleton() {
     )
 }
 
-export default async function Dashboard() {
-  const studentsCount = await getStudentsCount();
-  const assignmentsCount = await getAssignmentsCount();
-  const needsReviewSubmissions = await getNeedsReviewSubmissions();
-  const needsReviewCount = needsReviewSubmissions.length;
+export default function Dashboard() {
+  const { students, loading: studentsLoading } = useStudents();
+  const { assignments, loading: assignmentsLoading } = useAssignments();
+  const { submissions, loading: submissionsLoading } = useSubmissions();
+
+  const isLoading = studentsLoading || assignmentsLoading || submissionsLoading;
+  
+  const needsReviewCount = submissions.filter(s => ['Assigned', 'Incomplete'].includes(s.status)).length;
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -109,15 +122,9 @@ export default async function Dashboard() {
         Welcome Back, Tutor!
       </h1>
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-        <Suspense fallback={<StatCardSkeleton/>}>
-            <StatCard title="Total Students" value={studentsCount} icon={Users} />
-        </Suspense>
-        <Suspense fallback={<StatCardSkeleton/>}>
-            <StatCard title="Total Assignments" value={assignmentsCount} icon={FileText} />
-        </Suspense>
-        <Suspense fallback={<StatCardSkeleton/>}>
-            <StatCard title="Needs Review" value={needsReviewCount} icon={AlertCircle} />
-        </Suspense>
+        <StatCard title="Total Students" value={students.length} icon={Users} isLoading={isLoading}/>
+        <StatCard title="Total Assignments" value={assignments.length} icon={FileText} isLoading={isLoading}/>
+        <StatCard title="Needs Review" value={needsReviewCount} icon={AlertCircle} isLoading={isLoading}/>
       </div>
       <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
         <Card>
@@ -128,9 +135,7 @@ export default async function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Suspense fallback={<NeedsReviewTableSkeleton/>}>
-                <NeedsReviewTable />
-            </Suspense>
+            <NeedsReviewTable />
           </CardContent>
         </Card>
 

@@ -1,4 +1,6 @@
 
+'use client';
+
 import { collection, getDocs, query, where, updateDoc, doc } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Submission, FirebaseSubmission, SubmissionStatus } from './types';

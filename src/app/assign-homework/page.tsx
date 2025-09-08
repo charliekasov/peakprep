@@ -1,13 +1,29 @@
 
-import { AssignHomeworkClient } from '@/components/assign-homework-client';
-import { getAssignments } from '@/lib/assignments';
-import { getStudents } from '@/lib/students';
-import { getSubmissions } from '@/lib/submissions';
+'use client';
 
-export default async function AssignHomeworkPage() {
-  const students = await getStudents();
-  const assignments = await getAssignments();
-  const submissions = await getSubmissions();
+import { AssignHomeworkClient } from '@/components/assign-homework-client';
+import { useAssignments } from '@/hooks/use-assignments';
+import { useStudents } from '@/hooks/use-students';
+import { useSubmissions } from '@/hooks/use-submissions';
+import { Skeleton } from '@/components/ui/skeleton';
+
+export default function AssignHomeworkPage() {
+  const { students, loading: studentsLoading } = useStudents();
+  const { assignments, loading: assignmentsLoading } = useAssignments();
+  const { submissions, loading: submissionsLoading } = useSubmissions();
+
+  const isLoading = studentsLoading || assignmentsLoading || submissionsLoading;
+
+  if (isLoading) {
+    return (
+        <div className="flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+            <div className="space-y-4">
+                <Skeleton className="h-12 w-1/4" />
+                <Skeleton className="h-64 w-full" />
+            </div>
+        </div>
+    );
+  }
 
   return (
     <div className="flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
