@@ -185,6 +185,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
   
   const isStanineTest = useMemo(() => selectedTestType?.includes('ISEE'), [selectedTestType]);
 
+  // Effect to reset the form when a new student is selected
   useEffect(() => {
     if (studentId) {
         const student = students.find(s => s.id === studentId);
@@ -209,10 +210,12 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     setShowDayInput(false);
   }, [studentId, students, reset]);
 
+  // Effect to update scores when the test type is changed
   useEffect(() => {
     if (selectedTestType) {
         const config = TEST_CONFIG[selectedTestType];
         setValue('scores', config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : []);
+        // Reset dependant fields
         setValue('testTypeSelection', 'Practice Test');
         setValue('practiceTestId', '');
         setValue('officialTestName', '');
@@ -555,3 +558,5 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
+
+    
