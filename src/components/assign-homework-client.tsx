@@ -83,16 +83,13 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   
   const worksheetSources = useMemo(() => {
     const sources = new Set<string>();
+    const studentTestTypes = selectedStudent?.['Test Types'] || [];
     assignments
       .filter(a => !a['isPracticeTest'])
       .forEach(a => {
-        if (a['Source']) {
+        if (a['Source'] && studentTestTypes.some(stt => stt === a['Test Type'])) {
             const sourceName = a['Source'] === 'Google Drive' ? 'Question Bank' : a['Source'];
-            if (selectedStudent?.['Test Type'] === 'Upper Level SSAT' && ['Tutorverse', 'Test Innovators'].includes(a['Source'])) {
-                 sources.add(sourceName);
-            } else if (selectedStudent?.['Test Type'] === 'SAT' && ['Question Bank', 'Test Innovators'].includes(sourceName)){
-                 sources.add(sourceName);
-            }
+            sources.add(sourceName);
         }
       });
     return Array.from(sources);
@@ -162,10 +159,11 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
 
   const worksheets = useMemo(() => {
     if (!selectedStudent) return [];
+    const studentTestTypes = selectedStudent['Test Types'] || [];
     return assignments
       .filter(a => !a['isPracticeTest'])
       .filter(a => {
-        if (!selectedStudent['Test Type'] || a['Test Type'] === selectedStudent['Test Type'] || !a['Test Type']) {
+        if (a['Test Type'] && studentTestTypes.includes(a['Test Type'])) {
             const sourceForFilter = a['Source'] === 'Google Drive' ? 'Question Bank' : a['Source'];
             if (selectedWorksheetSources.size === 0) return true;
             return sourceForFilter && selectedWorksheetSources.has(sourceForFilter);
@@ -175,12 +173,16 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       .filter(a => {
         if (worksheetSearchQuery.trim() === '') return true;
         return a['Full Assignment Name'].toLowerCase().includes(worksheetSearchQuery.toLowerCase());
-      });
+      })
+      .sort((a, b) => a['Full Assignment Name'].localeCompare(b['Full Assignment Name']));
   }, [selectedStudent, assignments, worksheetSearchQuery, selectedWorksheetSources]);
 
    const practiceTests = useMemo(() => {
     if (!selectedStudent) return [];
-    return assignments.filter(a => a['isPracticeTest'] && a['Test Type'] === selectedStudent['Test Type']);
+    const studentTestTypes = selectedStudent['Test Types'] || [];
+    return assignments
+      .filter(a => a.isPracticeTest && a['Test Type'] && studentTestTypes.includes(a['Test Type']))
+      .sort((a, b) => a['Full Assignment Name'].localeCompare(b['Full Assignment Name']));
   }, [selectedStudent, assignments]);
 
 
