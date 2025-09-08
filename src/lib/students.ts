@@ -1,6 +1,4 @@
 
-'use client';
-
 import { collection, getDocs, getDoc, doc, addDoc, updateDoc, writeBatch } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Student } from './types';
