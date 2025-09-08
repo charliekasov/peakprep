@@ -182,7 +182,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     const studentTestTypes = selectedStudent['Test Types'] || [];
     return assignments
       .filter(a => a.isPracticeTest && a['Test Type'] && studentTestTypes.includes(a['Test Type']))
-      .sort((a, b) => a['Full Assignment Name'].localeCompare(b['Full Assignment Name']));
+      .sort((a, b) => a['Full Assignment Name'].localeCompare(b['Full Assignment Name'], undefined, { numeric: true, sensitivity: 'base' }));
   }, [selectedStudent, assignments]);
 
 
