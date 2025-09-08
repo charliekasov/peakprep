@@ -10,8 +10,10 @@ function createTests(
 ): Assignment[] {
   const tests: Assignment[] = [];
   for (let i = start; i < start + count; i++) {
+    const testTypeSlug = testType.toLowerCase().replace(/\s+/g, '-');
+    const sourceSlug = source.toLowerCase().replace(/\s+/g, '-');
     tests.push({
-      id: `${source.toLowerCase().replace(/\s/g, '-')}-${i}`,
+      id: `${testTypeSlug}-${sourceSlug}-${i}`,
       'Full Assignment Name': `${namePrefix} #${i}`,
       'isPracticeTest': true,
       'Test Type': testType,
