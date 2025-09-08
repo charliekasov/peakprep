@@ -85,7 +85,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     const sources = new Set<string>();
     const studentTestTypes = selectedStudent?.['Test Types'] || [];
     assignments
-      .filter(a => !a['isPracticeTest'])
+      .filter(a => !a['isPracticeTest'] && !a['isOfficialTest'])
       .forEach(a => {
         if (a['Source'] && studentTestTypes.some(stt => stt === a['Test Type'])) {
             const sourceName = a['Source'] === 'Google Drive' ? 'Question Bank' : a['Source'];
@@ -161,9 +161,9 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     if (!selectedStudent) return [];
     const studentTestTypes = selectedStudent['Test Types'] || [];
     return assignments
-      .filter(a => !a['isPracticeTest'])
+      .filter(a => !a.isPracticeTest && !a.isOfficialTest)
       .filter(a => {
-        if (a['Test Type'] && studentTestTypes.includes(a['Test Type'])) {
+        if (a['Test Type'] && studentTestTypes.some(stt => stt === a['Test Type'])) {
             const sourceForFilter = a['Source'] === 'Google Drive' ? 'Question Bank' : a['Source'];
             if (selectedWorksheetSources.size === 0) return true;
             return sourceForFilter && selectedWorksheetSources.has(sourceForFilter);
