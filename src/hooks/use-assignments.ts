@@ -38,9 +38,15 @@ export function useAssignments() {
         const assignmentsCollection = collection(db, 'assignments');
         const assignmentsSnapshot = await getDocs(assignmentsCollection);
         const firestoreAssignments = assignmentsSnapshot.docs.map(fromFirebase);
+        
+        // Get IDs from firestore to prevent duplicates
+        const firestoreIds = new Set(firestoreAssignments.map(a => a.id));
 
-        // Combine firestore assignments with hardcoded practice tests
-        const allAssignments = [...firestoreAssignments, ...practiceTests];
+        // Filter hardcoded tests to exclude any that are already in firestore
+        const uniquePracticeTests = practiceTests.filter(pt => !firestoreIds.has(pt.id));
+
+        // Combine firestore assignments with the unique hardcoded practice tests
+        const allAssignments = [...firestoreAssignments, ...uniquePracticeTests];
         
         setAssignments(allAssignments);
       } catch (error) {
