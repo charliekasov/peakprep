@@ -51,13 +51,13 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast';
 import { handleDeleteTestScore } from '@/app/test-scores/actions';
+import { useRouter } from 'next/navigation';
 
 
 interface TestScoresClientProps {
   students: Student[];
   assignments: Assignment[];
   submissions: Submission[];
-  onScoreAdd: () => void;
 }
 
 const sourceColors: { [key: string]: string } = {
@@ -376,13 +376,38 @@ function TestTypeDisplay({
 }
 
 
-export function TestScoresClient({ students, assignments, submissions, onScoreAdd }: TestScoresClientProps) {
+export function TestScoresClient({ students, assignments, submissions }: TestScoresClientProps) {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [editingSubmission, setEditingSubmission] = useState<Submission | null>(null);
   const [deletingSubmission, setDeletingSubmission] = useState<Submission | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
+
+  const handleScoreUpdate = () => {
+    router.refresh();
+    setEditingSubmission(null);
+  }
+  
+  const handleScoreAdd = () => {
+      router.refresh();
+  }
+  
+  const handleScoreDelete = async () => {
+    if (!deletingSubmission) return;
+    setIsDeleting(true);
+    try {
+      await handleDeleteTestScore({ submissionId: deletingSubmission.id });
+      toast({ title: 'Success', description: 'Test score deleted successfully.' });
+      setDeletingSubmission(null);
+      router.refresh();
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message || 'Failed to delete score.', variant: 'destructive' });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
   
   useEffect(() => {
     setIsMounted(true);
@@ -415,21 +440,6 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
       }));
   }, [selectedStudentId, submissions, assignmentMap]);
 
-
-  const confirmDelete = async () => {
-    if (!deletingSubmission) return;
-    setIsDeleting(true);
-    try {
-      await handleDeleteTestScore({ submissionId: deletingSubmission.id });
-      toast({ title: 'Success', description: 'Test score deleted successfully.' });
-      onScoreAdd(); // Refetch data
-      setDeletingSubmission(null);
-    } catch (error: any) {
-      toast({ title: 'Error', description: error.message || 'Failed to delete score.', variant: 'destructive' });
-    } finally {
-      setIsDeleting(false);
-    }
-  };
   
   if (!isMounted) {
     return null; // or a loading skeleton
@@ -454,7 +464,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
                </SelectContent>
              </Select>
            </div>
-           <AddOfficialScoreDialog students={students} assignments={assignments} onScoreAdd={onScoreAdd} />
+           <AddOfficialScoreDialog students={students} assignments={assignments} onScoreAdd={handleScoreAdd} />
         </div>
       </div>
       
@@ -498,10 +508,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
               setEditingSubmission(null);
             }
           }}
-          onScoreUpdate={() => {
-            onScoreAdd(); // refetch data
-            setEditingSubmission(null); // close dialog
-          }}
+          onScoreUpdate={handleScoreUpdate}
         />
       )}
 
@@ -516,7 +523,7 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setDeletingSubmission(null)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} disabled={isDeleting}>
+            <AlertDialogAction onClick={handleScoreDelete} disabled={isDeleting}>
               {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Continue
             </AlertDialogAction>
@@ -526,5 +533,3 @@ export function TestScoresClient({ students, assignments, submissions, onScoreAd
     </div>
   );
 }
-
-    

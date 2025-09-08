@@ -18,7 +18,6 @@ import { Logo } from '@/components/logo';
 import { Toaster } from '@/components/ui/toaster';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
-import { DataProvider } from '@/context/data-provider';
 
 function AppLayout({
   children,
@@ -115,13 +114,10 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased')}>
         <AuthProvider>
-          <DataProvider>
-            <AppLayout>{children}</AppLayout>
-          </DataProvider>
+          <AppLayout>{children}</AppLayout>
         </AuthProvider>
         <Toaster />
       </body>
     </html>
   );
 }
-

@@ -40,7 +40,6 @@ import { MoreHorizontal, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { handleUpdateSubmission } from '@/app/needs-review/actions';
-import { useData } from '@/context/data-provider';
 
 type EnrichedSubmission = Submission & {
   student?: Student;
@@ -109,7 +108,6 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState<EnrichedSubmission | null>(null);
   const { toast } = useToast();
-  const { refetchData } = useData();
 
   const sections = selectedSubmission?.assignment?.['Test Type'] ? TEST_CONFIG[selectedSubmission.assignment['Test Type']]?.sections : [];
   
@@ -139,11 +137,14 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
   const handleStatusChange = async (submissionId: string, status: SubmissionStatus) => {
     setIsSubmitting(true);
     try {
-      await handleUpdateSubmission({ submissionId, status });
-      toast({ title: 'Status Updated', description: `Assignment marked as ${status}.` });
-      refetchData();
-    } catch (error) {
-      toast({ title: 'Error', description: 'Failed to update status.', variant: 'destructive' });
+      const result = await handleUpdateSubmission({ submissionId, status });
+      if (result.success) {
+        toast({ title: 'Status Updated', description: `Assignment marked as ${status}.` });
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message || 'Failed to update status.', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
@@ -155,17 +156,21 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
     setIsSubmitting(true);
     try {
       // When scores are submitted, the status is automatically updated to 'Completed'
-      await handleUpdateSubmission({
+      const result = await handleUpdateSubmission({
         submissionId: selectedSubmission.id,
         status: 'Completed',
         scores: values.scores,
       });
-      toast({ title: 'Scores Saved', description: 'The test scores have been recorded.' });
-      refetchData();
-      setIsDialogOpen(false);
-      setSelectedSubmission(null);
-    } catch (error) {
-      toast({ title: 'Error', description: 'Failed to save scores.', variant: 'destructive' });
+
+      if (result.success) {
+        toast({ title: 'Scores Saved', description: 'The test scores have been recorded.' });
+        setIsDialogOpen(false);
+        setSelectedSubmission(null);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message || 'Failed to save scores.', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }

@@ -21,7 +21,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -37,8 +36,7 @@ import { EditStudentSheet } from '@/components/edit-student-sheet';
 import { cn } from '@/lib/utils';
 import { MoreHorizontal, Archive, ArchiveRestore } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { archiveStudent, unarchiveStudent } from '@/lib/students';
-import { useData } from '@/context/data-provider';
+import { archiveStudentAction, unarchiveStudentAction } from '@/app/students/actions';
 
 interface StudentListClientProps {
     students: Student[];
@@ -49,10 +47,9 @@ export function StudentListClient({ students }: StudentListClientProps) {
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [view, setView] = useState<'active' | 'archived'>('active');
   const { toast } = useToast();
-  const { refetchData } = useData();
 
   const filteredStudents = useMemo(() => {
-    return students.filter(s => s.status === view);
+    return students.filter(s => (s.status || 'active') === view);
   }, [students, view]);
 
   const handleRowClick = (student: Student) => {
@@ -65,14 +62,21 @@ export function StudentListClient({ students }: StudentListClientProps) {
 
   const onArchiveAction = async (student: Student) => {
     try {
-      if (student.status === 'active') {
-        await archiveStudent(student.id);
-        toast({ title: 'Student Archived', description: `${student.name} has been moved to the archive.`});
-      } else {
-        await unarchiveStudent(student.id);
-        toast({ title: 'Student Restored', description: `${student.name} has been moved back to active.`});
-      }
-      refetchData();
+        let result;
+        if (student.status === 'active' || !student.status) {
+            result = await archiveStudentAction(student.id);
+            if (result.success) {
+                toast({ title: 'Student Archived', description: `${student.name} has been moved to the archive.`});
+            }
+        } else {
+            result = await unarchiveStudentAction(student.id);
+            if (result.success) {
+                toast({ title: 'Student Restored', description: `${student.name} has been moved back to active.`});
+            }
+        }
+        if (!result.success) {
+             throw new Error(result.message);
+        }
     } catch (error: any) {
         toast({ title: 'Error', description: error.message, variant: 'destructive'});
     }
@@ -136,7 +140,7 @@ export function StudentListClient({ students }: StudentListClientProps) {
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                              <DropdownMenuItem onSelect={() => onArchiveAction(student)}>
-                                {student.status === 'active' ? (
+                                {(student.status === 'active' || !student.status) ? (
                                     <><Archive className="mr-2 h-4 w-4" /> Archive</>
                                 ) : (
                                     <><ArchiveRestore className="mr-2 h-4 w-4" /> Unarchive</>

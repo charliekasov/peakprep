@@ -36,8 +36,7 @@ import {
 } from '@/components/ui/select';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { addStudent } from '@/lib/students';
-import { useData } from '@/context/data-provider';
+import { addStudentAction } from '@/app/students/actions';
 
 const studentSchema = z.object({
   'Student Name': z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -54,7 +53,6 @@ export function AddStudentSheet() {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const { refetchData } = useData();
 
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
@@ -87,18 +85,22 @@ export function AddStudentSheet() {
           ...submissionData,
       };
 
-      await addStudent(studentData);
-      toast({
-        title: 'Student Added',
-        description: `${values['Student Name']} has been successfully added.`,
-      });
-      refetchData();
-      form.reset();
-      setOpen(false);
-    } catch (error) {
+      const result = await addStudentAction(studentData);
+
+      if (result.success) {
+        toast({
+          title: 'Student Added',
+          description: `${values['Student Name']} has been successfully added.`,
+        });
+        form.reset();
+        setOpen(false);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'Failed to add student. Please try again.',
+        description: error.message || 'Failed to add student. Please try again.',
         variant: 'destructive',
       });
     } finally {

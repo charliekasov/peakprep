@@ -35,8 +35,7 @@ import {
 } from '@/components/ui/select';
 import { Loader2, PlusCircle, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { updateStudent } from '@/lib/students';
-import { useData } from '@/context/data-provider';
+import { updateStudentAction } from '@/app/students/actions';
 import type { Student } from '@/lib/types';
 
 interface EditStudentSheetProps {
@@ -64,7 +63,6 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
   const [showTestType2, setShowTestType2] = useState(false);
 
   const { toast } = useToast();
-  const { refetchData } = useData();
 
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
@@ -109,17 +107,22 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
       // Filter out any empty strings from test types
       studentData['Test Types'] = studentData['Test Types'].filter(Boolean);
 
-      await updateStudent(student.id, studentData);
-      toast({
-        title: 'Student Updated',
-        description: `${values['Student Name']} has been successfully updated.`,
-      });
-      refetchData();
-      onOpenChange(false);
-    } catch (error) {
+      const result = await updateStudentAction(student.id, studentData);
+      
+      if (result.success) {
+        toast({
+            title: 'Student Updated',
+            description: `${values['Student Name']} has been successfully updated.`,
+        });
+        onOpenChange(false);
+      } else {
+        throw new Error(result.message);
+      }
+
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'Failed to update student. Please try again.',
+        description: error.message || 'Failed to update student. Please try again.',
         variant: 'destructive',
       });
     } finally {
