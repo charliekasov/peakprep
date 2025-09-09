@@ -135,7 +135,6 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDayInput, setShowDayInput] = useState(false);
-  const [formKey, setFormKey] = useState(0);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -213,34 +212,20 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
 
   // Effect to update scores when the test type is changed
   useEffect(() => {
-    if (selectedTestType) {
-        console.log('Test type changed to:', selectedTestType);
+    if (selectedTestType && studentId) { // Only run if we have both
         const config = TEST_CONFIG[selectedTestType];
-        console.log('New config:', config);
         
-        // Force complete form remount by changing key
-        setFormKey(prev => prev + 1);
-        
-        // Delay the setValue calls to ensure the remount completes first
-        setTimeout(() => {
-          const newScores = config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : [];
-          console.log('Set scores to:', newScores);
+        if (config) {
+          const newScores = config.sections.map((s: any) => ({ section: s.name, score: s.default }));
           
-          // Reset the form with all new values
-          reset({
-            studentId: studentId,
-            testType: selectedTestType,
-            testTypeSelection: 'Practice Test',
-            practiceTestId: '',
-            officialTestName: '',
-            month: watch('month'),
-            year: watch('year'),
-            day: watch('day'),
-            scores: newScores,
-          });
-        }, 50); // Slightly longer delay to ensure complete remount
+          setValue('scores', newScores, { shouldValidate: true });
+          
+          setValue('testTypeSelection', 'Practice Test', { shouldValidate: true });
+          setValue('practiceTestId', '', { shouldValidate: true });
+          setValue('officialTestName', '', { shouldValidate: true });
+        }
     }
-  }, [selectedTestType, studentId, reset, watch]);
+  }, [selectedTestType, setValue, studentId]); 
   
   useEffect(() => {
     if (testTypeSelection.startsWith('Official') && month && year && selectedTestType) {
@@ -316,7 +301,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
             
             <div className="px-6 flex-1 min-h-0">
                 <div className="max-h-full overflow-y-auto -mx-6 px-6">
-                    <Form {...form} key={formKey}>
+                    <Form {...form}>
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pb-4">
                         <FormField
                         control={control}
