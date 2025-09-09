@@ -140,7 +140,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     }
     
     const assignedItemsText = assignedAssignmentTitles.map(title => {
-        const assignmentName = title.split(' (')[0];
+        const assignmentName = title?.split(' (')[0] || '';
         const assignment = assignments.find(a => a['Full Assignment Name'] === assignmentName);
         if (assignment && assignment['Link']) {
             return `${title}: ${assignment['Link']}`;
