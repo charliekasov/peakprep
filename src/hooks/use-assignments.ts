@@ -1,21 +1,12 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Assignment } from '@/lib/types';
-import type { DocumentSnapshot } from 'firebase/firestore';
+import { fromFirebase } from '@/lib/assignments'; // Import shared function
 import { useAuth } from './use-auth';
 import { practiceTests } from '@/lib/assignments-data';
-
-function fromFirebase(doc: DocumentSnapshot): Assignment {
-  const data = doc.data()!;
-  return {
-    ...data,
-    id: doc.id,
-  } as Assignment;
-}
 
 export function useAssignments() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -24,12 +15,9 @@ export function useAssignments() {
 
   useEffect(() => {
     if (!user) {
-        // If there's no user, we might not want to fetch anything,
-        // or fetch public data. For now, let's just return.
-        // We also clear assignments for when a user logs out.
-        setAssignments([]);
-        setLoading(false);
-        return;
+      setAssignments([]);
+      setLoading(false);
+      return;
     }
 
     async function fetchAssignments() {
@@ -41,10 +29,10 @@ export function useAssignments() {
         
         // Get IDs from firestore to prevent duplicates
         const firestoreIds = new Set(firestoreAssignments.map(a => a.id));
-
+        
         // Filter hardcoded tests to exclude any that are already in firestore
         const uniquePracticeTests = practiceTests.filter(pt => !firestoreIds.has(pt.id));
-
+        
         // Combine firestore assignments with the unique hardcoded practice tests
         const allAssignments = [...firestoreAssignments, ...uniquePracticeTests];
         
@@ -57,7 +45,6 @@ export function useAssignments() {
     }
 
     fetchAssignments();
-
   }, [user]);
 
   return { assignments, loading };
