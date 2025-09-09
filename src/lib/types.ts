@@ -15,6 +15,7 @@ export interface Student {
   'Projected End Date'?: string;
   'Upcoming Test Date'?: string;
   profile?: string; 
+  timeZone?: string;
   status: 'active' | 'archived';
 
   // For backwards compatibility and easier access

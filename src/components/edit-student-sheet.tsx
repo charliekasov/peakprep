@@ -51,6 +51,9 @@ const studentSchema = z.object({
   'Parent Email 2': z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
   'Test Types': z.array(z.string()).min(1, {message: 'At least one test type is required.'}).max(2),
   'Upcoming Test Date': z.string().optional(),
+  'Rate': z.coerce.number().optional(),
+  'Frequency': z.string().optional(),
+  timeZone: z.string().optional(),
   profile: z.string().optional(),
 });
 
@@ -73,6 +76,9 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
       'Parent Email 2': '',
       'Test Types': [],
       'Upcoming Test Date': '',
+      'Rate': undefined,
+      'Frequency': '',
+      timeZone: '',
       profile: '',
     },
   });
@@ -88,6 +94,9 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
         'Parent Email 2': student['Parent Email 2'] || student.parentEmail2 || '',
         'Test Types': testTypes,
         'Upcoming Test Date': student['Upcoming Test Date'] || student.upcomingTestDate || '',
+        'Rate': student['Rate'],
+        'Frequency': student['Frequency'],
+        timeZone: student.timeZone,
         profile: student.profile || '',
       });
 
@@ -300,6 +309,57 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="Rate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hourly Rate ($)</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="e.g., 100" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="Frequency"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Preferred Days/Times</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Tuesdays at 4pm" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="timeZone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time Zone</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a time zone" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="ET+6">ET+6 (Europe)</SelectItem>
+                      <SelectItem value="ET+5">ET+5 (UK)</SelectItem>
+                      <SelectItem value="ET">ET (NY)</SelectItem>
+                      <SelectItem value="ET-1">ET-1 (Central)</SelectItem>
+                      <SelectItem value="ET-2">ET-2 (Mountain)</SelectItem>
+                      <SelectItem value="ET-3">ET-3 (Pacific)</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

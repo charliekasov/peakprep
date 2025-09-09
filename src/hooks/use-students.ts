@@ -27,6 +27,7 @@ function fromFirestore(doc: DocumentSnapshot): Student {
     'Projected End Date': data['Projected End Date'],
     'Upcoming Test Date': data['Upcoming Test Date'],
     profile: data.profile,
+    timeZone: data.timeZone,
     status: data.status || 'active', // Default to active if not set
     
     // For backwards compatibility and easier access

@@ -155,7 +155,7 @@ export function StudentListClient({ students }: StudentListClientProps) {
                             <TableCell colSpan={4} className="p-0">
                                 <div className="p-6">
                                     <h3 className="font-semibold text-lg mb-4">{selectedStudent.name}'s Details</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-4">
                                         <div className="space-y-1">
                                             <p className="text-sm font-medium text-muted-foreground">Student Email</p>
                                             <p>{selectedStudent.email || 'N/A'}</p>
@@ -168,7 +168,19 @@ export function StudentListClient({ students }: StudentListClientProps) {
                                             <p className="text-sm font-medium text-muted-foreground">Parent Email 2</p>
                                             <p>{selectedStudent.parentEmail2 || 'N/A'}</p>
                                         </div>
-                                        <div className="space-y-1 md:col-span-2">
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-medium text-muted-foreground">Hourly Rate</p>
+                                            <p>{selectedStudent['Rate'] ? `$${selectedStudent['Rate']}` : 'N/A'}</p>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-medium text-muted-foreground">Preferred Time</p>
+                                            <p>{selectedStudent['Frequency'] || 'N/A'}</p>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-medium text-muted-foreground">Time Zone</p>
+                                            <p>{selectedStudent.timeZone || 'N/A'}</p>
+                                        </div>
+                                        <div className="space-y-1 md:col-span-3">
                                             <p className="text-sm font-medium text-muted-foreground">Profile Notes</p>
                                             <p className="whitespace-pre-wrap text-sm">
                                                 {selectedStudent.profile || 'No profile notes for this student.'}

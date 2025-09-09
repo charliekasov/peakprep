@@ -45,6 +45,9 @@ const studentSchema = z.object({
   'Parent Email 2': z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
   'Test Type': z.string().min(1, { message: 'Please select a test type.' }),
   'Upcoming Test Date': z.string().optional(),
+  'Rate': z.coerce.number().optional(),
+  'Frequency': z.string().optional(),
+  timeZone: z.string().optional(),
   profile: z.string().optional(),
 });
 
@@ -63,6 +66,9 @@ export function AddStudentSheet() {
       'Parent Email 2': '',
       'Test Type': '',
       'Upcoming Test Date': '',
+      'Rate': undefined,
+      'Frequency': '',
+      timeZone: '',
       profile: '',
     },
   });
@@ -226,6 +232,57 @@ export function AddStudentSheet() {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="Rate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hourly Rate ($)</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="e.g., 100" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="Frequency"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Preferred Days/Times</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Tuesdays at 4pm" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="timeZone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time Zone</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a time zone" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="ET+6">ET+6 (Europe)</SelectItem>
+                      <SelectItem value="ET+5">ET+5 (UK)</SelectItem>
+                      <SelectItem value="ET">ET (NY)</SelectItem>
+                      <SelectItem value="ET-1">ET-1 (Central)</SelectItem>
+                      <SelectItem value="ET-2">ET-2 (Mountain)</SelectItem>
+                      <SelectItem value="ET-3">ET-3 (Pacific)</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
