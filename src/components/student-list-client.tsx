@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Fragment } from 'react';
 import {
   Card,
   CardHeader,
@@ -115,77 +115,76 @@ export function StudentListClient({ students }: StudentListClientProps) {
             </TableHeader>
             <TableBody>
               {filteredStudents.map((student: Student) => (
-                <TableRow 
-                    key={student.id} 
-                    onClick={() => handleRowClick(student)}
-                    className={cn(
-                        "cursor-pointer",
-                        selectedStudent?.id === student.id && "bg-muted hover:bg-muted"
+                <Fragment key={student.id}>
+                    <TableRow 
+                        onClick={() => handleRowClick(student)}
+                        className={cn(
+                            "cursor-pointer",
+                            selectedStudent?.id === student.id && "bg-muted/50"
+                        )}
+                    >
+                      <TableCell className="font-medium">{student['Student Name'] || student.name}</TableCell>
+                      <TableCell>{student['Test Types']?.join(', ') || student.testType || 'N/A'}</TableCell>
+                      <TableCell>{student['Upcoming Test Date'] || student.upcomingTestDate || 'N/A'}</TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
+                                    <MoreHorizontal className="h-4 w-4" />
+                                    <span className="sr-only">Actions</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+                                <DropdownMenuItem onSelect={() => setEditingStudent(student)}>
+                                    Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                 <DropdownMenuItem onSelect={() => onArchiveAction(student)}>
+                                    {(student.status === 'active' || !student.status) ? (
+                                        <><Archive className="mr-2 h-4 w-4" /> Archive</>
+                                    ) : (
+                                        <><ArchiveRestore className="mr-2 h-4 w-4" /> Unarchive</>
+                                    )}
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                    {selectedStudent?.id === student.id && (
+                        <TableRow className="bg-muted/20 hover:bg-muted/20">
+                            <TableCell colSpan={4} className="p-0">
+                                <div className="p-6">
+                                    <h3 className="font-semibold text-lg mb-4">{selectedStudent.name}'s Details</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-medium text-muted-foreground">Student Email</p>
+                                            <p>{selectedStudent.email || 'N/A'}</p>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-medium text-muted-foreground">Parent Email 1</p>
+                                            <p>{selectedStudent.parentEmail1 || 'N/A'}</p>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-medium text-muted-foreground">Parent Email 2</p>
+                                            <p>{selectedStudent.parentEmail2 || 'N/A'}</p>
+                                        </div>
+                                        <div className="space-y-1 md:col-span-2">
+                                            <p className="text-sm font-medium text-muted-foreground">Profile Notes</p>
+                                            <p className="whitespace-pre-wrap text-sm">
+                                                {selectedStudent.profile || 'No profile notes for this student.'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </TableCell>
+                        </TableRow>
                     )}
-                >
-                  <TableCell className="font-medium">{student['Student Name'] || student.name}</TableCell>
-                  <TableCell>{student['Test Types']?.join(', ') || student.testType || 'N/A'}</TableCell>
-                  <TableCell>{student['Upcoming Test Date'] || student.upcomingTestDate || 'N/A'}</TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Actions</span>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
-                            <DropdownMenuItem onSelect={() => setEditingStudent(student)}>
-                                Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                             <DropdownMenuItem onSelect={() => onArchiveAction(student)}>
-                                {(student.status === 'active' || !student.status) ? (
-                                    <><Archive className="mr-2 h-4 w-4" /> Archive</>
-                                ) : (
-                                    <><ArchiveRestore className="mr-2 h-4 w-4" /> Unarchive</>
-                                )}
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
+                </Fragment>
               ))}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
-
-      {selectedStudent && (
-        <Card className="mt-4 animate-in fade-in">
-            <CardHeader>
-                <CardTitle>{selectedStudent.name}</CardTitle>
-                <CardDescription>
-                    Detailed information for {selectedStudent.name}.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                    <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Email</p>
-                        <p>{selectedStudent.email || 'N/A'}</p>
-                    </div>
-                    <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Parent Email 1</p>
-                        <p>{selectedStudent.parentEmail1 || 'N/A'}</p>
-                    </div>
-                     <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Parent Email 2</p>
-                        <p>{selectedStudent.parentEmail2 || 'N/A'}</p>
-                    </div>
-                     <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Profile</p>
-                        <p className="whitespace-pre-wrap">{selectedStudent.profile || 'N/A'}</p>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-      )}
 
       {editingStudent && (
         <EditStudentSheet 
