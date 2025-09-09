@@ -4,12 +4,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCOmZZITPwGwIlyMcwHS-6vHNnt1qNEm_M",
-  authDomain: "tutorflow-ivaba.firebaseapp.com",
-  projectId: "tutorflow-ivaba",
+  apiKey: "your-credentials-here",
+  authDomain: "your-auth-domain-here",
+  projectId: "your-project-id-here",
   storageBucket: "tutorflow-ivaba.firebasestorage.app",
-  messagingSenderId: "743946118520",
-  appId: "1:743946118520:web:b73df158fb73ce3358d48d"
+  messagingSenderId: "your-sender-id-here",
+  appId: "your-app-id-here"
 };
 
 // Initialize Firebase for the client
