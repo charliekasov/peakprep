@@ -53,7 +53,7 @@ const studentSchema = z.object({
   'Upcoming Test Date': z.string().optional(),
   'Rate': z.coerce.number().optional(),
   'Frequency': z.string().optional(),
-  timeZone: z.string().optional(),
+  timeZone: z.string().optional().or(z.literal('')),
   profile: z.string().optional(),
 });
 
@@ -109,12 +109,20 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
   async function onSubmit(values: z.infer<typeof studentSchema>) {
     setIsSubmitting(true);
     try {
-      const studentData: any = { ...values };
-      if (studentData['Parent Email 1'] === '') delete studentData['Parent Email 1'];
-      if (studentData['Parent Email 2'] === '') delete studentData['Parent Email 2'];
+      const studentData: Record<string, any> = { ...values };
+
+      // Clean up optional fields before submission
+      for (const key in studentData) {
+        if (studentData[key] === '' || studentData[key] === undefined || studentData[key] === null) {
+          delete studentData[key];
+        }
+      }
 
       // Filter out any empty strings from test types
-      studentData['Test Types'] = studentData['Test Types'].filter(Boolean);
+      if (studentData['Test Types']) {
+        studentData['Test Types'] = studentData['Test Types'].filter(Boolean);
+      }
+
 
       const result = await updateStudentAction(student.id, studentData);
       
@@ -345,7 +353,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Time Zone</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value || ''}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a time zone (optional)" />
