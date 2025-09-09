@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -71,7 +70,6 @@ const TEST_CONFIG: any = {
   }
 };
 
-
 const scoreSchema = z.object({
   section: z.string(),
   score: z.coerce
@@ -85,15 +83,18 @@ const formSchema = z.object({
 
 function StatusBadge({ submission }: { submission: EnrichedSubmission }) {
   const { status, assignment } = submission;
-
   const isPracticeTest = assignment?.isPracticeTest;
 
-  const variant: 'secondary' | 'destructive' | 'outline' | 'default' = {
+  // Define status variants with proper typing
+  const statusVariants = {
     'Assigned': 'secondary',
     'Completed': 'default',
     'Incomplete': 'destructive',
     'Did Together': 'outline',
-  }[status];
+  } as const;
+
+  type VariantType = 'secondary' | 'destructive' | 'outline' | 'default';
+  const variant: VariantType = (statusVariants[status as keyof typeof statusVariants] || 'default') as VariantType;
   
   // Custom styling for Assigned Practice Tests
   if (isPracticeTest && status === 'Assigned') {

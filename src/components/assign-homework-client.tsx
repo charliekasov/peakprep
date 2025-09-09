@@ -75,6 +75,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   const [configuringAssignment, setConfiguringAssignment] = useState<Assignment | null>(null);
   const [tempOptions, setTempOptions] = useState<AssignmentOptions>({});
 
+  const activeStudents = useMemo(() => students.filter(s => (s.status || 'active') === 'active'), [students]);
 
   const selectedStudent = useMemo(
     () => students.find((s) => s.id === selectedStudentId) || null,
@@ -422,7 +423,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                   <SelectValue placeholder="Select a student..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {students.map((student) => (
+                  {activeStudents.map((student) => (
                     <SelectItem key={student.id} value={student.id}>
                       {student.name}
                     </SelectItem>

@@ -410,12 +410,14 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
     }
   };
   
+  const activeStudents = useMemo(() => students.filter(s => (s.status || 'active') === 'active'), [students]);
+
   useEffect(() => {
     setIsMounted(true);
-    if (students.length > 0 && !selectedStudentId) {
-      setSelectedStudentId(students[0].id);
+    if (activeStudents.length > 0 && !selectedStudentId) {
+      setSelectedStudentId(activeStudents[0].id);
     }
-  }, [students, selectedStudentId]);
+  }, [activeStudents, selectedStudentId]);
 
 
   const studentMap = useMemo(() => new Map(students.map(s => [s.id, s])), [students]);
@@ -516,7 +518,7 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
                  <SelectValue placeholder="Select a student..." />
                </SelectTrigger>
                <SelectContent>
-                 {students.map(student => (
+                 {activeStudents.map(student => (
                    <SelectItem key={student.id} value={student.id}>
                      {student.name}
                    </SelectItem>
@@ -524,7 +526,7 @@ export function TestScoresClient({ students, assignments, submissions }: TestSco
                </SelectContent>
              </Select>
            </div>
-           <AddOfficialScoreDialog students={students} assignments={assignments} onScoreAdd={handleScoreAdd} />
+           <AddOfficialScoreDialog students={activeStudents} assignments={assignments} onScoreAdd={handleScoreAdd} />
         </div>
       </div>
       

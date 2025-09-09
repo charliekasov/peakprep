@@ -554,4 +554,3 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
-

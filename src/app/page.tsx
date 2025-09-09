@@ -20,9 +20,7 @@ import {
 import {
   FileText,
   Users,
-  AlertCircle,
 } from 'lucide-react';
-import { StudentPerformanceChart } from '@/components/student-performance-chart';
 import type { Submission, Student, Assignment } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useStudents } from '@/hooks/use-students';
@@ -46,10 +44,6 @@ function StatCard({ title, value, icon: Icon, isLoading }: { title: string, valu
       </CardContent>
     </Card>
   );
-}
-
-function StatCardSkeleton() {
-    return <Skeleton className="h-28 w-full" />
 }
 
 function NeedsReviewTable() {
@@ -114,33 +108,29 @@ export default function Dashboard() {
 
   const isLoading = studentsLoading || assignmentsLoading || submissionsLoading;
   
-  const needsReviewCount = submissions.filter(s => ['Assigned', 'Incomplete'].includes(s.status)).length;
+  const activeStudents = students.filter(s => (s.status || 'active') === 'active');
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-        Welcome Back, Tutor!
+        Welcome Back, Charlie!
       </h1>
-      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-        <StatCard title="Total Students" value={students.length} icon={Users} isLoading={isLoading}/>
+      <div className="grid gap-4 md:grid-cols-2">
+        <StatCard title="Total Students" value={activeStudents.length} icon={Users} isLoading={isLoading}/>
         <StatCard title="Total Assignments" value={assignments.length} icon={FileText} isLoading={isLoading}/>
-        <StatCard title="Needs Review" value={needsReviewCount} icon={AlertCircle} isLoading={isLoading}/>
       </div>
-      <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
+      <div className="grid gap-4 md:gap-8 lg:grid-cols-1">
         <Card>
           <CardHeader>
             <CardTitle>Needs Review</CardTitle>
             <CardDescription>
-              Assignments submitted by students that require your feedback.
+              A prioritized list of assignments that require your feedback.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <NeedsReviewTable />
           </CardContent>
         </Card>
-
-        <StudentPerformanceChart />
-
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ function fromFirebase(doc: DocumentSnapshot): Submission {
     officialTestName: data.officialTestName
   };
 
-  if (submission.scores.length === 0) {
+  if (!submission.scores || submission.scores.length === 0) {
     const scoreFields: { [key: string]: string } = {
         'Math Score': 'Math',
         'Reading and Writing Score': 'Reading + Writing',
@@ -33,7 +33,10 @@ function fromFirebase(doc: DocumentSnapshot): Submission {
         if ((data as any)[sheetHeader]) {
             const scoreValue = Number((data as any)[sheetHeader]);
             if (!isNaN(scoreValue)) {
-                submission.scores.push({ section: sectionName, score: scoreValue });
+              if (!submission.scores) {
+                submission.scores = [];
+            }
+            submission.scores.push({ section: sectionName, score: scoreValue });
             }
         }
     }

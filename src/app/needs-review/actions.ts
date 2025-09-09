@@ -29,8 +29,7 @@ export async function handleUpdateSubmission(input: unknown) {
 
   try {
     // In a real app, this would update Firestore. For now, it updates mock data.
-    await updateSubmission(submissionId, { status, scores });
-
+    await updateSubmission(submissionId, { status, scores } as any);
     // Revalidate the path to show the changes
     revalidatePath('/needs-review');
     revalidatePath('/test-scores');

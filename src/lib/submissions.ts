@@ -20,27 +20,30 @@ function fromFirebase(doc: DocumentSnapshot): Submission {
   };
 
   // --- Dynamic Score Transformation ---
-  // If the scores array is empty, check for top-level score fields
-  // from the old import method and transform them.
-  if (submission.scores.length === 0) {
-    const scoreFields: { [key: string]: string } = {
-        'Math Score': 'Math',
-        'Reading and Writing Score': 'Reading + Writing',
-        'Verbal Score': 'Verbal',
-        'Quantitative Score': 'Quantitative',
-        'Reading Score': 'Reading'
-    };
+// If the scores array is empty, check for top-level score fields
+// from the old import method and transform them.
+if (!submission.scores || submission.scores.length === 0) {
+  const scoreFields: { [key: string]: string } = {
+      'Math Score': 'Math',
+      'Reading and Writing Score': 'Reading + Writing',
+      'Verbal Score': 'Verbal',
+      'Quantitative Score': 'Quantitative',
+      'Reading Score': 'Reading'
+  };
 
-    for (const [sheetHeader, sectionName] of Object.entries(scoreFields)) {
-        if ((data as any)[sheetHeader]) {
-            const scoreValue = Number((data as any)[sheetHeader]);
-            if (!isNaN(scoreValue)) {
-                submission.scores.push({ section: sectionName, score: scoreValue });
+  for (const [sheetHeader, sectionName] of Object.entries(scoreFields)) {
+      if ((data as any)[sheetHeader]) {
+          const scoreValue = Number((data as any)[sheetHeader]);
+          if (!isNaN(scoreValue)) {
+            if (!submission.scores) {
+                submission.scores = [];
             }
-        }
-    }
-  }
-  // --- End Transformation ---
+            submission.scores.push({ section: sectionName, score: scoreValue });
+          } // Added: Close the !isNaN if statement
+      } // Added: Close the data[sheetHeader] if statement
+  } // Added: Close the for loop
+} // Added: Close the main if statement
+// --- End Transformation ---
   
   return submission;
 }
