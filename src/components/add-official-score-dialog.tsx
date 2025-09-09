@@ -216,7 +216,7 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
         const config = TEST_CONFIG[selectedTestType];
         if (config) {
           const newScores = config.sections.map((s: any) => ({ section: s.name, score: s.default }));
-          setValue('scores', newScores);
+          setValue('scores', newScores, { shouldValidate: false });
           
           setValue('testTypeSelection', 'Practice Test', { shouldValidate: false });
           setValue('practiceTestId', '', { shouldValidate: false });
@@ -501,40 +501,34 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                                     <div className="space-y-4 pt-4">
                                         <FormLabel>Scores</FormLabel>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 rounded-md border p-4">
-                                            {currentTestConfig.sections.map((section: any, index: number) => (
-                                                <Controller
-                                                    key={`${selectedTestType}-${section.name}`}
-                                                    control={control}
-                                                    name={`scores.${index}`}
-                                                    render={({ field }) => (
-                                                    <FormItem>
+                                            {currentTestConfig.sections.map((section: any, index: number) => {
+                                                const currentScore = watch(`scores.${index}`) || { section: section.name, score: section.default };
+                                                
+                                                return (
+                                                    <div key={`${selectedTestType}-${section.name}-${index}`}>
                                                         <div className="flex items-center justify-between">
                                                             <FormLabel>{section.name}</FormLabel>
-                                                            {isStanineTest && field.value?.score > 0 && (
+                                                            {isStanineTest && currentScore?.score > 0 && (
                                                                 <span className="text-sm font-medium text-muted-foreground">
-                                                                Stanine: {getStanine(field.value.score)}
+                                                                Stanine: {getStanine(currentScore.score)}
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <FormControl>
-                                                            <Stepper
-                                                                value={field.value?.score || section.default}
-                                                                onValueChange={(newScore) => {
-                                                                    field.onChange({
-                                                                        section: section.name,
-                                                                        score: newScore
-                                                                    });
-                                                                }}
-                                                                min={section.min}
-                                                                max={section.max}
-                                                                step={section.step}
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                    )}
-                                                />
-                                            ))}
+                                                        <Stepper
+                                                            value={currentScore?.score || section.default}
+                                                            onValueChange={(newScore) => {
+                                                                setValue(`scores.${index}`, {
+                                                                    section: section.name,
+                                                                    score: newScore
+                                                                }, { shouldValidate: false });
+                                                            }}
+                                                            min={section.min}
+                                                            max={section.max}
+                                                            step={section.step}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}
@@ -561,4 +555,3 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
   );
 }
 
-    
