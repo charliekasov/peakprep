@@ -214,15 +214,13 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
   useEffect(() => {
     if (selectedTestType && studentId) { // Only run if we have both
         const config = TEST_CONFIG[selectedTestType];
-        
         if (config) {
           const newScores = config.sections.map((s: any) => ({ section: s.name, score: s.default }));
+          setValue('scores', newScores);
           
-          setValue('scores', newScores, { shouldValidate: true });
-          
-          setValue('testTypeSelection', 'Practice Test', { shouldValidate: true });
-          setValue('practiceTestId', '', { shouldValidate: true });
-          setValue('officialTestName', '', { shouldValidate: true });
+          setValue('testTypeSelection', 'Practice Test', { shouldValidate: false });
+          setValue('practiceTestId', '', { shouldValidate: false });
+          setValue('officialTestName', '', { shouldValidate: false });
         }
     }
   }, [selectedTestType, setValue, studentId]); 
