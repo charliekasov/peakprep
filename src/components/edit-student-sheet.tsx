@@ -95,8 +95,8 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
         'Test Types': testTypes,
         'Upcoming Test Date': student['Upcoming Test Date'] || student.upcomingTestDate || '',
         'Rate': student['Rate'],
-        'Frequency': student['Frequency'],
-        timeZone: student.timeZone,
+        'Frequency': student['Frequency'] || '',
+        timeZone: student.timeZone || '',
         profile: student.profile || '',
       });
 
@@ -348,16 +348,16 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a time zone" />
+                        <SelectValue placeholder="Select a time zone (optional)" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="ET+6">ET+6 (Europe)</SelectItem>
-                      <SelectItem value="ET+5">ET+5 (UK)</SelectItem>
-                      <SelectItem value="ET">ET (NY)</SelectItem>
-                      <SelectItem value="ET-1">ET-1 (Central)</SelectItem>
-                      <SelectItem value="ET-2">ET-2 (Mountain)</SelectItem>
-                      <SelectItem value="ET-3">ET-3 (Pacific)</SelectItem>
+                        <SelectItem value="ET-3">Pacific Time (ET-3)</SelectItem>
+                        <SelectItem value="ET-2">Mountain Time (ET-2)</SelectItem>
+                        <SelectItem value="ET-1">Central Time (ET-1)</SelectItem>
+                        <SelectItem value="ET">Eastern Time (NY)</SelectItem>
+                        <SelectItem value="ET+5">UK / Portugal (ET+5)</SelectItem>
+                        <SelectItem value="ET+6">France / Scandinavia (ET+6)</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
