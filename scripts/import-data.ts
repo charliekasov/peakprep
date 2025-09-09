@@ -213,11 +213,6 @@ async function getDataFromSheet(sheetName: string, auth: any) {
 async function importCollectionFromSheet(collectionName: string, sheetNameOrNames: string | string[]) {
   console.log(`\nImporting data for collection: '${collectionName}'...`);
   
-  if (SPREADSHEET_ID === 'YOUR_SPREADSHEET_ID_HERE') {
-      console.error("ERROR: Please update the SPREADSHEET_ID in the script.");
-      return;
-  }
-  
   const auth = new google.auth.GoogleAuth({
     keyFile: SERVICE_ACCOUNT_PATH,
     scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
