@@ -41,6 +41,7 @@ export function AssignmentsClient({ assignments }: AssignmentsClientProps) {
   const [selectedSource, setSelectedSource] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSubject, setSelectedSubject] = useState('all');
+  const [hasSearched, setHasSearched] = useState(false);
 
   // Effect to reset dependent filters when a parent filter changes
   useEffect(() => {
@@ -57,8 +58,23 @@ export function AssignmentsClient({ assignments }: AssignmentsClientProps) {
   useEffect(() => {
     setSelectedSubject('all');
   }, [selectedCategory]);
+  
+  // Track if a filter has been applied
+  useEffect(() => {
+    const activeFilters = 
+        selectedTestType !== 'all' ||
+        selectedSource !== 'all' ||
+        selectedCategory !== 'all' ||
+        selectedSubject !== 'all' ||
+        searchQuery !== '';
+    setHasSearched(activeFilters);
+  }, [selectedTestType, selectedSource, selectedCategory, selectedSubject, searchQuery]);
 
   const filteredAssignments = useMemo(() => {
+    if (!hasSearched) {
+      return [];
+    }
+
     let filtered = assignments;
 
     if (selectedTestType !== 'all') {
@@ -80,11 +96,11 @@ export function AssignmentsClient({ assignments }: AssignmentsClientProps) {
       );
     }
 
-    return filtered;
-  }, [assignments, searchQuery, selectedTestType, selectedSource, selectedCategory, selectedSubject]);
+    return filtered.sort((a, b) => a['Full Assignment Name'].localeCompare(b['Full Assignment Name']));
+  }, [assignments, searchQuery, selectedTestType, selectedSource, selectedCategory, selectedSubject, hasSearched]);
 
   const getUniqueValues = (key: keyof Assignment, sourceData: Assignment[]) => {
-    return Array.from(new Set(sourceData.map(a => a[key]).filter(Boolean)));
+    return Array.from(new Set(sourceData.map(a => a[key]).filter(Boolean))).sort();
   };
 
   const testTypes = useMemo(() => getUniqueValues('Test Type', assignments), [assignments]);
@@ -231,27 +247,41 @@ export function AssignmentsClient({ assignments }: AssignmentsClientProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredAssignments.map((assignment: any) => (
-                  <TableRow key={assignment.id}>
-                    <TableCell className="font-medium">{assignment['Full Assignment Name']}</TableCell>
-                    <TableCell>{assignment.Subject}</TableCell>
-                    <TableCell>{assignment['Broad Category']}</TableCell>
-                    <TableCell>
-                      <Badge variant={assignment.Difficulty === 'Hard' ? 'destructive' : (assignment.Difficulty === 'Medium' ? 'secondary' : 'default')}>{assignment.Difficulty}</Badge>
-                    </TableCell>
-                    <TableCell>{assignment['Test Type']}</TableCell>
-                    <TableCell>{assignment.Source}</TableCell>
-                    <TableCell>
-                      {assignment.Link ? (
-                        <Link href={assignment.Link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-primary hover:underline">
-                          View <ExternalLink className="h-4 w-4" />
-                        </Link>
-                      ) : (
-                        <span className="text-muted-foreground">N/A</span>
-                      )}
+                {!hasSearched ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                      Use the filters above to search for assignments.
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : filteredAssignments.length > 0 ? (
+                  filteredAssignments.map((assignment: any) => (
+                    <TableRow key={assignment.id}>
+                      <TableCell className="font-medium">{assignment['Full Assignment Name']}</TableCell>
+                      <TableCell>{assignment.Subject}</TableCell>
+                      <TableCell>{assignment['Broad Category']}</TableCell>
+                      <TableCell>
+                        <Badge variant={assignment.Difficulty === 'Hard' ? 'destructive' : (assignment.Difficulty === 'Medium' ? 'secondary' : 'default')}>{assignment.Difficulty}</Badge>
+                      </TableCell>
+                      <TableCell>{assignment['Test Type']}</TableCell>
+                      <TableCell>{assignment.Source}</TableCell>
+                      <TableCell>
+                        {assignment.Link ? (
+                          <Link href={assignment.Link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-primary hover:underline">
+                            View <ExternalLink className="h-4 w-4" />
+                          </Link>
+                        ) : (
+                          <span className="text-muted-foreground">N/A</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                   <TableRow>
+                    <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                      No assignments found for the selected filters.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
         </CardContent>
