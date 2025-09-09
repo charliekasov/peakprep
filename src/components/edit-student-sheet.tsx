@@ -86,7 +86,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
 
   useEffect(() => {
     if (student) {
-      const testTypes = student['Test Types'] || (student.testType ? [student.testType] : []);
+      const testTypes = student.testTypes || [];
       
       form.reset({
         name: student.name || '',
@@ -196,6 +196,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                     <Input
                       placeholder="e.g., jane.doe@example.com"
                       {...field}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -211,7 +212,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                     <FormLabel>Parent's Email 2</FormLabel>
                     <div className="flex items-center gap-2">
                         <FormControl>
-                            <Input placeholder="e.g., another.parent@example.com" {...field} />
+                            <Input placeholder="e.g., another.parent@example.com" {...field} value={field.value ?? ''} />
                         </FormControl>
                         <Button variant="ghost" size="icon" type="button" onClick={() => {
                             setShowParentEmail2(false);
@@ -309,6 +310,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                     <Input
                       placeholder="e.g., August 24, 2024"
                       {...field}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -322,7 +324,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                 <FormItem>
                   <FormLabel>Hourly Rate ($)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="e.g., 100" {...field} />
+                    <Input type="number" placeholder="e.g., 100" {...field} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -377,6 +379,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                       placeholder="Describe the student's strengths, weaknesses, and learning style."
                       className="min-h-[120px]"
                       {...field}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormDescription>

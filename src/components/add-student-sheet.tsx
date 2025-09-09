@@ -40,14 +40,14 @@ import { addStudent } from '@/lib/students';
 import { useRouter } from 'next/navigation';
 
 const studentSchema = z.object({
-  'Student Name': z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  'Student Email': z.string().trim().email({ message: 'Please enter a valid email address.' }),
-  'Parent Email 1': z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
-  'Parent Email 2': z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
-  'Test Type': z.string().min(1, { message: 'Please select a test type.' }),
-  'Upcoming Test Date': z.string().optional(),
-  'Rate': z.coerce.number().optional(),
-  'Frequency': z.string().optional(),
+  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
+  email: z.string().trim().email({ message: 'Please enter a valid email address.' }),
+  parentEmail1: z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
+  parentEmail2: z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
+  testTypes: z.array(z.string()).min(1, { message: 'Please select a test type.' }),
+  upcomingTestDate: z.string().optional(),
+  Rate: z.coerce.number().optional(),
+  Frequency: z.string().optional(),
   timeZone: z.string().optional().or(z.literal('')),
   profile: z.string().optional(),
 });
@@ -62,14 +62,14 @@ export function AddStudentSheet() {
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
-      'Student Name': '',
-      'Student Email': '',
-      'Parent Email 1': '',
-      'Parent Email 2': '',
-      'Test Type': '',
-      'Upcoming Test Date': '',
-      'Rate': undefined,
-      'Frequency': '',
+      name: '',
+      email: '',
+      parentEmail1: '',
+      parentEmail2: '',
+      testTypes: [],
+      upcomingTestDate: '',
+      Rate: undefined,
+      Frequency: '',
       timeZone: '',
       profile: '',
     },
@@ -79,16 +79,16 @@ export function AddStudentSheet() {
     setIsSubmitting(true);
     try {
       const studentData = {
-          name: values['Student Name'],
-          email: values['Student Email'],
-          parentEmail1: values['Parent Email 1'] || undefined,
-          parentEmail2: values['Parent Email 2'] || undefined,
-          testTypes: [values['Test Type']],
-          upcomingTestDate: values['Upcoming Test Date'] || undefined,
-          Rate: values['Rate'],
-          Frequency: values['Frequency'] || '',
-          timeZone: values.timeZone || '',
-          profile: values.profile || '',
+          name: values.name,
+          email: values.email,
+          parentEmail1: values.parentEmail1 || undefined,
+          parentEmail2: values.parentEmail2 || undefined,
+          testTypes: values.testTypes,
+          upcomingTestDate: values.upcomingTestDate || undefined,
+          Rate: values.Rate,
+          Frequency: values.Frequency || undefined,
+          timeZone: values.timeZone || undefined,
+          profile: values.profile || undefined,
       };
       
       // Remove undefined keys
@@ -102,7 +102,7 @@ export function AddStudentSheet() {
 
       toast({
         title: 'Student Added',
-        description: `${values['Student Name']} has been successfully added.`,
+        description: `${values.name} has been successfully added.`,
       });
       router.refresh();
       form.reset();
@@ -141,7 +141,7 @@ export function AddStudentSheet() {
           >
             <FormField
               control={form.control}
-              name="Student Name"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
@@ -154,7 +154,7 @@ export function AddStudentSheet() {
             />
             <FormField
               control={form.control}
-              name="Student Email"
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Student Email</FormLabel>
@@ -170,7 +170,7 @@ export function AddStudentSheet() {
             />
              <FormField
               control={form.control}
-              name="Parent Email 1"
+              name="parentEmail1"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Parent's Email (Optional)</FormLabel>
@@ -178,6 +178,7 @@ export function AddStudentSheet() {
                     <Input
                       placeholder="e.g., jane.doe@example.com"
                       {...field}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -186,7 +187,7 @@ export function AddStudentSheet() {
             />
              <FormField
               control={form.control}
-              name="Parent Email 2"
+              name="parentEmail2"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Parent's Email 2 (Optional)</FormLabel>
@@ -194,6 +195,7 @@ export function AddStudentSheet() {
                     <Input
                       placeholder="e.g., another.parent@example.com"
                       {...field}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -202,11 +204,11 @@ export function AddStudentSheet() {
             />
              <FormField
               control={form.control}
-              name="Test Type"
+              name="testTypes"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Primary Test Type</FormLabel>
-                   <Select onValueChange={field.onChange} defaultValue={field.value}>
+                   <Select onValueChange={(value) => field.onChange([value])} value={field.value?.[0] || ''}>
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select a test type" />
@@ -227,7 +229,7 @@ export function AddStudentSheet() {
             />
              <FormField
               control={form.control}
-              name="Upcoming Test Date"
+              name="upcomingTestDate"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Upcoming Test Date (Optional)</FormLabel>
