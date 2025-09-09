@@ -213,12 +213,15 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
   // Effect to update scores when the test type is changed
   useEffect(() => {
     if (selectedTestType) {
-        const config = TEST_CONFIG[selectedTestType];
-        setValue('scores', config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : []);
-        // Reset dependant fields
-        setValue('testTypeSelection', 'Practice Test');
-        setValue('practiceTestId', '');
-        setValue('officialTestName', '');
+      console.log('Test type changed to:', selectedTestType); // Add this
+      const config = TEST_CONFIG[selectedTestType];
+      console.log('New config:', config); // Add this
+      setValue('scores', config ? config.sections.map((s: any) => ({ section: s.name, score: s.default })) : []);
+      console.log('Set scores to:', config?.sections.map((s: any) => ({ section: s.name, score: s.default }))); // Add this
+      // Reset dependant fields
+      setValue('testTypeSelection', 'Practice Test');
+      setValue('practiceTestId', '');
+      setValue('officialTestName', '');
     }
   }, [selectedTestType, setValue]);
   
@@ -557,3 +560,5 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
     </Dialog>
   );
 }
+
+    
