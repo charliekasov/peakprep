@@ -109,21 +109,21 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
   async function onSubmit(values: z.infer<typeof studentSchema>) {
     setIsSubmitting(true);
     try {
-      const studentData: Record<string, any> = { ...values };
+      // Map form values to the structure expected by Firestore
+      const studentData: Partial<Student> = {
+          'Student Name': values['Student Name'],
+          'Student Email': values['Student Email'],
+          'Test Types': values['Test Types'].filter(Boolean),
+      };
 
-      // Clean up optional fields before submission
-      for (const key in studentData) {
-        if (studentData[key] === '' || studentData[key] === undefined || studentData[key] === null) {
-          delete studentData[key];
-        }
-      }
-
-      // Filter out any empty strings from test types
-      if (studentData['Test Types']) {
-        studentData['Test Types'] = studentData['Test Types'].filter(Boolean);
-      }
-
-
+      if (values['Parent Email 1']) studentData['Parent Email 1'] = values['Parent Email 1'];
+      if (values['Parent Email 2']) studentData['Parent Email 2'] = values['Parent Email 2'];
+      if (values['Upcoming Test Date']) studentData['Upcoming Test Date'] = values['Upcoming Test Date'];
+      if (values['Rate'] !== undefined && values['Rate'] !== null) studentData['Rate'] = values['Rate'];
+      if (values['Frequency']) studentData['Frequency'] = values['Frequency'];
+      if (values.timeZone) studentData.timeZone = values.timeZone;
+      if (values.profile) studentData.profile = values.profile;
+      
       const result = await updateStudentAction(student.id, studentData);
       
       if (result.success) {
@@ -359,7 +359,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                         <SelectValue placeholder="Select a time zone (optional)" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                     <SelectContent>
                         <SelectItem value="ET-3">Pacific Time (ET-3)</SelectItem>
                         <SelectItem value="ET-2">Mountain Time (ET-2)</SelectItem>
                         <SelectItem value="ET-1">Central Time (ET-1)</SelectItem>
