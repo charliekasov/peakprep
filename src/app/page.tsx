@@ -85,7 +85,7 @@ function NeedsReviewTable() {
                 return (
                   <TableRow key={submission.id}>
                     <TableCell>{student?.name}</TableCell>
-                    <TableCell>{assignment?.title}</TableCell>
+                    <TableCell>{assignment?.['Full Assignment Name']}</TableCell>
                     <TableCell className="text-right">
                       {submission.submittedAt.toLocaleDateString()}
                     </TableCell>
