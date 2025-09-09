@@ -36,7 +36,8 @@ import {
 } from '@/components/ui/select';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { addStudentAction } from '@/app/students/actions';
+import { addStudent } from '@/lib/students';
+import { useRouter } from 'next/navigation';
 
 const studentSchema = z.object({
   'Student Name': z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -47,7 +48,7 @@ const studentSchema = z.object({
   'Upcoming Test Date': z.string().optional(),
   'Rate': z.coerce.number().optional(),
   'Frequency': z.string().optional(),
-  timeZone: z.string().optional(),
+  timeZone: z.string().optional().or(z.literal('')),
   profile: z.string().optional(),
 });
 
@@ -56,6 +57,7 @@ export function AddStudentSheet() {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
@@ -76,33 +78,36 @@ export function AddStudentSheet() {
   async function onSubmit(values: z.infer<typeof studentSchema>) {
     setIsSubmitting(true);
     try {
-      const submissionData = { ...values };
-      if (submissionData['Parent Email 1'] === '') delete submissionData['Parent Email 1'];
-      if (submissionData['Parent Email 2'] === '') delete submissionData['Parent Email 2'];
-
-      // Map to old field names for backwards compatibility if needed, though lib handles it
       const studentData = {
-          name: submissionData['Student Name'],
-          email: submissionData['Student Email'],
-          parentEmail1: submissionData['Parent Email 1'],
-          parentEmail2: submissionData['Parent Email 2'],
-          testType: submissionData['Test Type'],
-          upcomingTestDate: submissionData['Upcoming Test Date'],
-          ...submissionData,
+          name: values['Student Name'],
+          email: values['Student Email'],
+          parentEmail1: values['Parent Email 1'] || undefined,
+          parentEmail2: values['Parent Email 2'] || undefined,
+          testTypes: [values['Test Type']],
+          upcomingTestDate: values['Upcoming Test Date'] || undefined,
+          Rate: values['Rate'],
+          Frequency: values['Frequency'] || '',
+          timeZone: values.timeZone || '',
+          profile: values.profile || '',
       };
+      
+      // Remove undefined keys
+      Object.keys(studentData).forEach(key => {
+        if (studentData[key as keyof typeof studentData] === undefined) {
+          delete studentData[key as keyof typeof studentData];
+        }
+      });
 
-      const result = await addStudentAction(studentData);
+      await addStudent(studentData as any);
 
-      if (result.success) {
-        toast({
-          title: 'Student Added',
-          description: `${values['Student Name']} has been successfully added.`,
-        });
-        form.reset();
-        setOpen(false);
-      } else {
-        throw new Error(result.message);
-      }
+      toast({
+        title: 'Student Added',
+        description: `${values['Student Name']} has been successfully added.`,
+      });
+      router.refresh();
+      form.reset();
+      setOpen(false);
+
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -168,7 +173,7 @@ export function AddStudentSheet() {
               name="Parent Email 1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Parent's Email 1 (Optional)</FormLabel>
+                  <FormLabel>Parent's Email (Optional)</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="e.g., jane.doe@example.com"
@@ -200,7 +205,7 @@ export function AddStudentSheet() {
               name="Test Type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Test Type</FormLabel>
+                  <FormLabel>Primary Test Type</FormLabel>
                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                         <SelectTrigger>
@@ -256,7 +261,7 @@ export function AddStudentSheet() {
                 <FormItem>
                   <FormLabel>Preferred Days/Times</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Tuesdays at 4pm" {...field} />
+                    <Input placeholder="e.g., Tuesdays at 4pm" {...field} value={field.value ?? ''}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -268,7 +273,7 @@ export function AddStudentSheet() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Time Zone</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value ?? ''}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a time zone (optional)" />

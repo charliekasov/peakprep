@@ -35,8 +35,9 @@ import {
 } from '@/components/ui/select';
 import { Loader2, PlusCircle, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { updateStudentAction } from '@/app/students/actions';
+import { updateStudent } from '@/lib/students';
 import type { Student } from '@/lib/types';
+import { useRouter } from 'next/navigation';
 
 interface EditStudentSheetProps {
   student: Student;
@@ -45,14 +46,14 @@ interface EditStudentSheetProps {
 }
 
 const studentSchema = z.object({
-  'Student Name': z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  'Student Email': z.string().trim().email({ message: 'Please enter a valid email address.' }),
-  'Parent Email 1': z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
-  'Parent Email 2': z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
-  'Test Types': z.array(z.string()).min(1, {message: 'At least one test type is required.'}).max(2),
-  'Upcoming Test Date': z.string().optional(),
-  'Rate': z.coerce.number().optional(),
-  'Frequency': z.string().optional(),
+  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
+  email: z.string().trim().email({ message: 'Please enter a valid email address.' }),
+  parentEmail1: z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
+  parentEmail2: z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
+  testTypes: z.array(z.string()).min(1, {message: 'At least one test type is required.'}).max(2),
+  upcomingTestDate: z.string().optional(),
+  Rate: z.coerce.number().optional(),
+  Frequency: z.string().optional(),
   timeZone: z.string().optional().or(z.literal('')),
   profile: z.string().optional(),
 });
@@ -64,22 +65,22 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showParentEmail2, setShowParentEmail2] = useState(false);
   const [showTestType2, setShowTestType2] = useState(false);
-
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
-      'Student Name': '',
-      'Student Email': '',
-      'Parent Email 1': '',
-      'Parent Email 2': '',
-      'Test Types': [],
-      'Upcoming Test Date': '',
-      'Rate': undefined,
-      'Frequency': '',
-      timeZone: '',
-      profile: '',
+        name: '',
+        email: '',
+        parentEmail1: '',
+        parentEmail2: '',
+        testTypes: [],
+        upcomingTestDate: '',
+        Rate: undefined,
+        Frequency: '',
+        timeZone: '',
+        profile: '',
     },
   });
 
@@ -88,19 +89,19 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
       const testTypes = student['Test Types'] || (student.testType ? [student.testType] : []);
       
       form.reset({
-        'Student Name': student['Student Name'] || student.name || '',
-        'Student Email': student['Student Email'] || student.email || '',
-        'Parent Email 1': student['Parent Email 1'] || student.parentEmail1 || '',
-        'Parent Email 2': student['Parent Email 2'] || student.parentEmail2 || '',
-        'Test Types': testTypes,
-        'Upcoming Test Date': student['Upcoming Test Date'] || student.upcomingTestDate || '',
-        'Rate': student['Rate'],
-        'Frequency': student['Frequency'] || '',
+        name: student.name || '',
+        email: student.email || '',
+        parentEmail1: student.parentEmail1 || '',
+        parentEmail2: student.parentEmail2 || '',
+        testTypes: testTypes,
+        upcomingTestDate: student.upcomingTestDate || '',
+        Rate: student['Rate'],
+        Frequency: student['Frequency'] || '',
         timeZone: student.timeZone || '',
         profile: student.profile || '',
       });
 
-      setShowParentEmail2(!!(student['Parent Email 2'] || student.parentEmail2));
+      setShowParentEmail2(!!(student.parentEmail2));
       setShowTestType2(testTypes.length > 1);
 
     }
@@ -109,32 +110,25 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
   async function onSubmit(values: z.infer<typeof studentSchema>) {
     setIsSubmitting(true);
     try {
-      // Map form values to the structure expected by Firestore
-      const studentData: Partial<Student> = {
-          'Student Name': values['Student Name'],
-          'Student Email': values['Student Email'],
-          'Test Types': values['Test Types'].filter(Boolean),
-      };
+      const studentData: Partial<Student> = { ...values };
 
-      if (values['Parent Email 1']) studentData['Parent Email 1'] = values['Parent Email 1'];
-      if (values['Parent Email 2']) studentData['Parent Email 2'] = values['Parent Email 2'];
-      if (values['Upcoming Test Date']) studentData['Upcoming Test Date'] = values['Upcoming Test Date'];
-      if (values['Rate'] !== undefined && values['Rate'] !== null) studentData['Rate'] = values['Rate'];
-      if (values['Frequency']) studentData['Frequency'] = values['Frequency'];
-      if (values.timeZone) studentData.timeZone = values.timeZone;
-      if (values.profile) studentData.profile = values.profile;
+      // Clean up optional fields
+      if (!studentData.parentEmail1) delete studentData.parentEmail1;
+      if (!studentData.parentEmail2) delete studentData.parentEmail2;
+      if (!studentData.upcomingTestDate) delete studentData.upcomingTestDate;
+      if (studentData.Rate === undefined || studentData.Rate === null) delete studentData.Rate;
+      if (!studentData.Frequency) delete studentData.Frequency;
+      if (!studentData.timeZone) delete studentData.timeZone;
+      if (!studentData.profile) delete studentData.profile;
       
-      const result = await updateStudentAction(student.id, studentData);
+      await updateStudent(student.id, studentData);
       
-      if (result.success) {
-        toast({
+      toast({
             title: 'Student Updated',
-            description: `${values['Student Name']} has been successfully updated.`,
-        });
-        onOpenChange(false);
-      } else {
-        throw new Error(result.message);
-      }
+            description: `${values.name} has been successfully updated.`,
+      });
+      router.refresh();
+      onOpenChange(false);
 
     } catch (error: any) {
       toast({
@@ -147,7 +141,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
     }
   }
   
-  const currentTestTypes = form.watch('Test Types') || [];
+  const currentTestTypes = form.watch('testTypes') || [];
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -165,7 +159,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
           >
             <FormField
               control={form.control}
-              name="Student Name"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
@@ -178,7 +172,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
             />
             <FormField
               control={form.control}
-              name="Student Email"
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Student Email</FormLabel>
@@ -194,7 +188,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
             />
              <FormField
               control={form.control}
-              name="Parent Email 1"
+              name="parentEmail1"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Parent's Email</FormLabel>
@@ -211,7 +205,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
             {showParentEmail2 ? (
                 <FormField
                 control={form.control}
-                name="Parent Email 2"
+                name="parentEmail2"
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Parent's Email 2</FormLabel>
@@ -221,7 +215,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                         </FormControl>
                         <Button variant="ghost" size="icon" type="button" onClick={() => {
                             setShowParentEmail2(false);
-                            form.setValue('Parent Email 2', '');
+                            form.setValue('parentEmail2', '');
                         }}>
                             <XCircle className="h-4 w-4 text-muted-foreground" />
                         </Button>
@@ -240,7 +234,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
             <div className="space-y-2">
                 <FormField
                     control={form.control}
-                    name="Test Types.0"
+                    name="testTypes.0"
                     render={({ field }) => (
                         <FormItem>
                         <FormLabel>Test Type</FormLabel>
@@ -266,7 +260,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                 {showTestType2 ? (
                      <FormField
                         control={form.control}
-                        name="Test Types.1"
+                        name="testTypes.1"
                         render={({ field }) => (
                             <FormItem>
                             <FormLabel>Test Type 2</FormLabel>
@@ -287,7 +281,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                                 </Select>
                                  <Button variant="ghost" size="icon" type="button" onClick={() => {
                                     setShowTestType2(false);
-                                    form.setValue('Test Types', [currentTestTypes[0]]);
+                                    form.setValue('testTypes', [currentTestTypes[0]]);
                                 }}>
                                     <XCircle className="h-4 w-4 text-muted-foreground" />
                                 </Button>
@@ -307,7 +301,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
 
              <FormField
               control={form.control}
-              name="Upcoming Test Date"
+              name="upcomingTestDate"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Upcoming Test Date (Optional)</FormLabel>
@@ -341,7 +335,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                 <FormItem>
                   <FormLabel>Preferred Days/Times</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Tuesdays at 4pm" {...field} />
+                    <Input placeholder="e.g., Tuesdays at 4pm" {...field} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -353,7 +347,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Time Zone</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || ''}>
+                  <Select onValueChange={field.onChange} value={field.value ?? ''}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a time zone (optional)" />

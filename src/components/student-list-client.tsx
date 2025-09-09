@@ -36,7 +36,8 @@ import { EditStudentSheet } from '@/components/edit-student-sheet';
 import { cn } from '@/lib/utils';
 import { MoreHorizontal, Archive, ArchiveRestore } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { archiveStudentAction, unarchiveStudentAction } from '@/app/students/actions';
+import { archiveStudent, unarchiveStudent } from '@/lib/students';
+import { useRouter } from 'next/navigation';
 
 interface StudentListClientProps {
     students: Student[];
@@ -47,6 +48,7 @@ export function StudentListClient({ students }: StudentListClientProps) {
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [view, setView] = useState<'active' | 'archived'>('active');
   const { toast } = useToast();
+  const router = useRouter();
 
   const filteredStudents = useMemo(() => {
     return students.filter(s => (s.status || 'active') === view);
@@ -62,21 +64,14 @@ export function StudentListClient({ students }: StudentListClientProps) {
 
   const onArchiveAction = async (student: Student) => {
     try {
-        let result;
         if (student.status === 'active' || !student.status) {
-            result = await archiveStudentAction(student.id);
-            if (result.success) {
-                toast({ title: 'Student Archived', description: `${student.name} has been moved to the archive.`});
-            }
+            await archiveStudent(student.id);
+            toast({ title: 'Student Archived', description: `${student.name} has been moved to the archive.`});
         } else {
-            result = await unarchiveStudentAction(student.id);
-            if (result.success) {
-                toast({ title: 'Student Restored', description: `${student.name} has been moved back to active.`});
-            }
+            await unarchiveStudent(student.id);
+            toast({ title: 'Student Restored', description: `${student.name} has been moved back to active.`});
         }
-        if (!result.success) {
-             throw new Error(result.message);
-        }
+        router.refresh();
     } catch (error: any) {
         toast({ title: 'Error', description: error.message, variant: 'destructive'});
     }
@@ -123,9 +118,9 @@ export function StudentListClient({ students }: StudentListClientProps) {
                             selectedStudent?.id === student.id && "bg-muted/50"
                         )}
                     >
-                      <TableCell className="font-medium">{student['Student Name'] || student.name}</TableCell>
-                      <TableCell>{student['Test Types']?.join(', ') || student.testType || 'N/A'}</TableCell>
-                      <TableCell>{student['Upcoming Test Date'] || student.upcomingTestDate || 'N/A'}</TableCell>
+                      <TableCell className="font-medium">{student.name}</TableCell>
+                      <TableCell>{student.testTypes?.join(', ') || 'N/A'}</TableCell>
+                      <TableCell>{student.upcomingTestDate || 'N/A'}</TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
