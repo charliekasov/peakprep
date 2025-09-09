@@ -235,6 +235,7 @@ export function AddStudentSheet() {
                     <Input
                       placeholder="e.g., August 24, 2024"
                       {...field}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -248,7 +249,7 @@ export function AddStudentSheet() {
                 <FormItem>
                   <FormLabel>Hourly Rate ($)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="e.g., 100" {...field} />
+                    <Input type="number" placeholder="e.g., 100" {...field} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -303,6 +304,7 @@ export function AddStudentSheet() {
                       placeholder="Describe the student's strengths, weaknesses, and learning style."
                       className="min-h-[120px]"
                       {...field}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormDescription>
