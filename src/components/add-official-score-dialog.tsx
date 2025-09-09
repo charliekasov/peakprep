@@ -500,10 +500,9 @@ export function AddOfficialScoreDialog({ students, assignments, onScoreAdd }: Ad
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 rounded-md border p-4">
                                             {currentTestConfig.sections.map((section: any, index: number) => (
                                                 <Controller
-                                                    key={section.name}
+                                                    key={`${selectedTestType}-${section.name}`}
                                                     control={control}
                                                     name={`scores.${index}`}
-                                                    defaultValue={{ section: section.name, score: section.default }}
                                                     render={({ field }) => (
                                                     <FormItem>
                                                         <div className="flex items-center justify-between">
