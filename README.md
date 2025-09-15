@@ -78,4 +78,4 @@ To enable email sending, you must have a Resend account.
     FROM_EMAIL="you@your-verified-domain.com"
     ```
 
-When a student replies to the homework email, their response will be sent to the "Reply-To" address specified in the code (`CharlieKasov@gmail.com`), ensuring the conversation continues in your personal inbox.
+When a student replies to the homework email, their response will be sent to the "Reply-To" address specified in the code (`yourname@email.com`), ensuring the conversation continues in your personal inbox.
