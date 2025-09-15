@@ -18,16 +18,23 @@
 .env.local
 .env.development.local
 .env.production.local
+.env.local.*
 
-# Sensitive Credentials
+# Sensitive Credentials & Data
 # This is your Firebase Admin service account key. DO NOT commit this file.
 service-account-key.json
+*.backup
+*.dump
+/data/
 
 # Log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
 
 # System files
 .DS_Store
