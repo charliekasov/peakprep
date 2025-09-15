@@ -11,6 +11,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarInset,
+  SidebarTrigger
 } from '@/components/ui/sidebar';
 import { UserNav } from '@/components/user-nav';
 import { Nav } from '@/components/nav';
@@ -65,9 +66,17 @@ function AppLayout({
             <UserNav />
           </SidebarFooter>
         </Sidebar>
-        <SidebarInset>{children}</SidebarInset>
-      </SidebarProvider>
-  )
+        <SidebarInset>
+      <header className="flex h-16 shrink-0 items-center gap-2 px-4 md:hidden">
+        <SidebarTrigger />
+        <div className="ml-auto">
+          <UserNav />
+        </div>
+      </header>
+      {children}
+    </SidebarInset>
+  </SidebarProvider>
+)
 
   const renderContent = () => {
     if (loading) {

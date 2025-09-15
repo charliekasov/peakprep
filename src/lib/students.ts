@@ -2,12 +2,12 @@
 
 import { collection, getDocs, getDoc, doc, addDoc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Student } from './types';
+import type { Student, StudentFirestoreData } from './types';
 import type { DocumentSnapshot } from 'firebase/firestore';
 
 // Single source of truth for student transformation logic
 export function fromFirestore(doc: DocumentSnapshot): Student {
-  const data = doc.data()!;
+  const data = doc.data() as StudentFirestoreData;
   
   // Normalize testTypes to always be an array
   const testTypes = Array.isArray(data['Test Types']) 
@@ -36,39 +36,53 @@ export function fromFirestore(doc: DocumentSnapshot): Student {
     status: data.status || 'active',
     
     // Clean field names (for backwards compatibility and easier access)
-    name: data.name || data['Student Name'],
-    email: data.email || data['Student Email'],
-    parentEmail1: data.parentEmail1 || data['Parent Email 1'],
-    parentEmail2: data.parentEmail2 || data['Parent Email 2'],
+    name: data['Student Name'],
+    email: data['Student Email'],
+    parentEmail1: data['Parent Email 1'],
+    parentEmail2: data['Parent Email 2'],
     testTypes: testTypes,
-    upcomingTestDate: data.upcomingTestDate || data['Upcoming Test Date'],
+    upcomingTestDate: data['Upcoming Test Date'],
   };
   
   return student;
 }
 
 // Helper to convert clean field names to Firestore format
-function toFirestoreFormat(student: Partial<Omit<Student, 'id' | 'status'>>): Record<string, any> {
-  const firestoreData = {
-    'Student Name': student.name,
-    'Student Email': student.email,
-    'Parent Email 1': student.parentEmail1,
-    'Parent Email 2': student.parentEmail2,
-    'Test Types': student.testTypes,
-    'Upcoming Test Date': student.upcomingTestDate,
-    'Rate': student.Rate,
-    'Frequency': student.Frequency,
-    'timeZone': student.timeZone,
-    'profile': student.profile,
-  };
-
-  // Remove undefined keys to keep Firestore clean
-  Object.keys(firestoreData).forEach(key => {
-    if (firestoreData[key] === undefined) {
-      delete firestoreData[key];
-    }
-  });
-
+function toFirestoreFormat(student: Partial<Omit<Student, 'id' | 'status'>>): Partial<StudentFirestoreData> {
+  const firestoreData: Partial<StudentFirestoreData> = {};
+  
+  // Only add fields that have values to avoid storing undefined
+  if (student.name || student['Student Name']) {
+    firestoreData['Student Name'] = student.name || student['Student Name']!;
+  }
+  if (student.email || student['Student Email']) {
+    firestoreData['Student Email'] = student.email || student['Student Email']!;
+  }
+  if (student.parentEmail1 || student['Parent Email 1']) {
+    firestoreData['Parent Email 1'] = student.parentEmail1 || student['Parent Email 1'];
+  }
+  if (student.parentEmail2 || student['Parent Email 2']) {
+    firestoreData['Parent Email 2'] = student.parentEmail2 || student['Parent Email 2'];
+  }
+  if (student.testTypes || student['Test Types']) {
+    firestoreData['Test Types'] = student.testTypes || student['Test Types'];
+  }
+  if (student.upcomingTestDate || student['Upcoming Test Date']) {
+    firestoreData['Upcoming Test Date'] = student.upcomingTestDate || student['Upcoming Test Date'];
+  }
+  if (student.Rate || student['Rate']) {
+    firestoreData['Rate'] = student.Rate || student['Rate'];
+  }
+  if (student.Frequency || student['Frequency']) {
+    firestoreData['Frequency'] = student.Frequency || student['Frequency'];
+  }
+  if (student.timeZone) {
+    firestoreData['timeZone'] = student.timeZone;
+  }
+  if (student.profile) {
+    firestoreData['profile'] = student.profile;
+  }
+  
   return firestoreData;
 }
 
@@ -95,7 +109,7 @@ export async function getStudentsCount(): Promise<number> {
 
 export async function addStudent(student: Omit<Student, 'id' | 'status'>): Promise<string> {
   const studentsCollection = collection(db, 'students');
-  const studentForFirestore = {
+  const studentForFirestore: Partial<StudentFirestoreData> & { status: string } = {
     ...toFirestoreFormat(student),
     status: 'active'
   };
