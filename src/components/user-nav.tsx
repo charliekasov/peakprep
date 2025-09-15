@@ -52,7 +52,7 @@ export function UserNav() {
         >
           <Avatar className="h-8 w-8">
             <AvatarImage
-              src="https://placehold.co/40x40.png"
+              src="https://picsum.photos/seed/1/40/40"
               alt={user?.email || 'Tutor'}
               data-ai-hint="person face"
             />

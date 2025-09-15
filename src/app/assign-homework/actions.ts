@@ -60,7 +60,7 @@ export async function handleAssignHomework(input: unknown) {
       from: `Peak Prep <${process.env.FROM_EMAIL}>`,
       to: to,
       cc: cc.length > 0 ? cc : undefined,
-      reply_to: 'CharlieKasov@gmail.com',
+      reply_to: process.env.REPLY_TO_EMAIL,
       subject: emailSubject,
       text: emailMessage, // Using text for simplicity, can be changed to html
     });

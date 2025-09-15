@@ -1,4 +1,3 @@
-
 /**
  * @fileoverview A script to import data from a Google Sheet into Firestore.
  *
@@ -25,16 +24,14 @@
  * -----------------------------------------------------------
  *    a. Open your Google Sheet.
  *    b. Click the "Share" button in the top right corner.
- *    c. Copy the email address below and paste it into the "Add people and groups" field:
- *
- *       firebase-adminsdk-fbsvc@tutorflow-ivaba.iam.gserviceaccount.com
- *
+ *    c. Copy the email address from your service-account-key.json file
+ *       (the "client_email" field) and paste it into the "Add people and groups" field.
  *    d. Ensure it has at least "Viewer" access, then click "Share".
  *
  *
- * STEP 3: Configure the script below.
+ * STEP 3: Configure your .env file.
  * -----------------------------------------------------------
- *    a. Update the SPREADSHEET_ID with your Google Sheet's ID from the URL.
+ *    a. Update the SPREADSHEET_ID in your .env file with your Google Sheet's ID from the URL.
  *    b. Update the SHEET_NAMES to match the exact names of your sheet tabs.
  *
  *
@@ -54,7 +51,7 @@ config();
 
 // --- Configuration ---
 // The ID of your Google Sheet (from the URL)
-const SPREADSHEET_ID = '1rAS--uHk3MfWTuTr-Z7dsvPlUQVf-pgIUZOREYmtoro'; 
+const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
 // Mapping from Firestore collection name to the exact name of the sheet tab(s)
 // For submissions, you can provide an array of sheet names to merge.
@@ -273,16 +270,21 @@ async function importCollectionFromSheet(collectionName: string, sheetNameOrName
 }
 
 async function main() {
+  if (!SPREADSHEET_ID) {
+    console.error('ERROR: SPREADSHEET_ID environment variable is not set.');
+    console.error('Please add it to your .env file.');
+    process.exit(1);
+  }
+  
   console.log('Starting Firestore data import from Google Sheets...');
   // Note: We are no longer importing assignments or submissions from sheets.
   // This is now handled by the hardcoded assignments-data.ts file and manual entry.
   // We only import students now.
   await importCollectionFromSheet('students', SHEET_NAMES.students);
-  // await importCollectionFromSheet('assignments', SHEET_NAMES.assignments);
-  // await importCollectionFromSheet('submissions', SHEET_NAMES.submissions);
+  await importCollectionFromSheet('assignments', SHEET_NAMES.assignments);
+  await importCollectionFromSheet('submissions', SHEET_NAMES.submissions);
   
   console.log('\nData import process finished.');
-  console.log('NOTE: Assignments and submissions are no longer imported from this script.');
 }
 
 main().catch(console.error);
