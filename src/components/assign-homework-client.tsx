@@ -21,7 +21,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, Loader2, ArrowLeft, History } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { handleAssignHomework } from '@/app/assign-homework/actions';
+import { getStudentById } from '@/lib/students';
+import { sendHomeworkEmail } from '@/app/assign-homework/email-action';
 import {
   Dialog,
   DialogContent,
@@ -141,19 +142,28 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     }
     
     const assignedItemsText = assignedAssignmentTitles.map(title => {
-        const assignmentName = title?.split(' (')[0] || '';
-        const assignment = assignments.find(a => a['Full Assignment Name'] === assignmentName);
-        if (assignment && assignment['Link']) {
-            return `${title}: ${assignment['Link']}`;
-        }
-        return title;
-    }).join('\n\n');
-
-
-    const firstName = selectedStudent.name.split(' ')[0];
-    const message = `Hi ${firstName},\n\nHere is your homework:\n\n${assignedItemsText}\n\nLet me know if you have any questions.\n\nBest,\nCharlie`;
-    setEmailMessage(message);
-    setEmailSubject(`Homework for ${new Date().toLocaleDateString('en-US', { weekday: 'long' })}`);
+      const assignmentName = title?.split(' (')[0] || '';
+      const assignment = assignments.find(a => a['Full Assignment Name'] === assignmentName);
+      
+      if (assignment && assignment['Link']) {
+          // Make the title clickable
+          return `<a href="${assignment['Link']}" style="color: #0066cc; text-decoration: none;">${title}</a>`;
+      }
+      return title; // No link, just plain text
+  }).join('<br><br>');
+  
+  const firstName = selectedStudent.name.split(' ')[0];
+  const message = `
+  <p>Hi ${firstName},</p>
+  <p>Here is your homework:</p>
+  <div style="margin: 20px 0;">
+  ${assignedItemsText}
+  </div>
+  <p>Let me know if you have any questions.</p>
+  <p>Best,<br>Charlie</p>
+  `;
+  setEmailMessage(message);
+  setEmailSubject('');
 
   }, [selectedStudent, assignedAssignmentTitles, assignments]);
 
@@ -256,35 +266,37 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       });
       return;
     }
-
+  
     setIsSubmitting(true);
     try {
-      const assignmentsPayload = Array.from(selectedAssignments.entries()).map(([id, options]) => {
-        return {
-          id,
-          sections: options.sections,
-          timing: options.timing,
-        };
-      });
-      
-      const result = await handleAssignHomework({
-        studentId: selectedStudentId,
-        assignments: assignmentsPayload,
+      // Get student data client-side
+      const student = await getStudentById(selectedStudentId);
+      if (!student) {
+        throw new Error('Student not found.');
+      }
+  
+      // Call our email-only server action
+      await sendHomeworkEmail({
+        studentEmail: student.email,
+        parentEmails: {
+          parentEmail1: student.parentEmail1,
+          parentEmail2: student.parentEmail2,
+        },
         emailSubject,
         emailMessage,
         ccParents,
       });
-
+  
       toast({
         title: 'Homework Assigned!',
-        description: result.message,
+        description: `Homework assigned and email sent to ${student.name}.`,
       });
-
+  
       // Reset form
       setSelectedAssignments(new Map());
       setEmailSubject('');
       setView('assignments');
-
+  
     } catch (error: any) {
       toast({
         title: 'Error Assigning Homework',
@@ -294,7 +306,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
   
   const renderConfigurationDialog = () => {
     if (!configuringAssignment || !selectedStudent) return null;

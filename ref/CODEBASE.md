@@ -63,12 +63,8 @@ The application is built using the **Next.js App Router**, heavily utilizing **R
 *   **Next.js Server Actions**: The application uses Server Actions to handle all data mutations (writes/updates). This avoids the need to create traditional API endpoints.
 *   **Implementation**: Action files (e.g., `src/app/students/actions.ts`) are marked with `'use server'`. They define functions that can be directly imported and called from client components. These actions handle form validation (using Zod), interact with the database, and trigger cache revalidation (`revalidatePath`) to update the UI.
 
-### 2.5. Generative AI Integration
 
-*   **Framework**: **Genkit** is used for all AI-related functionality. The core configuration is in `src/ai/genkit.ts`.
-*   **Flows**: AI logic is encapsulated in "flows." The primary example is `src/ai/flows/generate-email-subject.ts`, which defines a prompt and a flow for generating an email subject line. The flow is exposed to the frontend via a server action (`src/app/email-subject-generator/actions.ts`).
-
-### 2.6. Key Files & Directories
+### 2.5. Key Files & Directories
 
 *   `src/app/`: Contains all pages and routes.
 *   `src/components/`: Contains all React components.
