@@ -521,7 +521,7 @@ setEmailMessage(plainMessage);
                 <SelectTrigger id="student-select" className="max-w-md">
                   <SelectValue placeholder="Select a student..." />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-60">
                   {activeStudents.map((student) => (
                     <SelectItem key={student.id} value={student.id}>
                       {student.name}

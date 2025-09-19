@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Suspense } from 'react';
@@ -26,23 +25,41 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useStudents } from '@/hooks/use-students';
 import { useAssignments } from '@/hooks/use-assignments';
 import { useSubmissions } from '@/hooks/use-submissions';
+import Link from 'next/link';
 
+function StatCard({ title, value, icon: Icon, isLoading, href }: { 
+  title: string, 
+  value: number, 
+  icon: React.ElementType, 
+  isLoading?: boolean,
+  href: string 
+}) {
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <Icon className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-8 w-20" />
+        </CardContent>
+      </Card>
+    );
+  }
 
-function StatCard({ title, value, icon: Icon, isLoading }: { title: string, value: number, icon: React.ElementType, isLoading?: boolean }) {
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <Skeleton className="h-8 w-1/4" />
-        ) : (
+    <Link href={href} className="block">
+      <Card className="cursor-pointer hover:shadow-md transition-shadow duration-200">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <Icon className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
           <div className="text-2xl font-bold">{value}</div>
-        )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
 
@@ -116,21 +133,35 @@ export default function Dashboard() {
         Welcome Back, Charlie!
       </h1>
       <div className="grid gap-4 md:grid-cols-2">
-        <StatCard title="Total Students" value={activeStudents.length} icon={Users} isLoading={isLoading}/>
-        <StatCard title="Total Assignments" value={assignments.length} icon={FileText} isLoading={isLoading}/>
+        <StatCard 
+          title="Total Students" 
+          value={activeStudents.length} 
+          icon={Users} 
+          isLoading={isLoading}
+          href="/students"
+        />
+        <StatCard 
+          title="Total Assignments" 
+          value={assignments.length} 
+          icon={FileText} 
+          isLoading={isLoading}
+          href="/assignments"
+        />
       </div>
       <div className="grid gap-4 md:gap-8 lg:grid-cols-1">
-        <Card>
-          <CardHeader>
-            <CardTitle>Needs Review</CardTitle>
-            <CardDescription>
-              A prioritized list of assignments that require your feedback.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <NeedsReviewTable />
-          </CardContent>
-        </Card>
+        <Link href="/needs-review" className="block">
+          <Card className="cursor-pointer hover:shadow-md transition-shadow duration-200">
+            <CardHeader>
+              <CardTitle>Needs Review</CardTitle>
+              <CardDescription>
+                A prioritized list of assignments that require your feedback.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <NeedsReviewTable />
+            </CardContent>
+          </Card>
+        </Link>
       </div>
     </div>
   );
