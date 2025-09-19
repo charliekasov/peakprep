@@ -23,6 +23,8 @@ import { Search, Loader2, ArrowLeft, History } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getStudentById } from '@/lib/students';
 import { sendHomeworkEmail } from '@/app/assign-homework/email-action';
+import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import {
   Dialog,
   DialogContent,
@@ -141,28 +143,30 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
       return;
     }
     
-    const assignedItemsText = assignedAssignmentTitles.map(title => {
-      const assignmentName = title?.split(' (')[0] || '';
-      const assignment = assignments.find(a => a['Full Assignment Name'] === assignmentName);
-      
-      if (assignment && assignment['Link']) {
-          // Make the title clickable
-          return `<a href="${assignment['Link']}" style="color: #0066cc; text-decoration: none;">${title}</a>`;
-      }
-      return title; // No link, just plain text
-  }).join('<br><br>');
+   // Plain text version for editing
+const plainTextItems = assignedAssignmentTitles.map(title => {
+  const assignmentName = title?.split(' (')[0] || '';
+  const assignment = assignments.find(a => a['Full Assignment Name'] === assignmentName);
   
-  const firstName = selectedStudent.name.split(' ')[0];
-  const message = `
-  <p>Hi ${firstName},</p>
-  <p>Here is your homework:</p>
-  <div style="margin: 20px 0;">
-  ${assignedItemsText}
-  </div>
-  <p>Let me know if you have any questions.</p>
-  <p>Best,<br>Charlie</p>
-  `;
-  setEmailMessage(message);
+  if (assignment && assignment['Link']) {
+      return `${title}: ${assignment['Link']}`;
+  }
+  return title;
+}).join('\n\n');
+
+const firstName = selectedStudent.name.split(' ')[0];
+const plainMessage = `Hi ${firstName},
+
+Here is your homework:
+
+${plainTextItems}
+
+Let me know if you have any questions.
+
+Best,
+Charlie`;
+
+setEmailMessage(plainMessage);
   setEmailSubject('');
 
   }, [selectedStudent, assignedAssignmentTitles, assignments]);
@@ -283,10 +287,50 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
           parentEmail2: student.parentEmail2,
         },
         emailSubject,
-        emailMessage,
+        emailMessage: convertToHTML(emailMessage),
         ccParents,
       });
   
+      const assignmentsPayload = Array.from(selectedAssignments.entries()).map(([id, options]) => ({
+        id,
+        sections: options.sections,
+        timing: options.timing,
+      }));
+      
+      // Mark any reassigned submissions after successful email
+      for (const assignmentPayload of assignmentsPayload) {
+        const incompleteSubmission = studentSubmissions.find(
+          sub => sub.assignmentId === assignmentPayload.id && sub.status === 'Incomplete'
+        );
+        
+        if (incompleteSubmission) {
+          const oldSubmissionRef = doc(db, 'submissions', incompleteSubmission.id);
+          await updateDoc(oldSubmissionRef, { status: 'Reassigned' });
+        }
+      }
+      
+      // Create submission records for each assigned assignment
+      for (const assignmentPayload of assignmentsPayload) {
+        const submissionData = {
+          studentId: selectedStudentId,
+          assignmentId: assignmentPayload.id,
+          status: 'Assigned',
+          submittedAt: new Date(),
+          scores: [],
+        };
+      
+        // Only add sections and timing if they exist
+        if (assignmentPayload.sections) {
+          submissionData.sections = assignmentPayload.sections;
+        }
+        
+        if (assignmentPayload.timing) {
+          submissionData.timing = assignmentPayload.timing;
+        }
+      
+        await addDoc(collection(db, 'submissions'), submissionData);
+      }
+
       toast({
         title: 'Homework Assigned!',
         description: `Homework assigned and email sent to ${student.name}.`,
@@ -308,6 +352,49 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
     }
   };
   
+  const handleReassignFromHistory = (assignment: Assignment) => {
+    if (!assignment) return;
+    
+    // Just add to cart - don't change any statuses yet
+    const newSet = new Map(selectedAssignments);
+    if (assignment['isPracticeTest']) {
+      setConfiguringAssignment(assignment);
+      const sections = SECTIONS_BY_TEST_TYPE[assignment['Test Type'] || ''] || [];
+      setTempOptions({ timing: 'timed', sections: sections });
+    } else {
+      newSet.set(assignment.id, {});
+      setSelectedAssignments(newSet);
+    }
+    
+    toast({
+      title: 'Assignment Added',
+      description: `${assignment['Full Assignment Name']} added to compose email.`,
+    });
+  };
+
+  const convertToHTML = (plainText: string) => {
+    return plainText
+      .split('\n')
+      .map(line => {
+        // Handle assignment links: "Assignment Name: URL" → clickable assignment name
+        // Note: Custom assignments should follow this format: "Custom Assignment: https://url.com"
+        const assignmentLinkRegex = /^(.+?):\s+(https?:\/\/[^\s]+)$/;
+        const assignmentMatch = line.match(assignmentLinkRegex);
+        
+        if (assignmentMatch) {
+          const [, assignmentName, url] = assignmentMatch;
+          return `<p><a href="${url}" style="color: #0066cc; text-decoration: none;">${assignmentName}</a></p>`;
+        }
+        
+        // Handle any other standalone URLs (makes them clickable but visible)
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const linkedLine = line.replace(urlRegex, '<a href="$1" style="color: #0066cc; text-decoration: none;">$1</a>');
+        
+        return `<p>${linkedLine}</p>`;
+      })
+      .join('');
+  };
+
   const renderConfigurationDialog = () => {
     if (!configuringAssignment || !selectedStudent) return null;
     
@@ -462,10 +549,25 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
                               {studentSubmissions.map(submission => {
                                 const assignment = assignments.find(a => a.id === submission.assignmentId);
                                 return (
-                                  <li key={submission.id} className="flex justify-between items-center text-sm">
-                                    <span>{assignment?.['Full Assignment Name'] || 'Unknown Assignment'}</span>
-                                    <span className="text-muted-foreground">{submission.submittedAt.toLocaleDateString()}</span>
-                                  </li>
+                                  <li key={submission.id} className={`flex justify-between items-center text-sm ${
+                                    submission.status === 'Incomplete' ? 'text-red-600' : 
+                                    submission.status === 'Reassigned' ? 'text-red-500 italic' : ''
+                                  }`}>
+  <span>{assignment?.['Full Assignment Name'] || 'Unknown Assignment'}</span>
+  <div className="flex items-center gap-2">
+    <span className="text-muted-foreground">{submission.submittedAt.toLocaleDateString()}</span>
+    {submission.status === 'Incomplete' && (
+      <Button 
+        size="sm" 
+        variant="outline" 
+        onClick={() => handleReassignFromHistory(assignment)}
+        className="text-xs px-2 py-1"
+      >
+        Reassign
+      </Button>
+    )}
+  </div>
+</li>
                                 )
                               })}
                             </ul>
@@ -607,8 +709,6 @@ function WorksheetTable({ assignments, selectedAssignments, studentSubmissions, 
               <TableRow>
                 <TableHead className="w-[50px]"></TableHead>
                 <TableHead>Title</TableHead>
-                <TableHead>Subject</TableHead>
-                <TableHead>Difficulty</TableHead>
                 <TableHead>Source</TableHead>
                 <TableHead>Last Assigned</TableHead>
               </TableRow>
@@ -631,8 +731,6 @@ function WorksheetTable({ assignments, selectedAssignments, studentSubmissions, 
                       />
                     </TableCell>
                     <TableCell className="font-medium">{assignment['Full Assignment Name']}</TableCell>
-                    <TableCell>{assignment['Subject']}</TableCell>
-                    <TableCell>{assignment['Difficulty']}</TableCell>
                     <TableCell>{assignment['Source']}</TableCell>
                     <TableCell>{lastSubmitted ? lastSubmitted.toLocaleDateString() : 'N/A'}</TableCell>
                   </TableRow>

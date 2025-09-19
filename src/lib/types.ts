@@ -51,7 +51,7 @@ export interface Assignment extends AssignmentFirestoreData {
 }
 
 // Submission types - properly separated Firebase data from app data
-export type SubmissionStatus = 'Assigned' | 'Completed' | 'Incomplete' | 'Did Together';
+export type SubmissionStatus = 'Assigned' | 'Completed' | 'Incomplete' | 'Did Together' | 'Reassigned';
 
 export interface SubmissionFirestoreData {
   assignmentId: string;

@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Submission, Student, Assignment, SubmissionStatus } from '@/lib/types';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import {
   Card,
   CardContent,
@@ -38,7 +40,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { MoreHorizontal, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { handleUpdateSubmission } from '@/app/needs-review/actions';
+
 
 type EnrichedSubmission = Submission & {
   student?: Student;
@@ -91,6 +93,7 @@ function StatusBadge({ submission }: { submission: EnrichedSubmission }) {
     'Completed': 'default',
     'Incomplete': 'destructive',
     'Did Together': 'outline',
+    'Reassigned': 'outline', // Base styling
   } as const;
 
   type VariantType = 'secondary' | 'destructive' | 'outline' | 'default';
@@ -99,6 +102,11 @@ function StatusBadge({ submission }: { submission: EnrichedSubmission }) {
   // Custom styling for Assigned Practice Tests
   if (isPracticeTest && status === 'Assigned') {
     return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">Assigned</Badge>
+  }
+
+  // Custom styling for Reassigned (red for remedial reassignment)
+  if (status === 'Reassigned') {
+    return <Badge className="bg-red-100 text-red-800 hover:bg-red-200">Reassigned</Badge>
   }
 
   return <Badge variant={variant}>{status}</Badge>;
@@ -138,12 +146,10 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
   const handleStatusChange = async (submissionId: string, status: SubmissionStatus) => {
     setIsSubmitting(true);
     try {
-      const result = await handleUpdateSubmission({ submissionId, status });
-      if (result.success) {
-        toast({ title: 'Status Updated', description: `Assignment marked as ${status}.` });
-      } else {
-        throw new Error(result.message);
-      }
+      const submissionRef = doc(db, 'submissions', submissionId);
+await updateDoc(submissionRef, { status });
+
+toast({ title: 'Status Updated', description: `Assignment marked as ${status}.` });
     } catch (error: any) {
       toast({ title: 'Error', description: error.message || 'Failed to update status.', variant: 'destructive' });
     } finally {
@@ -157,19 +163,15 @@ export function NeedsReviewClient({ submissions }: NeedsReviewClientProps) {
     setIsSubmitting(true);
     try {
       // When scores are submitted, the status is automatically updated to 'Completed'
-      const result = await handleUpdateSubmission({
-        submissionId: selectedSubmission.id,
-        status: 'Completed',
-        scores: values.scores,
-      });
+      const submissionRef = doc(db, 'submissions', selectedSubmission.id);
+await updateDoc(submissionRef, { 
+  status: 'Completed',
+  scores: values.scores 
+});
 
-      if (result.success) {
-        toast({ title: 'Scores Saved', description: 'The test scores have been recorded.' });
-        setIsDialogOpen(false);
-        setSelectedSubmission(null);
-      } else {
-        throw new Error(result.message);
-      }
+toast({ title: 'Scores Saved', description: 'The test scores have been recorded.' });
+setIsDialogOpen(false);
+setSelectedSubmission(null);
     } catch (error: any) {
       toast({ title: 'Error', description: error.message || 'Failed to save scores.', variant: 'destructive' });
     } finally {
