@@ -98,6 +98,15 @@ const TEST_CONFIG: any = {
   'SAT': {
     sections: [{ name: 'Reading + Writing', min: 200, max: 800, step: 10, default: 600 }, { name: 'Math', min: 200, max: 800, step: 10, default: 600 }],
   },
+  'PSAT/NMSQT': {
+    sections: [{ name: 'Reading and Writing', min: 200, max: 800, step: 10, default: 500 }, { name: 'Math', min: 200, max: 800, step: 10, default: 500 }],
+  },
+  'PSAT 10': {
+    sections: [{ name: 'Reading and Writing', min: 200, max: 800, step: 10, default: 500 }, { name: 'Math', min: 200, max: 800, step: 10, default: 500 }],
+  },
+  'PSAT 8/9': {
+    sections: [{ name: 'Reading and Writing', min: 200, max: 800, step: 10, default: 450 }, { name: 'Math', min: 200, max: 800, step: 10, default: 450 }],
+  },
   'ACT': {
     sections: [{ name: 'English', min: 1, max: 36, step: 1, default: 27 }, { name: 'Math', min: 1, max: 36, step: 1, default: 27 }, { name: 'Reading', min: 1, max: 36, step: 1, default: 27 }, { name: 'Science', min: 1, max: 36, step: 1, default: 27 }],
   },
@@ -243,7 +252,7 @@ function TestTypeDisplay({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2 lg:gap-x-4 lg:gap-y-2">
           {availableSources.map(source => (
             <div key={source} className="flex items-center space-x-2">
               <Checkbox
@@ -256,55 +265,45 @@ function TestTypeDisplay({
             </div>
           ))}
         </div>
-
-        <div className="h-96 w-full">
+  
+        <div className="h-64 md:h-96 w-full overflow-hidden">
           {chartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis type="number" domain={yAxisDomain} />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'hsl(var(--background))',
-                      borderColor: 'hsl(var(--border))'
-                    }}
-                    formatter={(value: number, name: string, props) => {
-                        const isStanineTest = props.payload.testType?.includes('ISEE');
-                        if (isStanineTest) {
-                          return `${value} (Stanine: ${getStanine(value)})`;
-                        }
-                        return value;
-                    }}
-                    labelFormatter={(label, payload) => {
-                        const dataPoint = payload?.[0]?.payload;
-                        if (!dataPoint) return label;
-                        return (
-                          <>
-                              <span className="font-bold">{label}</span>
-                              <br />
-                              <span className="text-sm text-muted-foreground">{dataPoint.name} ({dataPoint.source})</span>
-                          </>
-                        )
-                    }}
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis type="number" domain={yAxisDomain} />
+                <Tooltip 
+  contentStyle={{
+    backgroundColor: 'hsl(var(--background))',
+    borderColor: 'hsl(var(--border))'
+  }}
+  formatter={(value: number, name: string, props) => {
+    const isStanineTest = props.payload.testType?.includes('ISEE');
+    if (isStanineTest) {
+      return `${value} (Stanine: ${getStanine(value)})`;
+    }
+    return value;
+  }}
+  labelFormatter={(label) => label}
+/>
+                <Legend />
+                {allSections.map((section: string) => (
+                  <Line 
+                    key={section} 
+                    type="monotone"
+                    dataKey={section} 
+                    stroke={sectionColors[section] || '#8884d8'}
+                    strokeWidth={2}
+                    activeDot={{ r: 8 }}
                   />
-                  <Legend />
-                  {allSections.map((section: string) => (
-                      <Line 
-                          key={section} 
-                          type="monotone"
-                          dataKey={section} 
-                          stroke={sectionColors[section] || '#8884d8'}
-                          strokeWidth={2}
-                          activeDot={{ r: 8 }}
-                       />
-                  ))}
+                ))}
               </LineChart>
-              </ResponsiveContainer>
+            </ResponsiveContainer>
           ) : (
-              <div className="flex h-full items-center justify-center rounded-lg border border-dashed text-muted-foreground">
-                  <p>No {testType} scores to display for the selected sources.</p>
-              </div>
+            <div className="flex h-full items-center justify-center rounded-lg border border-dashed text-muted-foreground">
+              <p>No {testType} scores to display for the selected sources.</p>
+            </div>
           )}
         </div>
       
@@ -313,68 +312,127 @@ function TestTypeDisplay({
             <CardTitle>{testType} Scores Log</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Test</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Scores</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {[...filteredSubmissions].reverse().map((submission) => {
-                  const assignment = submission.assignment || assignmentMap.get(submission.assignmentId);
-                  const isStanineTest = testType?.includes('ISEE');
-                  return (
-                  <TableRow key={submission.id}>
-                    <TableCell className="font-medium">
-                      {submission.isOfficial ? submission.officialTestName : assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
-                    </TableCell>
-                    <TableCell>
-                       {submission.isOfficial ? 'Official' : assignment?.Source || 'N/A'}
-                    </TableCell>
-                    <TableCell>
-                      {submission.submittedAt.toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      {submission.scores
-                        ?.map((s) => `${s.section}: ${s.score}${isStanineTest ? ` (Stanine: ${getStanine(s.score)})` : ''}`)
-                        .join(', ')}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => onEdit(submission)}>
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-destructive"
-                            onClick={() => onDelete(submission)}
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+            {/* Mobile: Card layout */}
+            <div className="block md:hidden space-y-4">
+              {[...filteredSubmissions].reverse().map((submission) => {
+                const assignment = submission.assignment || assignmentMap.get(submission.assignmentId);
+                const isStanineTest = testType?.includes('ISEE');
+                return (
+                  <Card key={submission.id}>
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-start">
+                          <h3 className="font-semibold text-sm">
+                            {submission.isOfficial ? submission.officialTestName : assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
+                          </h3>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => onEdit(submission)}>
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive"
+                                onClick={() => onDelete(submission)}
+                              >
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                        <div className="text-sm space-y-1">
+                          <p><span className="font-medium">Source:</span> {submission.isOfficial ? 'Official' : assignment?.Source || 'N/A'}</p>
+                          <p><span className="font-medium">Date:</span> {submission.submittedAt.toLocaleDateString()}</p>
+                          <div>
+                            <span className="font-medium">Scores:</span>
+                            <div className="mt-1 flex flex-wrap gap-1">
+                              {submission.scores?.map((s, index) => (
+                                <span key={index} className="text-xs bg-muted px-2 py-1 rounded">
+                                  {s.section}: {s.score}{isStanineTest ? ` (${getStanine(s.score)})` : ''}
+                                </span>
+                              )) || <span className="text-xs text-muted-foreground">No scores recorded</span>}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+  
+            {/* Desktop: Original Table layout */}
+            <div className="hidden md:block">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Test</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Scores</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                )})}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {[...filteredSubmissions].reverse().map((submission) => {
+                    const assignment = submission.assignment || assignmentMap.get(submission.assignmentId);
+                    const isStanineTest = testType?.includes('ISEE');
+                    return (
+                      <TableRow key={submission.id}>
+                        <TableCell className="font-medium">
+                          {submission.isOfficial ? submission.officialTestName : assignment?.['Full Assignment Name'] || 'Unknown Assignment'}
+                        </TableCell>
+                        <TableCell>
+                          {submission.isOfficial ? 'Official' : assignment?.Source || 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          {submission.submittedAt.toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          {submission.scores
+                            ?.map((s) => `${s.section}: ${s.score}${isStanineTest ? ` (Stanine: ${getStanine(s.score)})` : ''}`)
+                            .join(', ')}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => onEdit(submission)}>
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive"
+                                onClick={() => onDelete(submission)}
+                              >
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </CardContent>
     </Card>
   )
-}
+  }
 
 
 export function TestScoresClient({ students, assignments, submissions }: TestScoresClientProps) {

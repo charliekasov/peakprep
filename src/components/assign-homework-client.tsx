@@ -77,6 +77,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
 
   const [configuringAssignment, setConfiguringAssignment] = useState<Assignment | null>(null);
   const [tempOptions, setTempOptions] = useState<AssignmentOptions>({});
+  const [showAssignmentDialog, setShowAssignmentDialog] = useState(false);
 
   const activeStudents = useMemo(() => students.filter(s => (s.status || 'active') === 'active'), [students]);
 
@@ -200,6 +201,20 @@ setEmailMessage(plainMessage);
       .sort((a, b) => a['Full Assignment Name'].localeCompare(b['Full Assignment Name'], undefined, { numeric: true, sensitivity: 'base' }));
   }, [selectedStudent, assignments]);
 
+  const filteredAssignments = useMemo(() => {
+    if (!selectedStudent) return [];
+    
+    // Combine worksheets and practice tests
+    const allAssignments = [...worksheets, ...practiceTests];
+    
+    // Apply search filter if there's a search query
+    if (worksheetSearchQuery.trim() === '') return allAssignments;
+    
+    return allAssignments.filter(assignment => 
+      assignment['Full Assignment Name'].toLowerCase().includes(worksheetSearchQuery.toLowerCase())
+    );
+  }, [worksheets, practiceTests, worksheetSearchQuery, selectedStudent]);
+
 
   const studentSubmissions = useMemo(() => {
     if (!selectedStudentId) return [];
@@ -321,11 +336,11 @@ setEmailMessage(plainMessage);
       
         // Only add sections and timing if they exist
         if (assignmentPayload.sections) {
-          submissionData.sections = assignmentPayload.sections;
+          (submissionData as any).sections = assignmentPayload.sections;
         }
         
         if (assignmentPayload.timing) {
-          submissionData.timing = assignmentPayload.timing;
+          (submissionData as any).timing = assignmentPayload.timing;
         }
       
         await addDoc(collection(db, 'submissions'), submissionData);
@@ -492,10 +507,123 @@ setEmailMessage(plainMessage);
     )
   }
 
+  const renderAssignmentSelectionDialog = () => (
+    <Dialog open={showAssignmentDialog} onOpenChange={setShowAssignmentDialog}>
+      <DialogContent className="max-w-4xl max-h-[90vh]">
+        <DialogHeader>
+          <DialogTitle>Select Assignments for {selectedStudent?.name}</DialogTitle>
+        </DialogHeader>
+        
+        <div className="space-y-4">
+          {/* Search at top */}
+          <div className="flex items-center space-x-2">
+            <Search className="h-4 w-4" />
+            <Input
+              placeholder="Search assignments..."
+              value={worksheetSearchQuery}
+              onChange={(e) => setWorksheetSearchQuery(e.target.value)}
+              className="flex-1"
+            />
+          </div>
+  
+          {/* Tabs for Worksheets vs Practice Tests */}
+          <Tabs defaultValue="worksheets" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="worksheets">Worksheets ({worksheets.length})</TabsTrigger>
+              <TabsTrigger value="practice-tests">Practice Tests ({practiceTests.length})</TabsTrigger>
+            </TabsList>
+  
+            <TabsContent value="worksheets" className="space-y-4">
+              {/* Source filtering */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Sources:</Label>
+                <div className="flex flex-wrap gap-2">
+                  {worksheetSources.map((source) => (
+                    <div key={source} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={source}
+                        checked={selectedWorksheetSources.has(source)}
+                        onCheckedChange={() => handleSourceToggle(source)}
+                      />
+                      <Label htmlFor={source} className="text-sm">{source}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+  
+              {/* Scrollable worksheets list */}
+              <ScrollArea className="h-64">
+                <div className="space-y-2">
+                  {worksheets.map((assignment) => (
+                    <div key={assignment.id} className="flex items-center space-x-2 p-2 rounded border">
+                      <Checkbox
+                        checked={selectedAssignments.has(assignment.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            handleAssignmentToggle(assignment);
+                          } else {
+                            const newSet = new Map(selectedAssignments);
+                            newSet.delete(assignment.id);
+                            setSelectedAssignments(newSet);
+                          }
+                        }}
+                      />
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">{assignment['Full Assignment Name']}</p>
+                        <p className="text-xs text-muted-foreground">{assignment['Source']}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </TabsContent>
+  
+            <TabsContent value="practice-tests" className="space-y-4">
+              <ScrollArea className="h-64">
+                <div className="space-y-2">
+                  {practiceTests.map((assignment) => (
+                    <div key={assignment.id} className="flex items-center space-x-2 p-2 rounded border">
+                      <Checkbox
+                        checked={selectedAssignments.has(assignment.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            handleAssignmentToggle(assignment);
+                          } else {
+                            const newSet = new Map(selectedAssignments);
+                            newSet.delete(assignment.id);
+                            setSelectedAssignments(newSet);
+                          }
+                        }}
+                      />
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">{assignment['Full Assignment Name']}</p>
+                        <p className="text-xs text-muted-foreground">{assignment['Test Type']}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </TabsContent>
+          </Tabs>
+        </div>
+  
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setShowAssignmentDialog(false)}>
+            Cancel
+          </Button>
+          <Button onClick={() => setShowAssignmentDialog(false)}>
+            Done ({selectedAssignments.size} selected)
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+
   return (
     <div className="mx-auto w-full max-w-6xl">
        <h1 className="text-2xl font-bold tracking-tight md:text-3xl mb-6">Assign Homework</h1>
        {renderConfigurationDialog()}
+       {renderAssignmentSelectionDialog()}
 
       {view === 'assignments' && (
         <Card>
@@ -508,9 +636,9 @@ setEmailMessage(plainMessage);
                 </CardDescription>
               </div>
                <Button
+                className="w-full md:w-auto"
                 disabled={selectedAssignments.size === 0}
                 onClick={() => setView('email')}
-                className="w-full sm:w-auto"
               >
                 Compose Email ({selectedAssignments.size})
               </Button>
@@ -560,7 +688,7 @@ setEmailMessage(plainMessage);
       <Button 
         size="sm" 
         variant="outline" 
-        onClick={() => handleReassignFromHistory(assignment)}
+        onClick={() => assignment && handleReassignFromHistory(assignment)}
         className="text-xs px-2 py-1"
       >
         Reassign
@@ -579,53 +707,31 @@ setEmailMessage(plainMessage);
                   </AccordionItem>
                 </Accordion>
 
-               <Tabs defaultValue="worksheets">
-               <TabsList className="grid w-full grid-cols-2 max-w-md">
-                 <TabsTrigger value="worksheets">Worksheets ({worksheets.length})</TabsTrigger>
-                 <TabsTrigger value="practice-tests">Practice Tests ({practiceTests.length})</TabsTrigger>
-               </TabsList>
-               <TabsContent value="worksheets">
-                  <Card>
-                    <CardHeader>
-                      <div className="flex flex-col gap-4 md:flex-row md:items-center">
-                        <div className="relative flex-1">
-                           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                           <Input 
-                            placeholder="Search worksheets..." 
-                            className="pl-8"
-                            value={worksheetSearchQuery}
-                            onChange={e => setWorksheetSearchQuery(e.target.value)}
-                           />
-                        </div>
-                         {worksheetSources.length > 0 && (
-                          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                            <Label>Sources:</Label>
-                              {worksheetSources.map(source => (
-                                <div key={source} className="flex items-start space-x-2 pt-2">
-                                  <Checkbox 
-                                    id={`source-${source}`} 
-                                    checked={selectedWorksheetSources.has(source)}
-                                    onCheckedChange={() => handleSourceToggle(source)}
-                                  />
-                                  <div className="grid gap-1.5 leading-none">
-                                    <Label htmlFor={`source-${source}`} className="font-normal">{source}</Label>
-                                    {source === 'Question Bank' && (
-                                       <p className="text-xs text-muted-foreground">(Google Drive)</p>
-                                    )}
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
-                         )}
-                      </div>
-                    </CardHeader>
-                    <WorksheetTable assignments={worksheets} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
-                  </Card>
-               </TabsContent>
-               <TabsContent value="practice-tests">
-                  <PracticeTestTable assignments={practiceTests} selectedAssignments={selectedAssignments} studentSubmissions={studentSubmissions} onToggle={handleAssignmentToggle} />
-               </TabsContent>
-             </Tabs>
+                {selectedStudentId && (
+  <div className="space-y-4">
+    <Button
+      onClick={() => setShowAssignmentDialog(true)}
+      variant="outline" 
+      className="w-full"
+    >
+      Select Assignments ({selectedAssignments.size} selected)
+    </Button>
+    
+    {selectedAssignments.size > 0 && (
+      <div className="bg-muted p-3 rounded">
+        <p className="text-sm font-medium mb-2">Selected Assignments:</p>
+        <div className="space-y-1">
+          {Array.from(selectedAssignments.keys()).map(id => {
+            const assignment = assignments.find(a => a.id === id);
+            return assignment ? (
+              <p key={id} className="text-xs">{assignment['Full Assignment Name']}</p>
+            ) : null;
+          })}
+        </div>
+      </div>
+    )}
+  </div>
+)}
              </>
             )}
           </CardContent>
