@@ -19,6 +19,7 @@ import { Logo } from '@/components/logo';
 import { Toaster } from '@/components/ui/toaster';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
+import { UserRoleProvider } from '@/hooks/use-user-role';
 
 function AppLayout({
   children,
@@ -123,11 +124,13 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased')}>
-        <AuthProvider>
-          <AppLayout>{children}</AppLayout>
-        </AuthProvider>
-        <Toaster />
-      </body>
+  <AuthProvider>
+    <UserRoleProvider>
+      <AppLayout>{children}</AppLayout>
+    </UserRoleProvider>
+  </AuthProvider>
+  <Toaster />
+</body>
     </html>
   );
 }

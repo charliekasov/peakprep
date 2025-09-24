@@ -13,12 +13,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
+import { useUserRole } from '@/hooks/use-user-role';
 
 export function UserNav() {
   const router = useRouter();
   const { toast } = useToast();
   const auth = getAuth();
   const user = auth.currentUser;
+  
+  // Get role information
+  const { user: userProfile, userRole } = useUserRole();
 
   const handleLogout = async () => {
     try {
@@ -38,10 +42,22 @@ export function UserNav() {
     }
   };
 
+  const handleProfile = () => {
+    router.push('/profile');
+  };
+
   const getInitials = (email: string | null | undefined) => {
     if (!email) return 'U';
     return email.charAt(0).toUpperCase();
   };
+
+  // Display role in the dropdown
+  const displayName = userProfile?.displayName || user?.displayName || 'Tutor';
+  const roleDisplay = userRole ? {
+    'super_admin': 'Super Admin',
+    'manager_admin': 'Manager', 
+    'tutor': 'Tutor'
+  }[userRole] : 'Loading...';
 
   return (
     <DropdownMenu>
@@ -60,7 +76,7 @@ export function UserNav() {
           </Avatar>
           <div className="flex flex-col items-start text-left truncate">
             <p className="text-sm font-medium leading-none truncate">
-              {user?.displayName || 'Tutor'}
+              {displayName}
             </p>
             <p className="text-xs text-muted-foreground leading-none truncate">
               {user?.email || 'tutor@example.com'}
@@ -72,16 +88,21 @@ export function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {user?.displayName || 'Tutor'}
+              {displayName}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
               {user?.email}
+            </p>
+            <p className="text-xs leading-none text-blue-600 font-medium">
+              {roleDisplay}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleProfile}>
+            Profile
+          </DropdownMenuItem>
           <DropdownMenuItem>Billing</DropdownMenuItem>
           <DropdownMenuItem>Settings</DropdownMenuItem>
         </DropdownMenuGroup>
