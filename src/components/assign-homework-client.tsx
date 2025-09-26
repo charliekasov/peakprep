@@ -21,6 +21,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, Loader2, ArrowLeft, History } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useUserRole } from '@/hooks/use-user-role';
 import { getStudentById } from '@/lib/students';
 import { sendHomeworkEmail } from '@/app/assign-homework/email-action';
 import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
@@ -74,6 +75,7 @@ export function AssignHomeworkClient({ students, assignments, submissions }: Ass
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ccParents, setCcParents] = useState(false);
   const { toast } = useToast();
+  const { user } = useUserRole();
 
   const [configuringAssignment, setConfiguringAssignment] = useState<Assignment | null>(null);
   const [tempOptions, setTempOptions] = useState<AssignmentOptions>({});
@@ -156,6 +158,7 @@ const plainTextItems = assignedAssignmentTitles.map(title => {
 }).join('\n\n');
 
 const firstName = selectedStudent.name.split(' ')[0];
+const tutorName = user?.displayName?.split(' ')[0] || 'Your Tutor';
 const plainMessage = `Hi ${firstName},
 
 Here is your homework:
@@ -165,7 +168,7 @@ ${plainTextItems}
 Let me know if you have any questions.
 
 Best,
-Charlie`;
+${tutorName}`;
 
 setEmailMessage(plainMessage);
   setEmailSubject('');

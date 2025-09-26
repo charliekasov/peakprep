@@ -12,6 +12,7 @@ import {
   Timestamp 
 } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { signOut, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { User, UserRole, DEFAULT_TUTOR_ROLE, validateUserRole } from '@/lib/user-roles';
 
@@ -61,23 +62,21 @@ export async function createTutorAccount(
       createdBy,
       createdDate: Timestamp.now(),
       isActive: true,
-      
-      // Profile fields (if provided)
-      location: profileData?.location,
-      phone: profileData?.phone,
-      subjects: profileData?.subjects,
-      bio: profileData?.bio,
-      availability: profileData?.availability,
-      experience: profileData?.experience,
-      education: profileData?.education,
-      hourlyRate: profileData?.hourlyRate,
-      adminNotes: profileData?.adminNotes,
-      startDate: profileData?.startDate ? Timestamp.fromDate(profileData.startDate) : undefined,
-      
-      // Profile metadata
       profileLastUpdated: Timestamp.now(),
       profileUpdatedBy: createdBy,
     };
+    
+    // Add optional fields only if they exist
+    if (profileData?.location) userData.location = profileData.location;
+    if (profileData?.phone) userData.phone = profileData.phone;
+    if (profileData?.subjects) userData.subjects = profileData.subjects;
+    if (profileData?.bio) userData.bio = profileData.bio;
+    if (profileData?.availability) userData.availability = profileData.availability;
+    if (profileData?.experience) userData.experience = profileData.experience;
+    if (profileData?.education) userData.education = profileData.education;
+    if (profileData?.hourlyRate) userData.hourlyRate = profileData.hourlyRate;
+    if (profileData?.adminNotes) userData.adminNotes = profileData.adminNotes;
+    if (profileData?.startDate) userData.startDate = Timestamp.fromDate(profileData.startDate);
 
     // Add to Firestore with Firebase Auth UID as document ID
     await setDoc(doc(db, USERS_COLLECTION, firebaseUser.uid), userData);
@@ -215,7 +214,6 @@ export async function getAllTutors(): Promise<User[]> {
     const q = query(
       collection(db, USERS_COLLECTION),
       where('isActive', '==', true),
-      orderBy('createdDate', 'desc')
     );
     
     const querySnapshot = await getDocs(q);
@@ -247,7 +245,7 @@ export async function getAllTutors(): Promise<User[]> {
         profileLastUpdated: userData.profileLastUpdated?.toDate(),
         profileUpdatedBy: userData.profileUpdatedBy,
       };
-    });
+    }).sort((a, b) => b.createdDate.getTime() - a.createdDate.getTime());
 
   } catch (error) {
     console.error('Error fetching all tutors:', error);

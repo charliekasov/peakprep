@@ -3,6 +3,7 @@ import type { Timestamp } from 'firebase/firestore';
 // Student types - handles dual field naming for legacy compatibility
 export interface StudentFirestoreData {
   // Legacy spaced field names (stored in Firestore)
+  tutorId?: string;
   'Student Name': string;
   'Student Email': string;
   'Parent Email 1'?: string;
@@ -25,6 +26,7 @@ export interface Student extends StudentFirestoreData {
   status: 'active' | 'archived'; // Required in app logic
   
   // Clean field names for easier access (derived from spaced names)
+  tutorId?: string;
   name: string;
   email: string;
   parentEmail1?: string;

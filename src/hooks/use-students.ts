@@ -1,31 +1,44 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Student } from '@/lib/types';
-import { fromFirestore } from '@/lib/students'; // Import shared function
-import { useAuth } from './use-auth';
+import { fromFirestore } from '@/lib/students';
+import { useUserRole } from '@/hooks/use-user-role';
 
 export function useStudents() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, isAdmin, isLoading: roleLoading } = useUserRole();
 
   useEffect(() => {
-    if (!user) {
+    // Wait for role information to load
+    if (roleLoading || !user) {
       setStudents([]);
-      setLoading(false);
+      setLoading(roleLoading);
       return;
     }
     
     setLoading(true);
-    const studentsCollection = collection(db, 'students');
+
+    let studentsQuery;
+    
+    if (isAdmin) {
+      // Admins can see all students
+      studentsQuery = collection(db, 'students');
+    } else {
+      // Regular tutors only see their assigned students
+      studentsQuery = query(
+        collection(db, 'students'),
+        where('tutorId', '==', user.uid)
+      );
+    }
     
     const unsubscribe = onSnapshot(
-      studentsCollection, 
+      studentsQuery, 
       (snapshot) => {
-        const studentData = snapshot.docs.map(fromFirestore); // Use shared function
+        const studentData = snapshot.docs.map(fromFirestore);
         setStudents(studentData);
         setLoading(false);
       }, 
@@ -36,7 +49,7 @@ export function useStudents() {
     );
 
     return () => unsubscribe();
-  }, [user]);
+  }, [user, isAdmin, roleLoading]);
 
   return { students, loading };
 }

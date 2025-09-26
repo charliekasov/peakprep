@@ -34,6 +34,7 @@ export function fromFirestore(doc: DocumentSnapshot): Student {
     profile: data.profile,
     timeZone: data.timeZone,
     status: data.status || 'active',
+    tutorId: data.tutorId, // ← ADD THIS LINE
     
     // Clean field names (for backwards compatibility and easier access)
     name: data['Student Name'],
@@ -81,6 +82,9 @@ function toFirestoreFormat(student: Partial<Omit<Student, 'id' | 'status'>>): Pa
   }
   if (student.profile) {
     firestoreData['profile'] = student.profile;
+  }
+  if (student.tutorId) { // ← ADD THESE LINES
+    firestoreData['tutorId'] = student.tutorId;
   }
   
   return firestoreData;

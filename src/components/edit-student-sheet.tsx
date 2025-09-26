@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -33,11 +32,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, PlusCircle, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { updateStudent } from '@/lib/students';
 import type { Student } from '@/lib/types';
 import { useRouter } from 'next/navigation';
+import { useUserRole } from '@/hooks/use-user-role';
+import { getAllTutors } from '@/lib/user-management';
+import type { User } from '@/lib/user-roles';
 
 interface EditStudentSheetProps {
   student: Student;
@@ -50,87 +53,151 @@ const studentSchema = z.object({
   email: z.string().trim().email({ message: 'Please enter a valid email address.' }),
   parentEmail1: z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
   parentEmail2: z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
-  testTypes: z.array(z.string()).min(1, {message: 'At least one test type is required.'}).max(2),
+  testTypes: z.array(z.string()).min(1, { message: 'At least one test type is required.' }),
   upcomingTestDate: z.string().optional(),
   Rate: z.coerce.number().optional(),
   Frequency: z.string().optional(),
   timeZone: z.string().optional().or(z.literal('')),
   profile: z.string().optional(),
+  tutorId: z.string().min(1, { message: 'Please select a tutor.' }),
 });
 
-
-const TEST_OPTIONS = ["SAT", "ACT", "Upper Level SSAT", "Middle Level SSAT", "Upper Level ISEE", "Middle Level ISEE"];
+// Helper function to get field value with backward compatibility
+function getFieldValue(student: Student, cleanName: string, legacyName: string): string {
+  // Try clean name first, then legacy name, then empty string
+  const cleanValue = (student as any)[cleanName];
+  const legacyValue = (student as any)[legacyName];
+  return cleanValue || legacyValue || '';
+}
 
 export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentSheetProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showParentEmail2, setShowParentEmail2] = useState(false);
-  const [showTestType2, setShowTestType2] = useState(false);
+  const [tutors, setTutors] = useState<User[]>([]);
+  const [tutorsLoading, setTutorsLoading] = useState(true);
   const { toast } = useToast();
   const router = useRouter();
+  const { isAdmin } = useUserRole();
 
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
-        name: '',
-        email: '',
-        parentEmail1: '',
-        parentEmail2: '',
-        testTypes: [],
-        upcomingTestDate: '',
-        Rate: undefined,
-        Frequency: '',
-        timeZone: '',
-        profile: '',
+      name: getFieldValue(student, 'name', 'Student Name'),
+      email: getFieldValue(student, 'email', 'Student Email'),
+      parentEmail1: getFieldValue(student, 'parentEmail1', 'Parent Email 1'),
+      parentEmail2: getFieldValue(student, 'parentEmail2', 'Parent Email 2'),
+      testTypes: student.testTypes || (student as any)['Test Types'] || [],
+      upcomingTestDate: student.upcomingTestDate || (student as any)['Upcoming Test Date'] || '',
+      Rate: student.Rate || 0,
+      Frequency: student.Frequency || (student as any)['Frequency'] || '',
+      timeZone: student.timeZone || (student as any)['Time Zone'] || '',
+      profile: student.profile || (student as any)['Profile'] || '',
+      tutorId: (student as any).tutorId || '',
     },
   });
 
+  // Reset form when student changes OR when tutors finish loading
   useEffect(() => {
-    if (student) {
-      const testTypes = student.testTypes || [];
+    if (student && isOpen && (!isAdmin || !tutorsLoading)) {
+      const formValues = {
+        name: getFieldValue(student, 'name', 'Student Name'),
+        email: getFieldValue(student, 'email', 'Student Email'),
+        parentEmail1: getFieldValue(student, 'parentEmail1', 'Parent Email 1'),
+        parentEmail2: getFieldValue(student, 'parentEmail2', 'Parent Email 2'),
+        testTypes: student.testTypes || (student as any)['Test Types'] || [],
+        upcomingTestDate: student.upcomingTestDate || (student as any)['Upcoming Test Date'] || '',
+        Rate: student.Rate || 0,
+        Frequency: student.Frequency || (student as any)['Frequency'] || '',
+        timeZone: student.timeZone || (student as any)['Time Zone'] || '',
+        profile: student.profile || (student as any)['Profile'] || '',
+        tutorId: (student as any).tutorId || '',
+      };
       
-      form.reset({
-        name: student.name || '',
-        email: student.email || '',
-        parentEmail1: student.parentEmail1 || '',
-        parentEmail2: student.parentEmail2 || '',
-        testTypes: testTypes,
-        upcomingTestDate: student.upcomingTestDate || '',
-        Rate: student['Rate'],
-        Frequency: student['Frequency'] || '',
-        timeZone: student.timeZone || '',
-        profile: student.profile || '',
-      });
-
-      setShowParentEmail2(!!(student.parentEmail2));
-      setShowTestType2(testTypes.length > 1);
-
+      form.reset(formValues);
     }
-  }, [student, form, isOpen]);
+  }, [student, isOpen, form, isAdmin, tutorsLoading]);
+
+  // Load tutors for admin dropdown
+  useEffect(() => {
+    async function loadTutors() {
+      if (!isAdmin) {
+        setTutorsLoading(false);
+        return;
+      }
+      
+      try {
+        const allTutors = await getAllTutors();
+        setTutors(allTutors.filter(tutor => tutor.isActive));
+      } catch (error) {
+        console.error('Error loading tutors:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load tutors for selection.',
+          variant: 'destructive',
+        });
+      } finally {
+        setTutorsLoading(false);
+      }
+    }
+
+    loadTutors();
+  }, [isAdmin, toast]);
+
+  // Check if we should show parent email 2 field
+  useEffect(() => {
+    const parentEmail2Value = getFieldValue(student, 'parentEmail2', 'Parent Email 2');
+    setShowParentEmail2(!!parentEmail2Value);
+  }, [student]);
+
+  const handleAddParentEmail2 = () => {
+    setShowParentEmail2(true);
+  };
+
+  const handleRemoveParentEmail2 = () => {
+    setShowParentEmail2(false);
+    form.setValue('parentEmail2', '');
+  };
 
   async function onSubmit(values: z.infer<typeof studentSchema>) {
     setIsSubmitting(true);
     try {
-      const studentData: Partial<Student> = { ...values };
+      // Map form fields to clean Firestore field names
+      const studentData = {
+        name: values.name,
+        email: values.email,
+        parentEmail1: values.parentEmail1 || undefined,
+        parentEmail2: values.parentEmail2 || undefined,
+        testTypes: values.testTypes,
+        upcomingTestDate: values.upcomingTestDate || undefined,
+        Rate: values.Rate,
+        Frequency: values.Frequency || undefined,
+        timeZone: values.timeZone || undefined,
+        profile: values.profile || undefined,
+        tutorId: values.tutorId,
+      };
 
-      // Clean up optional fields
-      if (!studentData.parentEmail1) delete studentData.parentEmail1;
-      if (!studentData.parentEmail2) delete studentData.parentEmail2;
-      if (!studentData.upcomingTestDate) delete studentData.upcomingTestDate;
-      if (studentData.Rate === undefined || studentData.Rate === null) delete studentData.Rate;
-      if (!studentData.Frequency) delete studentData.Frequency;
-      if (!studentData.timeZone) delete studentData.timeZone;
-      if (!studentData.profile) delete studentData.profile;
-      
-      await updateStudent(student.id, studentData);
-      
-      toast({
-            title: 'Student Updated',
-            description: `${values.name} has been successfully updated.`,
+      // Remove undefined keys to avoid Firestore issues
+      Object.keys(studentData).forEach(key => {
+        if (studentData[key as keyof typeof studentData] === undefined) {
+          delete studentData[key as keyof typeof studentData];
+        }
       });
-      router.refresh();
-      onOpenChange(false);
 
+      await updateStudent(student.id, studentData);
+
+      const selectedTutor = tutors.find(t => t.uid === values.tutorId);
+      const tutorName = selectedTutor ? selectedTutor.displayName : 'selected tutor';
+
+      toast({
+        title: 'Student Updated',
+        description: `${values.name} has been successfully updated and assigned to ${tutorName}.`,
+      });
+      
+      // Close dialog first, then refresh - this helps with state management
+      onOpenChange(false);
+      router.refresh();
     } catch (error: any) {
+      console.error('Error updating student:', error);
       toast({
         title: 'Error',
         description: error.message || 'Failed to update student. Please try again.',
@@ -140,7 +207,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
       setIsSubmitting(false);
     }
   }
-  
+
   const currentTestTypes = form.watch('testTypes') || [];
 
   return (
@@ -157,6 +224,37 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
             onSubmit={form.handleSubmit(onSubmit)}
             className="mt-6 space-y-4"
           >
+            {/* Tutor Selection - Only for Admins */}
+            {isAdmin && (
+              <FormField
+                control={form.control}
+                name="tutorId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Assigned Tutor</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value} disabled={tutorsLoading}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={tutorsLoading ? "Loading tutors..." : "Select a tutor"} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {tutors.map((tutor) => (
+                          <SelectItem key={tutor.uid} value={tutor.uid}>
+                            {tutor.displayName} ({tutor.email})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Choose which tutor this student is assigned to.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
             <FormField
               control={form.control}
               name="name"
@@ -170,6 +268,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="email"
@@ -186,7 +285,8 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                 </FormItem>
               )}
             />
-             <FormField
+
+            <FormField
               control={form.control}
               name="parentEmail1"
               render={({ field }) => (
@@ -203,171 +303,168 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                 </FormItem>
               )}
             />
+
             {showParentEmail2 ? (
-                <FormField
+              <FormField
                 control={form.control}
                 name="parentEmail2"
                 render={({ field }) => (
-                    <FormItem>
+                  <FormItem>
                     <FormLabel>Parent's Email 2</FormLabel>
                     <div className="flex items-center gap-2">
-                        <FormControl>
-                            <Input placeholder="e.g., another.parent@example.com" {...field} value={field.value ?? ''} />
-                        </FormControl>
-                        <Button variant="ghost" size="icon" type="button" onClick={() => {
-                            setShowParentEmail2(false);
-                            form.setValue('parentEmail2', '');
-                        }}>
-                            <XCircle className="h-4 w-4 text-muted-foreground" />
-                        </Button>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g., another.parent@example.com" 
+                          {...field} 
+                          value={field.value ?? ''}
+                        />
+                      </FormControl>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleRemoveParentEmail2}
+                      >
+                        <XCircle className="h-4 w-4" />
+                      </Button>
                     </div>
                     <FormMessage />
-                    </FormItem>
+                  </FormItem>
                 )}
-                />
+              />
             ) : (
-                <Button type="button" variant="outline" size="sm" className="text-xs" onClick={() => setShowParentEmail2(true)}>
-                    <PlusCircle className="mr-2 h-3 w-3" />
-                    Add Parent Email
-                </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddParentEmail2}
+                className="flex items-center gap-2"
+              >
+                <PlusCircle className="h-4 w-4" />
+                Add Second Parent Email
+              </Button>
             )}
 
-            <div className="space-y-2">
-                <FormField
-                    control={form.control}
-                    name="testTypes.0"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Test Type</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value || ''}>
+            <FormField
+              control={form.control}
+              name="testTypes"
+              render={() => (
+                <FormItem>
+                  <div className="mb-4">
+                    <FormLabel className="text-base">Test Types</FormLabel>
+                    <FormDescription>
+                      Select all the test types this student is preparing for.
+                    </FormDescription>
+                  </div>
+                  {['SAT', 'ACT', 'PSAT', 'AP', 'IB', 'Other'].map((item) => (
+                    <FormField
+                      key={item}
+                      control={form.control}
+                      name="testTypes"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={item}
+                            className="flex flex-row items-start space-x-3 space-y-0"
+                          >
                             <FormControl>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select a test type" />
-                            </SelectTrigger>
+                              <Checkbox
+                                checked={field.value?.includes(item)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, item])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== item
+                                        )
+                                      );
+                                }}
+                              />
                             </FormControl>
-                            <SelectContent>
-                                {TEST_OPTIONS.map(opt => (
-                                    <SelectItem key={opt} value={opt} disabled={currentTestTypes[1] === opt}>
-                                        {opt}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                {showTestType2 ? (
-                     <FormField
-                        control={form.control}
-                        name="testTypes.1"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Test Type 2</FormLabel>
-                             <div className="flex items-center gap-2">
-                                <Select onValueChange={field.onChange} value={field.value || ''}>
-                                    <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a second test type" />
-                                    </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                       {TEST_OPTIONS.map(opt => (
-                                            <SelectItem key={opt} value={opt} disabled={currentTestTypes[0] === opt}>
-                                                {opt}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                 <Button variant="ghost" size="icon" type="button" onClick={() => {
-                                    setShowTestType2(false);
-                                    form.setValue('testTypes', [currentTestTypes[0]]);
-                                }}>
-                                    <XCircle className="h-4 w-4 text-muted-foreground" />
-                                </Button>
-                            </div>
-                            <FormMessage />
-                            </FormItem>
-                        )}
+                            <FormLabel className="font-normal">
+                              {item}
+                            </FormLabel>
+                          </FormItem>
+                        );
+                      }}
                     />
-                ) : (
-                    currentTestTypes.length < 2 &&
-                    <Button type="button" variant="outline" size="sm" className="text-xs" onClick={() => setShowTestType2(true)}>
-                        <PlusCircle className="mr-2 h-3 w-3" />
-                        Add Test Type
-                    </Button>
-                )}
-            </div>
+                  ))}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-             <FormField
+            <FormField
               control={form.control}
               name="upcomingTestDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Upcoming Test Date (Optional)</FormLabel>
+                  <FormLabel>Upcoming Test Date</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="e.g., August 24, 2024"
-                      {...field}
-                      value={field.value ?? ''}
-                    />
+                    <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-             <FormField
+
+            <FormField
               control={form.control}
               name="Rate"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Hourly Rate ($)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="e.g., 100" {...field} value={field.value ?? ''} />
+                    <Input
+                      type="number"
+                      placeholder="e.g., 75"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="Frequency"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Preferred Days/Times</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Tuesdays at 4pm" {...field} value={field.value ?? ''} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="timeZone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Time Zone</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                  <FormLabel>Session Frequency</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a time zone (optional)" />
+                        <SelectValue placeholder="Select frequency" />
                       </SelectTrigger>
                     </FormControl>
-                     <SelectContent>
-                        <SelectItem value="ET-3">Pacific Time (ET-3)</SelectItem>
-                        <SelectItem value="ET-2">Mountain Time (ET-2)</SelectItem>
-                        <SelectItem value="ET-1">Central Time (ET-1)</SelectItem>
-                        <SelectItem value="ET">Eastern Time (NY)</SelectItem>
-                        <SelectItem value="ET+5">UK / Portugal (ET+5)</SelectItem>
-                        <SelectItem value="ET+6">France / Scandinavia (ET+6)</SelectItem>
+                    <SelectContent>
+                      <SelectItem value="Weekly">Weekly</SelectItem>
+                      <SelectItem value="Bi-weekly">Bi-weekly</SelectItem>
+                      <SelectItem value="Monthly">Monthly</SelectItem>
+                      <SelectItem value="As needed">As needed</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="timeZone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time Zone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., EST, PST, GMT+1" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="profile"
@@ -376,29 +473,27 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                   <FormLabel>Student Profile</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Describe the student's strengths, weaknesses, and learning style."
-                      className="min-h-[120px]"
+                      placeholder="Add any notes about the student's learning style, goals, or preferences..."
+                      className="resize-none"
                       {...field}
-                      value={field.value ?? ''}
                     />
                   </FormControl>
-                  <FormDescription>
-                    This will help tailor assignments and communication.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <SheetFooter className="mt-6 pt-6">
+            <SheetFooter className="flex gap-2 pt-6">
               <SheetClose asChild>
-                <Button variant="ghost" type="button">Cancel</Button>
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
               </SheetClose>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Save Changes
+                Update Student
               </Button>
             </SheetFooter>
           </form>
