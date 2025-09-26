@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Card,
@@ -6,21 +6,21 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from '@/components/ui/chart';
-import { chartData } from '@/lib/mock-data';
-import { TrendingUp } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+} from "@/components/ui/chart";
+import { chartData } from "@/lib/mock-data";
+import { TrendingUp } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 const chartConfig = {
   score: {
-    label: 'Avg. Score',
-    color: 'hsl(var(--primary))',
+    label: "Avg. Score",
+    color: "hsl(var(--primary))",
   },
 } satisfies ChartConfig;
 

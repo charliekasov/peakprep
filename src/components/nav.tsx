@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   SidebarMenu,
   SidebarMenuItem,
@@ -10,7 +10,7 @@ import {
   SidebarGroupLabel,
   SidebarGroupContent,
   SidebarSeparator,
-} from '@/components/ui/sidebar';
+} from "@/components/ui/sidebar";
 import {
   LayoutDashboard,
   Users,
@@ -20,52 +20,52 @@ import {
   BarChart,
   Settings,
   UserCog,
-} from 'lucide-react';
-import { useUserRole } from '@/hooks/use-user-role';
+} from "lucide-react";
+import { useUserRole } from "@/hooks/use-user-role";
 
 const navItems = [
   {
-    href: '/',
+    href: "/",
     icon: LayoutDashboard,
-    label: 'Dashboard',
+    label: "Dashboard",
   },
   {
-    href: '/students',
+    href: "/students",
     icon: Users,
-    label: 'Students',
+    label: "Students",
   },
   {
-    href: '/assignments',
+    href: "/assignments",
     icon: FileText,
-    label: 'Assignments',
+    label: "Assignments",
   },
   {
-    href: '/assign-homework',
+    href: "/assign-homework",
     icon: Mail,
-    label: 'Assign Homework',
-  },
-   {
-    href: '/needs-review',
-    icon: CheckSquare,
-    label: 'Needs Review',
+    label: "Assign Homework",
   },
   {
-    href: '/test-scores',
+    href: "/needs-review",
+    icon: CheckSquare,
+    label: "Needs Review",
+  },
+  {
+    href: "/test-scores",
     icon: BarChart,
-    label: 'Test Scores',
+    label: "Test Scores",
   },
 ];
 
 const adminNavItems = [
   {
-    href: '/admin',
+    href: "/admin",
     icon: Settings,
-    label: 'Admin Dashboard',
+    label: "Admin Dashboard",
   },
   {
-    href: '/admin/users',
+    href: "/admin/users",
     icon: UserCog,
-    label: 'Manage Tutors',
+    label: "Manage Tutors",
   },
 ];
 
@@ -84,7 +84,10 @@ export function Nav() {
               <SidebarMenuItem key={item.href}>
                 <Link href={item.href}>
                   <SidebarMenuButton
-                    isActive={pathname.startsWith(item.href) && (item.href !== '/' || pathname === '/')}
+                    isActive={
+                      pathname.startsWith(item.href) &&
+                      (item.href !== "/" || pathname === "/")
+                    }
                     tooltip={{ children: item.label }}
                   >
                     <item.icon />

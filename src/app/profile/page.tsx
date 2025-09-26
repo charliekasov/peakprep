@@ -1,25 +1,41 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Loader2, Save } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { useUserRole } from '@/hooks/use-user-role';
-import { useAuth } from '@/hooks/use-auth';
-import { createInitialSuperAdmin, updateUserProfile } from '@/lib/user-management';
-import { getRoleDisplayName, getRoleBadgeColor } from '@/lib/user-roles';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useUserRole } from "@/hooks/use-user-role";
+import { useAuth } from "@/hooks/use-auth";
+import {
+  createInitialSuperAdmin,
+  updateUserProfile,
+} from "@/lib/user-management";
+import { getRoleDisplayName, getRoleBadgeColor } from "@/lib/user-roles";
 
 const profileSchema = z.object({
-  displayName: z.string().min(1, 'Display name is required'),
+  displayName: z.string().min(1, "Display name is required"),
   location: z.string().optional(),
   phone: z.string().optional(),
   subjects: z.string().optional(), // Will be parsed as array
@@ -37,24 +53,29 @@ export default function ProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
   const { user: firebaseUser } = useAuth();
-  const { user: userProfile, userRole, isLoading, refreshProfile } = useUserRole();
-  
+  const {
+    user: userProfile,
+    userRole,
+    isLoading,
+    refreshProfile,
+  } = useUserRole();
+
   const [isSaving, setIsSaving] = useState(false);
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      displayName: userProfile?.displayName || firebaseUser?.displayName || '',
-      location: userProfile?.location || '',
-      phone: userProfile?.phone || '',
-      subjects: userProfile?.subjects?.join(', ') || '',
-      bio: userProfile?.bio || '',
-      availability: userProfile?.availability || '',
-      experience: userProfile?.experience || '',
-      education: userProfile?.education || '',
-      hourlyRate: userProfile?.hourlyRate || '',
-      adminNotes: userProfile?.adminNotes || '',
+      displayName: userProfile?.displayName || firebaseUser?.displayName || "",
+      location: userProfile?.location || "",
+      phone: userProfile?.phone || "",
+      subjects: userProfile?.subjects?.join(", ") || "",
+      bio: userProfile?.bio || "",
+      availability: userProfile?.availability || "",
+      experience: userProfile?.experience || "",
+      education: userProfile?.education || "",
+      hourlyRate: userProfile?.hourlyRate || "",
+      adminNotes: userProfile?.adminNotes || "",
     },
   });
 
@@ -63,27 +84,27 @@ export default function ProfilePage() {
 
   const handleCreateInitialProfile = async () => {
     if (!firebaseUser) return;
-    
+
     setIsCreatingProfile(true);
     try {
       await createInitialSuperAdmin(
         firebaseUser.uid,
         firebaseUser.email!,
-        firebaseUser.displayName || firebaseUser.email!
+        firebaseUser.displayName || firebaseUser.email!,
       );
-      
+
       await refreshProfile();
-      
+
       toast({
-        title: 'Profile Created',
-        description: 'Your super admin profile has been created successfully.',
+        title: "Profile Created",
+        description: "Your super admin profile has been created successfully.",
       });
     } catch (error) {
-      console.error('Error creating initial profile:', error);
+      console.error("Error creating initial profile:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to create profile. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to create profile. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsCreatingProfile(false);
@@ -96,8 +117,11 @@ export default function ProfilePage() {
     setIsSaving(true);
     try {
       // Parse subjects from comma-separated string to array
-      const subjects = data.subjects 
-        ? data.subjects.split(',').map(s => s.trim()).filter(Boolean)
+      const subjects = data.subjects
+        ? data.subjects
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
         : undefined;
 
       await updateUserProfile(
@@ -111,26 +135,26 @@ export default function ProfilePage() {
           availability: data.availability,
           experience: data.experience,
           education: data.education,
-          ...(userRole === 'super_admin' && {
+          ...(userRole === "super_admin" && {
             hourlyRate: data.hourlyRate,
             adminNotes: data.adminNotes,
           }),
         },
-        firebaseUser.uid
+        firebaseUser.uid,
       );
 
       await refreshProfile();
 
       toast({
-        title: 'Profile Updated',
-        description: 'Your profile has been updated successfully.',
+        title: "Profile Updated",
+        description: "Your profile has been updated successfully.",
       });
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error("Error updating profile:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to update profile. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsSaving(false);
@@ -165,8 +189,8 @@ export default function ProfilePage() {
           <CardHeader>
             <CardTitle>Initial Setup Required</CardTitle>
             <CardDescription>
-              You need to create your admin profile to access all features.
-              This will set you up as a Super Administrator.
+              You need to create your admin profile to access all features. This
+              will set you up as a Super Administrator.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -177,19 +201,22 @@ export default function ProfilePage() {
                   <strong>Email:</strong> {firebaseUser?.email}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  <strong>Name:</strong> {firebaseUser?.displayName || 'Not set'}
+                  <strong>Name:</strong>{" "}
+                  {firebaseUser?.displayName || "Not set"}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   <strong>Role:</strong> Super Administrator
                 </p>
               </div>
-              
-              <Button 
+
+              <Button
                 onClick={handleCreateInitialProfile}
                 disabled={isCreatingProfile}
                 className="w-full"
               >
-                {isCreatingProfile && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isCreatingProfile && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Create Admin Profile
               </Button>
             </div>
@@ -224,9 +251,7 @@ export default function ProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle>Basic Information</CardTitle>
-              <CardDescription>
-                Your basic profile information
-              </CardDescription>
+              <CardDescription>Your basic profile information</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -250,7 +275,10 @@ export default function ProfilePage() {
                   <FormItem>
                     <FormLabel>Location</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="e.g., New York, NY or Remote" />
+                      <Input
+                        {...field}
+                        placeholder="e.g., New York, NY or Remote"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -288,9 +316,9 @@ export default function ProfilePage() {
                   <FormItem>
                     <FormLabel>Subjects</FormLabel>
                     <FormControl>
-                      <Input 
-                        {...field} 
-                        placeholder="e.g., SAT Math, ACT English, SSAT Verbal (comma-separated)" 
+                      <Input
+                        {...field}
+                        placeholder="e.g., SAT Math, ACT English, SSAT Verbal (comma-separated)"
                       />
                     </FormControl>
                     <FormMessage />
@@ -305,8 +333,8 @@ export default function ProfilePage() {
                   <FormItem>
                     <FormLabel>Bio</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        {...field} 
+                      <Textarea
+                        {...field}
                         placeholder="Brief description of your background and expertise"
                         className="min-h-[100px]"
                       />
@@ -323,7 +351,10 @@ export default function ProfilePage() {
                   <FormItem>
                     <FormLabel>Experience</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Years of experience or background" />
+                      <Input
+                        {...field}
+                        placeholder="Years of experience or background"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -337,7 +368,10 @@ export default function ProfilePage() {
                   <FormItem>
                     <FormLabel>Education</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Relevant education or certifications" />
+                      <Input
+                        {...field}
+                        placeholder="Relevant education or certifications"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -351,7 +385,10 @@ export default function ProfilePage() {
                   <FormItem>
                     <FormLabel>Availability</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="e.g., Weekdays evenings, Weekends" />
+                      <Input
+                        {...field}
+                        placeholder="e.g., Weekdays evenings, Weekends"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -361,7 +398,7 @@ export default function ProfilePage() {
           </Card>
 
           {/* Admin-only fields */}
-          {userRole === 'super_admin' && (
+          {userRole === "super_admin" && (
             <Card>
               <CardHeader>
                 <CardTitle>Admin Settings</CardTitle>
@@ -377,7 +414,10 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Hourly Rate</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="e.g., $75/hour or Negotiable" />
+                        <Input
+                          {...field}
+                          placeholder="e.g., $75/hour or Negotiable"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -391,8 +431,8 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Admin Notes</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          {...field} 
+                        <Textarea
+                          {...field}
                           placeholder="Internal notes for administrative use"
                           className="min-h-[80px]"
                         />

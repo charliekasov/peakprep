@@ -1,10 +1,18 @@
+"use client";
 
-'use client';
-
-import { addDoc, collection, query, where, getDocs, updateDoc, doc, deleteDoc } from 'firebase/firestore';
-import { z } from 'zod';
-import { db } from '@/lib/firebase';
-import type { SubmissionStatus } from '@/lib/types';
+import {
+  addDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
+import { z } from "zod";
+import { db } from "@/lib/firebase";
+import type { SubmissionStatus } from "@/lib/types";
 
 const scoreSchema = z.object({
   section: z.string(),
@@ -12,10 +20,10 @@ const scoreSchema = z.object({
 });
 
 const testScoreSchema = z.object({
-  studentId: z.string().min(1, 'Student is required.'),
-  testType: z.string().min(1, 'Test type is required.'),
-  assignmentId: z.string().min(1, 'Test identifier is required.'),
-  testDate: z.date({ required_error: 'Test date is required.' }),
+  studentId: z.string().min(1, "Student is required."),
+  testType: z.string().min(1, "Test type is required."),
+  assignmentId: z.string().min(1, "Test identifier is required."),
+  testDate: z.date({ required_error: "Test date is required." }),
   scores: z.array(scoreSchema).optional(),
   isOfficial: z.boolean(),
 });
@@ -30,17 +38,19 @@ const deleteTestScoreSchema = z.object({
   submissionId: z.string(),
 });
 
-
-async function findOrCreateOfficialTestAssignment(testName: string, testType: string) {
+async function findOrCreateOfficialTestAssignment(
+  testName: string,
+  testType: string,
+) {
   if (!testName || !testType) {
-    throw new Error('Test Name and Test Type are required for official tests.');
+    throw new Error("Test Name and Test Type are required for official tests.");
   }
 
-  const assignmentsRef = collection(db, 'assignments');
+  const assignmentsRef = collection(db, "assignments");
   const q = query(
     assignmentsRef,
-    where('Full Assignment Name', '==', testName),
-    where('isOfficialTest', '==', true)
+    where("Full Assignment Name", "==", testName),
+    where("isOfficialTest", "==", true),
   );
 
   const querySnapshot = await getDocs(q);
@@ -50,15 +60,15 @@ async function findOrCreateOfficialTestAssignment(testName: string, testType: st
   } else {
     console.log(`Creating new official test assignment: "${testName}"`);
     const newAssignment = {
-      'Full Assignment Name': testName,
-      'isPracticeTest': false,
-      'isOfficialTest': true,
-      'Source': 'Official',
-      'Test Type': testType,
-      'Subject': 'Official Test',
-      'Broad Category': 'Official Test',
-      'Difficulty': 'Medium',
-      'Link': ''
+      "Full Assignment Name": testName,
+      isPracticeTest: false,
+      isOfficialTest: true,
+      Source: "Official",
+      "Test Type": testType,
+      Subject: "Official Test",
+      "Broad Category": "Official Test",
+      Difficulty: "Medium",
+      Link: "",
     };
     const docRef = await addDoc(assignmentsRef, newAssignment);
     return docRef.id;
@@ -69,85 +79,93 @@ export async function handleAddTestScore(input: unknown) {
   const validatedInput = testScoreSchema.safeParse(input);
 
   if (!validatedInput.success) {
-    const errorMessages = validatedInput.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
-    console.error('Invalid input for handleAddTestScore:', errorMessages);
+    const errorMessages = validatedInput.error.errors
+      .map((e) => `${e.path.join(".")}: ${e.message}`)
+      .join(", ");
+    console.error("Invalid input for handleAddTestScore:", errorMessages);
     throw new Error(`Invalid input: ${errorMessages}`);
   }
 
-  const { studentId, testType, assignmentId, testDate, scores, isOfficial } = validatedInput.data;
-  
+  const { studentId, testType, assignmentId, testDate, scores, isOfficial } =
+    validatedInput.data;
+
   try {
     let finalAssignmentId = assignmentId;
-    
+
     if (isOfficial) {
       // For official tests, the 'assignmentId' from the form is the test name.
-      finalAssignmentId = await findOrCreateOfficialTestAssignment(assignmentId, testType);
+      finalAssignmentId = await findOrCreateOfficialTestAssignment(
+        assignmentId,
+        testType,
+      );
     }
-    
+
     const submissionData = {
       studentId,
       assignmentId: finalAssignmentId,
       scores: scores || [],
-      status: 'Completed' as SubmissionStatus,
+      status: "Completed" as SubmissionStatus,
       submittedAt: testDate,
       isOfficial: isOfficial,
       // Store the user-entered name for official tests for display purposes.
       ...(isOfficial && { officialTestName: assignmentId }),
     };
 
-    const submissionsRef = collection(db, 'submissions');
+    const submissionsRef = collection(db, "submissions");
     await addDoc(submissionsRef, submissionData);
 
-    return { success: true, message: 'Test score added successfully.' };
+    return { success: true, message: "Test score added successfully." };
   } catch (error: any) {
-    console.error('Error adding test score:', error);
-    throw new Error(error.message || 'Failed to add test score.');
+    console.error("Error adding test score:", error);
+    throw new Error(error.message || "Failed to add test score.");
   }
 }
-
 
 export async function handleUpdateTestScore(input: unknown) {
   const validatedInput = updateTestScoreSchema.safeParse(input);
 
   if (!validatedInput.success) {
-    const errorMessages = validatedInput.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
-    console.error('Invalid input for handleUpdateTestScore:', errorMessages);
+    const errorMessages = validatedInput.error.errors
+      .map((e) => `${e.path.join(".")}: ${e.message}`)
+      .join(", ");
+    console.error("Invalid input for handleUpdateTestScore:", errorMessages);
     throw new Error(`Invalid input: ${errorMessages}`);
   }
 
   const { submissionId, testDate, scores } = validatedInput.data;
 
   try {
-    const submissionRef = doc(db, 'submissions', submissionId);
+    const submissionRef = doc(db, "submissions", submissionId);
     await updateDoc(submissionRef, {
       submittedAt: testDate,
       scores: scores,
     });
-    return { success: true, message: 'Test score updated successfully.' };
+    return { success: true, message: "Test score updated successfully." };
   } catch (error: any) {
-    console.error('Error updating test score:', error);
-    throw new Error(error.message || 'Failed to update test score.');
+    console.error("Error updating test score:", error);
+    throw new Error(error.message || "Failed to update test score.");
   }
 }
-
 
 export async function handleDeleteTestScore(input: unknown) {
   const validatedInput = deleteTestScoreSchema.safeParse(input);
 
   if (!validatedInput.success) {
-    const errorMessages = validatedInput.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
-    console.error('Invalid input for handleDeleteTestScore:', errorMessages);
+    const errorMessages = validatedInput.error.errors
+      .map((e) => `${e.path.join(".")}: ${e.message}`)
+      .join(", ");
+    console.error("Invalid input for handleDeleteTestScore:", errorMessages);
     throw new Error(`Invalid input: ${errorMessages}`);
   }
 
   const { submissionId } = validatedInput.data;
 
   try {
-    const submissionRef = doc(db, 'submissions', submissionId);
+    const submissionRef = doc(db, "submissions", submissionId);
     await deleteDoc(submissionRef);
-    return { success: true, message: 'Test score deleted successfully.' };
+    return { success: true, message: "Test score deleted successfully." };
   } catch (error: any) {
-    console.error('Error deleting test score:', error);
-    throw new Error(error.message || 'Failed to delete test score.');
+    console.error("Error deleting test score:", error);
+    throw new Error(error.message || "Failed to delete test score.");
   }
 }

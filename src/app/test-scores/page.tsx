@@ -1,11 +1,10 @@
+"use client";
 
-'use client';
-
-import { TestScoresClient } from '@/components/test-scores-client';
-import { useAssignments } from '@/hooks/use-assignments';
-import { useStudents } from '@/hooks/use-students';
-import { useSubmissions } from '@/hooks/use-submissions';
-import { Skeleton } from '@/components/ui/skeleton';
+import { TestScoresClient } from "@/components/test-scores-client";
+import { useAssignments } from "@/hooks/use-assignments";
+import { useStudents } from "@/hooks/use-students";
+import { useSubmissions } from "@/hooks/use-submissions";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function TestScoresPage() {
   const { students, loading: studentsLoading } = useStudents();
@@ -16,12 +15,12 @@ export default function TestScoresPage() {
 
   if (isLoading) {
     return (
-        <div className="flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <div className="space-y-4">
-                <Skeleton className="h-12 w-1/4" />
-                <Skeleton className="h-96 w-full" />
-            </div>
+      <div className="flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+        <div className="space-y-4">
+          <Skeleton className="h-12 w-1/4" />
+          <Skeleton className="h-96 w-full" />
         </div>
+      </div>
     );
   }
 

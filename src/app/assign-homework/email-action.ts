@@ -1,13 +1,13 @@
-'use server';
+"use server";
 
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
 export async function sendHomeworkEmail({
   studentEmail,
   parentEmails,
   emailSubject,
   emailMessage,
-  ccParents
+  ccParents,
 }: {
   studentEmail: string;
   parentEmails: { parentEmail1?: string; parentEmail2?: string };
@@ -16,7 +16,7 @@ export async function sendHomeworkEmail({
   ccParents: boolean;
 }) {
   if (!process.env.RESEND_API_KEY || !process.env.FROM_EMAIL) {
-    throw new Error('Email service is not configured.');
+    throw new Error("Email service is not configured.");
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
@@ -38,8 +38,8 @@ export async function sendHomeworkEmail({
   });
 
   if (error) {
-    console.error('Resend API Error:', error);
-    throw new Error('Failed to send email.');
+    console.error("Resend API Error:", error);
+    throw new Error("Failed to send email.");
   }
 
   return { success: true, data };

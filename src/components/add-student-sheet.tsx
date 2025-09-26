@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetClose,
@@ -14,7 +14,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
+} from "@/components/ui/sheet";
 import {
   Form,
   FormControl,
@@ -23,37 +23,52 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { PlusCircle, Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { addStudent } from '@/lib/students';
-import { useRouter } from 'next/navigation';
-import { useUserRole } from '@/hooks/use-user-role';
-import { getAllTutors } from '@/lib/user-management';
-import type { User } from '@/lib/user-roles';
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { PlusCircle, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { addStudent } from "@/lib/students";
+import { useRouter } from "next/navigation";
+import { useUserRole } from "@/hooks/use-user-role";
+import { getAllTutors } from "@/lib/user-management";
+import type { User } from "@/lib/user-roles";
 
 const studentSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().trim().email({ message: 'Please enter a valid email address.' }),
-  parentEmail1: z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
-  parentEmail2: z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
-  testTypes: z.array(z.string()).min(1, { message: 'Please select a test type.' }),
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z
+    .string()
+    .trim()
+    .email({ message: "Please enter a valid email address." }),
+  parentEmail1: z
+    .string()
+    .trim()
+    .email({ message: "Please enter a valid email." })
+    .optional()
+    .or(z.literal("")),
+  parentEmail2: z
+    .string()
+    .trim()
+    .email({ message: "Please enter a valid email." })
+    .optional()
+    .or(z.literal("")),
+  testTypes: z
+    .array(z.string())
+    .min(1, { message: "Please select a test type." }),
   upcomingTestDate: z.string().optional(),
   Rate: z.coerce.number().optional(),
   Frequency: z.string().optional(),
-  timeZone: z.string().optional().or(z.literal('')),
+  timeZone: z.string().optional().or(z.literal("")),
   profile: z.string().optional(),
-  tutorId: z.string().min(1, { message: 'Please select a tutor.' }),
+  tutorId: z.string().min(1, { message: "Please select a tutor." }),
 });
 
 export function AddStudentSheet() {
@@ -68,17 +83,17 @@ export function AddStudentSheet() {
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      parentEmail1: '',
-      parentEmail2: '',
+      name: "",
+      email: "",
+      parentEmail1: "",
+      parentEmail2: "",
       testTypes: [],
-      upcomingTestDate: '',
+      upcomingTestDate: "",
       Rate: undefined,
-      Frequency: '',
-      timeZone: '',
-      profile: '',
-      tutorId: currentUser?.uid || '', // Default to current user for non-admins
+      Frequency: "",
+      timeZone: "",
+      profile: "",
+      tutorId: currentUser?.uid || "", // Default to current user for non-admins
     },
   });
 
@@ -89,16 +104,16 @@ export function AddStudentSheet() {
         setTutorsLoading(false);
         return;
       }
-      
+
       try {
         const allTutors = await getAllTutors();
-        setTutors(allTutors.filter(tutor => tutor.isActive));
+        setTutors(allTutors.filter((tutor) => tutor.isActive));
       } catch (error) {
-        console.error('Error loading tutors:', error);
+        console.error("Error loading tutors:", error);
         toast({
-          title: 'Error',
-          description: 'Failed to load tutors for selection.',
-          variant: 'destructive',
+          title: "Error",
+          description: "Failed to load tutors for selection.",
+          variant: "destructive",
         });
       } finally {
         setTutorsLoading(false);
@@ -111,7 +126,7 @@ export function AddStudentSheet() {
   // Set default tutor for non-admins
   useEffect(() => {
     if (!isAdmin && currentUser) {
-      form.setValue('tutorId', currentUser.uid);
+      form.setValue("tutorId", currentUser.uid);
     }
   }, [isAdmin, currentUser, form]);
 
@@ -131,9 +146,9 @@ export function AddStudentSheet() {
         profile: values.profile || undefined,
         tutorId: values.tutorId, // Add tutorId to student data
       };
-      
+
       // Remove undefined keys
-      Object.keys(studentData).forEach(key => {
+      Object.keys(studentData).forEach((key) => {
         if (studentData[key as keyof typeof studentData] === undefined) {
           delete studentData[key as keyof typeof studentData];
         }
@@ -141,22 +156,22 @@ export function AddStudentSheet() {
 
       await addStudent(studentData as any);
 
-      const selectedTutor = tutors.find(t => t.uid === values.tutorId);
-      const tutorName = selectedTutor ? selectedTutor.displayName : 'tutor';
+      const selectedTutor = tutors.find((t) => t.uid === values.tutorId);
+      const tutorName = selectedTutor ? selectedTutor.displayName : "tutor";
 
       toast({
-        title: 'Student Added',
+        title: "Student Added",
         description: `${values.name} has been successfully added to ${tutorName}'s roster.`,
       });
       router.refresh();
       form.reset();
       setOpen(false);
-
     } catch (error: any) {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to add student. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description:
+          error.message || "Failed to add student. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
@@ -180,7 +195,8 @@ export function AddStudentSheet() {
         <SheetHeader>
           <SheetTitle>Add New Student</SheetTitle>
           <SheetDescription>
-            Fill out the form below to add a new student and assign them to a tutor.
+            Fill out the form below to add a new student and assign them to a
+            tutor.
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
@@ -195,10 +211,20 @@ export function AddStudentSheet() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Assign to Tutor</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value} disabled={tutorsLoading}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={tutorsLoading}
+                  >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={tutorsLoading ? "Loading tutors..." : "Select a tutor"} />
+                        <SelectValue
+                          placeholder={
+                            tutorsLoading
+                              ? "Loading tutors..."
+                              : "Select a tutor"
+                          }
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -230,7 +256,7 @@ export function AddStudentSheet() {
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="email"
@@ -247,7 +273,7 @@ export function AddStudentSheet() {
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="parentEmail1"
@@ -258,14 +284,14 @@ export function AddStudentSheet() {
                     <Input
                       placeholder="e.g., jane.doe@example.com"
                       {...field}
-                      value={field.value ?? ''}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="parentEmail2"
@@ -276,7 +302,7 @@ export function AddStudentSheet() {
                     <Input
                       placeholder="e.g., another.parent@example.com"
                       {...field}
-                      value={field.value ?? ''}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -295,7 +321,14 @@ export function AddStudentSheet() {
                       Select all test types this student will be preparing for.
                     </FormDescription>
                   </div>
-                  {['SAT', 'ACT', 'SSAT', 'Upper Level ISEE', 'Middle Level ISEE', 'Lower Level ISEE'].map((testType) => (
+                  {[
+                    "SAT",
+                    "ACT",
+                    "SSAT",
+                    "Upper Level ISEE",
+                    "Middle Level ISEE",
+                    "Lower Level ISEE",
+                  ].map((testType) => (
                     <FormField
                       key={testType}
                       control={form.control}
@@ -314,9 +347,9 @@ export function AddStudentSheet() {
                                     ? field.onChange([...field.value, testType])
                                     : field.onChange(
                                         field.value?.filter(
-                                          (value) => value !== testType
-                                        )
-                                      )
+                                          (value) => value !== testType,
+                                        ),
+                                      );
                                 }}
                               />
                             </FormControl>
@@ -324,7 +357,7 @@ export function AddStudentSheet() {
                               {testType}
                             </FormLabel>
                           </FormItem>
-                        )
+                        );
                       }}
                     />
                   ))}
@@ -340,11 +373,7 @@ export function AddStudentSheet() {
                 <FormItem>
                   <FormLabel>Upcoming Test Date (Optional)</FormLabel>
                   <FormControl>
-                    <Input
-                      type="date"
-                      {...field}
-                      value={field.value ?? ''}
-                    />
+                    <Input type="date" {...field} value={field.value ?? ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -363,7 +392,7 @@ export function AddStudentSheet() {
                         type="number"
                         placeholder="e.g., 150"
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -381,7 +410,7 @@ export function AddStudentSheet() {
                       <Input
                         placeholder="e.g., Weekly"
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -396,7 +425,10 @@ export function AddStudentSheet() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Time Zone (Optional)</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value ?? ""}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select time zone" />
@@ -425,7 +457,7 @@ export function AddStudentSheet() {
                       placeholder="Any additional notes about the student..."
                       className="min-h-[120px]"
                       {...field}
-                      value={field.value ?? ''}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormDescription>

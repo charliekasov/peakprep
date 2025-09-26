@@ -1,42 +1,80 @@
 // Manage Tutors - List, add, and archive tutors
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useToast } from '@/hooks/use-toast';
-import { useUserRole } from '@/hooks/use-user-role';
-import { 
-  ArrowLeft, 
-  UserPlus, 
-  Loader2, 
-  Edit, 
-  Archive, 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
+} from "@/components/ui/form";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
+import { useUserRole } from "@/hooks/use-user-role";
+import {
+  ArrowLeft,
+  UserPlus,
+  Loader2,
+  Edit,
+  Archive,
   RotateCcw,
   Save,
   Users,
-} from 'lucide-react';
-import { createTutorAccount, getAllTutors, updateUserProfile, updateUserRole, archiveUser, reactivateUser } from '@/lib/user-management';
-import { getRoleDisplayName, getRoleBadgeColor, UserRole } from '@/lib/user-roles';
-import type { User } from '@/lib/user-roles';
+} from "lucide-react";
+import {
+  createTutorAccount,
+  getAllTutors,
+  updateUserProfile,
+  updateUserRole,
+  archiveUser,
+  reactivateUser,
+} from "@/lib/user-management";
+import {
+  getRoleDisplayName,
+  getRoleBadgeColor,
+  UserRole,
+} from "@/lib/user-roles";
+import type { User } from "@/lib/user-roles";
 
 const tutorSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  displayName: z.string().min(1, 'Display name is required'),
-  role: z.enum(['tutor', 'manager_admin', 'super_admin']),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  displayName: z.string().min(1, "Display name is required"),
+  role: z.enum(["tutor", "manager_admin", "super_admin"]),
   location: z.string().optional(),
   phone: z.string().optional(),
   subjects: z.string().optional(), // Will be parsed as array
@@ -55,7 +93,7 @@ export default function AdminUsersPage() {
   const { isAdmin, isSuperAdmin, isLoading, user: currentUser } = useUserRole();
   const router = useRouter();
   const { toast } = useToast();
-  
+
   const [tutors, setTutors] = useState<User[]>([]);
   const [tutorsLoading, setTutorsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -65,15 +103,15 @@ export default function AdminUsersPage() {
   const form = useForm<TutorFormData>({
     resolver: zodResolver(tutorSchema),
     defaultValues: {
-      role: 'tutor',
-      password: 'TempPass123!', // Default temporary password
+      role: "tutor",
+      password: "TempPass123!", // Default temporary password
     },
   });
 
   // Redirect if not admin
   useEffect(() => {
     if (!isLoading && !isAdmin) {
-      router.push('/');
+      router.push("/");
     }
   }, [isAdmin, isLoading, router]);
 
@@ -84,11 +122,11 @@ export default function AdminUsersPage() {
         const allTutors = await getAllTutors();
         setTutors(allTutors);
       } catch (error) {
-        console.error('Error loading tutors:', error);
+        console.error("Error loading tutors:", error);
         toast({
-          title: 'Error',
-          description: 'Failed to load tutors. Please try again.',
-          variant: 'destructive',
+          title: "Error",
+          description: "Failed to load tutors. Please try again.",
+          variant: "destructive",
         });
       } finally {
         setTutorsLoading(false);
@@ -106,10 +144,13 @@ export default function AdminUsersPage() {
     setIsCreating(true);
     try {
       // Parse subjects and start date
-      const subjects = data.subjects 
-        ? data.subjects.split(',').map(s => s.trim()).filter(Boolean)
+      const subjects = data.subjects
+        ? data.subjects
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
         : undefined;
-      
+
       const startDate = data.startDate ? new Date(data.startDate) : undefined;
 
       const profileData = {
@@ -127,7 +168,7 @@ export default function AdminUsersPage() {
 
       // Filter out undefined values
       const cleanProfileData = Object.fromEntries(
-        Object.entries(profileData).filter(([_, value]) => value !== undefined)
+        Object.entries(profileData).filter(([_, value]) => value !== undefined),
       );
 
       await createTutorAccount(
@@ -136,7 +177,7 @@ export default function AdminUsersPage() {
         data.displayName,
         data.role as UserRole,
         currentUser.uid,
-        cleanProfileData
+        cleanProfileData,
       );
 
       // Reload tutors
@@ -144,20 +185,19 @@ export default function AdminUsersPage() {
       setTutors(updatedTutors);
 
       toast({
-        title: 'Tutor Created',
+        title: "Tutor Created",
         description: `${data.displayName} has been added successfully. They can now log in with their credentials.`,
       });
 
       // Reset form and close dialog
       form.reset();
       setShowAddDialog(false);
-
     } catch (error) {
-      console.error('Error creating tutor:', error);
+      console.error("Error creating tutor:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to create tutor account. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to create tutor account. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsCreating(false);
@@ -169,22 +209,22 @@ export default function AdminUsersPage() {
 
     try {
       await archiveUser(user.uid);
-      
+
       // Update local state
-      setTutors(tutors.map(t => 
-        t.uid === user.uid ? { ...t, isActive: false } : t
-      ));
+      setTutors(
+        tutors.map((t) => (t.uid === user.uid ? { ...t, isActive: false } : t)),
+      );
 
       toast({
-        title: 'User Archived',
+        title: "User Archived",
         description: `${user.displayName} has been archived.`,
       });
     } catch (error) {
-      console.error('Error archiving user:', error);
+      console.error("Error archiving user:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to archive user. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to archive user. Please try again.",
+        variant: "destructive",
       });
     }
   };
@@ -192,31 +232,31 @@ export default function AdminUsersPage() {
   const handleReactivateUser = async (user: User) => {
     try {
       await reactivateUser(user.uid);
-      
+
       // Update local state
-      setTutors(tutors.map(t => 
-        t.uid === user.uid ? { ...t, isActive: true } : t
-      ));
+      setTutors(
+        tutors.map((t) => (t.uid === user.uid ? { ...t, isActive: true } : t)),
+      );
 
       toast({
-        title: 'User Reactivated',
+        title: "User Reactivated",
         description: `${user.displayName} has been reactivated.`,
       });
     } catch (error) {
-      console.error('Error reactivating user:', error);
+      console.error("Error reactivating user:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to reactivate user. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to reactivate user. Please try again.",
+        variant: "destructive",
       });
     }
   };
 
   const getInitials = (displayName: string) => {
     return displayName
-      .split(' ')
-      .map(name => name.charAt(0))
-      .join('')
+      .split(" ")
+      .map((name) => name.charAt(0))
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -233,8 +273,8 @@ export default function AdminUsersPage() {
     );
   }
 
-  const activeTutors = tutors.filter(tutor => tutor.isActive);
-  const archivedTutors = tutors.filter(tutor => !tutor.isActive);
+  const activeTutors = tutors.filter((tutor) => tutor.isActive);
+  const archivedTutors = tutors.filter((tutor) => !tutor.isActive);
 
   return (
     <div className="p-6 space-y-6">
@@ -249,7 +289,7 @@ export default function AdminUsersPage() {
             Add new tutors, edit profiles, and manage access permissions
           </p>
         </div>
-        
+
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
             <Button>
@@ -261,12 +301,16 @@ export default function AdminUsersPage() {
             <DialogHeader>
               <DialogTitle>Add New Tutor</DialogTitle>
               <DialogDescription>
-                Create a new tutor account with profile information and permissions.
+                Create a new tutor account with profile information and
+                permissions.
               </DialogDescription>
             </DialogHeader>
 
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 {/* Basic Account Info */}
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
@@ -290,7 +334,11 @@ export default function AdminUsersPage() {
                       <FormItem>
                         <FormLabel>Email Address</FormLabel>
                         <FormControl>
-                          <Input {...field} type="email" placeholder="jane@peakprep.tech" />
+                          <Input
+                            {...field}
+                            type="email"
+                            placeholder="jane@peakprep.tech"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -322,7 +370,10 @@ export default function AdminUsersPage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Role</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select role" />
@@ -330,9 +381,13 @@ export default function AdminUsersPage() {
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="tutor">Tutor</SelectItem>
-                            <SelectItem value="manager_admin">Manager Admin</SelectItem>
+                            <SelectItem value="manager_admin">
+                              Manager Admin
+                            </SelectItem>
                             {isSuperAdmin && (
-                              <SelectItem value="super_admin">Super Admin</SelectItem>
+                              <SelectItem value="super_admin">
+                                Super Admin
+                              </SelectItem>
                             )}
                           </SelectContent>
                         </Select>
@@ -380,7 +435,10 @@ export default function AdminUsersPage() {
                     <FormItem>
                       <FormLabel>Subjects</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="SAT Math, ACT English, SSAT Verbal (comma-separated)" />
+                        <Input
+                          {...field}
+                          placeholder="SAT Math, ACT English, SSAT Verbal (comma-separated)"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -394,8 +452,8 @@ export default function AdminUsersPage() {
                     <FormItem>
                       <FormLabel>Bio</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          {...field} 
+                        <Textarea
+                          {...field}
                           placeholder="Brief description of background and expertise"
                           className="min-h-[80px]"
                         />
@@ -427,7 +485,10 @@ export default function AdminUsersPage() {
                       <FormItem>
                         <FormLabel>Availability</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="Weekends and evenings" />
+                          <Input
+                            {...field}
+                            placeholder="Weekends and evenings"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -475,8 +536,8 @@ export default function AdminUsersPage() {
                         <FormItem>
                           <FormLabel>Admin Notes</FormLabel>
                           <FormControl>
-                            <Textarea 
-                              {...field} 
+                            <Textarea
+                              {...field}
                               placeholder="Internal notes for administrative use"
                               className="min-h-[60px]"
                             />
@@ -489,15 +550,17 @@ export default function AdminUsersPage() {
                 )}
 
                 <div className="flex justify-end space-x-2 pt-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => setShowAddDialog(false)}
                   >
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isCreating}>
-                    {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isCreating && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     Create Tutor
                   </Button>
                 </div>
@@ -542,9 +605,7 @@ export default function AdminUsersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{archivedTutors.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Archived accounts
-            </p>
+            <p className="text-xs text-muted-foreground">Archived accounts</p>
           </CardContent>
         </Card>
       </div>
@@ -579,7 +640,9 @@ export default function AdminUsersPage() {
             <div className="space-y-4">
               {/* Active Tutors */}
               <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-3">ACTIVE TUTORS</h4>
+                <h4 className="text-sm font-medium text-muted-foreground mb-3">
+                  ACTIVE TUTORS
+                </h4>
                 <div className="space-y-3">
                   {activeTutors.map((tutor) => (
                     <div
@@ -588,12 +651,18 @@ export default function AdminUsersPage() {
                     >
                       <div className="flex items-center space-x-4">
                         <Avatar>
-                          <AvatarImage src={`https://picsum.photos/seed/${tutor.uid}/40/40`} />
-                          <AvatarFallback>{getInitials(tutor.displayName)}</AvatarFallback>
+                          <AvatarImage
+                            src={`https://picsum.photos/seed/${tutor.uid}/40/40`}
+                          />
+                          <AvatarFallback>
+                            {getInitials(tutor.displayName)}
+                          </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-medium">{tutor.displayName}</span>
+                            <span className="font-medium">
+                              {tutor.displayName}
+                            </span>
                             <Badge className={getRoleBadgeColor(tutor.role)}>
                               {getRoleDisplayName(tutor.role)}
                             </Badge>
@@ -612,7 +681,9 @@ export default function AdminUsersPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => router.push(`/admin/users/${tutor.uid}`)}
+                          onClick={() =>
+                            router.push(`/admin/users/${tutor.uid}`)
+                          }
                         >
                           <Edit className="h-4 w-4 mr-1" />
                           Edit
@@ -636,7 +707,9 @@ export default function AdminUsersPage() {
               {/* Archived Tutors */}
               {archivedTutors.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-3">ARCHIVED TUTORS</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-3">
+                    ARCHIVED TUTORS
+                  </h4>
                   <div className="space-y-3">
                     {archivedTutors.map((tutor) => (
                       <div
@@ -645,12 +718,18 @@ export default function AdminUsersPage() {
                       >
                         <div className="flex items-center space-x-4">
                           <Avatar className="opacity-50">
-                            <AvatarImage src={`https://picsum.photos/seed/${tutor.uid}/40/40`} />
-                            <AvatarFallback>{getInitials(tutor.displayName)}</AvatarFallback>
+                            <AvatarImage
+                              src={`https://picsum.photos/seed/${tutor.uid}/40/40`}
+                            />
+                            <AvatarFallback>
+                              {getInitials(tutor.displayName)}
+                            </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="font-medium">{tutor.displayName}</span>
+                              <span className="font-medium">
+                                {tutor.displayName}
+                              </span>
                               <Badge variant="secondary">Archived</Badge>
                             </div>
                             <div className="text-sm text-muted-foreground">

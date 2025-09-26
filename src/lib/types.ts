@@ -1,30 +1,30 @@
-import type { Timestamp } from 'firebase/firestore';
+import type { Timestamp } from "firebase/firestore";
 
 // Student types - handles dual field naming for legacy compatibility
 export interface StudentFirestoreData {
   // Legacy spaced field names (stored in Firestore)
   tutorId?: string;
-  'Student Name': string;
-  'Student Email': string;
-  'Parent Email 1'?: string;
-  'Parent Email 2'?: string;
-  'Test Types'?: string[];
-  'Test Type'?: string; // Legacy singular field for backwards compatibility
-  'Target Score'?: string;
-  'Rate'?: number;
-  'Frequency'?: string;
-  'Start Date'?: string;
-  'Projected End Date'?: string;
-  'Upcoming Test Date'?: string;
+  "Student Name": string;
+  "Student Email": string;
+  "Parent Email 1"?: string;
+  "Parent Email 2"?: string;
+  "Test Types"?: string[];
+  "Test Type"?: string; // Legacy singular field for backwards compatibility
+  "Target Score"?: string;
+  Rate?: number;
+  Frequency?: string;
+  "Start Date"?: string;
+  "Projected End Date"?: string;
+  "Upcoming Test Date"?: string;
   profile?: string;
   timeZone?: string;
-  status?: 'active' | 'archived';
+  status?: "active" | "archived";
 }
 
 export interface Student extends StudentFirestoreData {
   id: string;
-  status: 'active' | 'archived'; // Required in app logic
-  
+  status: "active" | "archived"; // Required in app logic
+
   // Clean field names for easier access (derived from spaced names)
   tutorId?: string;
   name: string;
@@ -37,15 +37,15 @@ export interface Student extends StudentFirestoreData {
 
 // Assignment types
 export interface AssignmentFirestoreData {
-  'Full Assignment Name': string;
-  'Link': string;
-  'Subject': string;
-  'Broad Category': string;
-  'Difficulty': 'Easy' | 'Medium' | 'Hard';
-  'Test Type'?: string;
-  'Source'?: string;
-  'isPracticeTest'?: boolean;
-  'isOfficialTest'?: boolean;
+  "Full Assignment Name": string;
+  Link: string;
+  Subject: string;
+  "Broad Category": string;
+  Difficulty: "Easy" | "Medium" | "Hard";
+  "Test Type"?: string;
+  Source?: string;
+  isPracticeTest?: boolean;
+  isOfficialTest?: boolean;
 }
 
 export interface Assignment extends AssignmentFirestoreData {
@@ -53,7 +53,12 @@ export interface Assignment extends AssignmentFirestoreData {
 }
 
 // Submission types - properly separated Firebase data from app data
-export type SubmissionStatus = 'Assigned' | 'Completed' | 'Incomplete' | 'Did Together' | 'Reassigned';
+export type SubmissionStatus =
+  | "Assigned"
+  | "Completed"
+  | "Incomplete"
+  | "Did Together"
+  | "Reassigned";
 
 export interface SubmissionFirestoreData {
   assignmentId: string;
@@ -65,7 +70,8 @@ export interface SubmissionFirestoreData {
   officialTestName?: string;
 }
 
-export interface Submission extends Omit<SubmissionFirestoreData, 'submittedAt'> {
+export interface Submission
+  extends Omit<SubmissionFirestoreData, "submittedAt"> {
   id: string; // Added by document reference, not stored in Firestore data
   submittedAt: Date; // Converted from Timestamp for easier JavaScript usage
 }
@@ -77,8 +83,8 @@ export interface TestScore {
 }
 
 // Helper types for form validation
-export type StudentFormData = Omit<Student, 'id' | 'status'>;
-export type SubmissionFormData = Omit<Submission, 'id' | 'submittedAt'> & {
+export type StudentFormData = Omit<Student, "id" | "status">;
+export type SubmissionFormData = Omit<Submission, "id" | "submittedAt"> & {
   submittedAt?: Date;
 };
 

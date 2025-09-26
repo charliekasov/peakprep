@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetClose,
@@ -13,7 +13,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet';
+} from "@/components/ui/sheet";
 import {
   Form,
   FormControl,
@@ -22,25 +22,25 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, PlusCircle, XCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { updateStudent } from '@/lib/students';
-import type { Student } from '@/lib/types';
-import { useRouter } from 'next/navigation';
-import { useUserRole } from '@/hooks/use-user-role';
-import { getAllTutors } from '@/lib/user-management';
-import type { User } from '@/lib/user-roles';
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, PlusCircle, XCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { updateStudent } from "@/lib/students";
+import type { Student } from "@/lib/types";
+import { useRouter } from "next/navigation";
+import { useUserRole } from "@/hooks/use-user-role";
+import { getAllTutors } from "@/lib/user-management";
+import type { User } from "@/lib/user-roles";
 
 interface EditStudentSheetProps {
   student: Student;
@@ -49,28 +49,51 @@ interface EditStudentSheetProps {
 }
 
 const studentSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().trim().email({ message: 'Please enter a valid email address.' }),
-  parentEmail1: z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
-  parentEmail2: z.string().trim().email({ message: 'Please enter a valid email.' }).optional().or(z.literal('')),
-  testTypes: z.array(z.string()).min(1, { message: 'At least one test type is required.' }),
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z
+    .string()
+    .trim()
+    .email({ message: "Please enter a valid email address." }),
+  parentEmail1: z
+    .string()
+    .trim()
+    .email({ message: "Please enter a valid email." })
+    .optional()
+    .or(z.literal("")),
+  parentEmail2: z
+    .string()
+    .trim()
+    .email({ message: "Please enter a valid email." })
+    .optional()
+    .or(z.literal("")),
+  testTypes: z
+    .array(z.string())
+    .min(1, { message: "At least one test type is required." }),
   upcomingTestDate: z.string().optional(),
   Rate: z.coerce.number().optional(),
   Frequency: z.string().optional(),
-  timeZone: z.string().optional().or(z.literal('')),
+  timeZone: z.string().optional().or(z.literal("")),
   profile: z.string().optional(),
-  tutorId: z.string().min(1, { message: 'Please select a tutor.' }),
+  tutorId: z.string().min(1, { message: "Please select a tutor." }),
 });
 
 // Helper function to get field value with backward compatibility
-function getFieldValue(student: Student, cleanName: string, legacyName: string): string {
+function getFieldValue(
+  student: Student,
+  cleanName: string,
+  legacyName: string,
+): string {
   // Try clean name first, then legacy name, then empty string
   const cleanValue = (student as any)[cleanName];
   const legacyValue = (student as any)[legacyName];
-  return cleanValue || legacyValue || '';
+  return cleanValue || legacyValue || "";
 }
 
-export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentSheetProps) {
+export function EditStudentSheet({
+  student,
+  isOpen,
+  onOpenChange,
+}: EditStudentSheetProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showParentEmail2, setShowParentEmail2] = useState(false);
   const [tutors, setTutors] = useState<User[]>([]);
@@ -82,17 +105,20 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
-      name: getFieldValue(student, 'name', 'Student Name'),
-      email: getFieldValue(student, 'email', 'Student Email'),
-      parentEmail1: getFieldValue(student, 'parentEmail1', 'Parent Email 1'),
-      parentEmail2: getFieldValue(student, 'parentEmail2', 'Parent Email 2'),
-      testTypes: student.testTypes || (student as any)['Test Types'] || [],
-      upcomingTestDate: student.upcomingTestDate || (student as any)['Upcoming Test Date'] || '',
+      name: getFieldValue(student, "name", "Student Name"),
+      email: getFieldValue(student, "email", "Student Email"),
+      parentEmail1: getFieldValue(student, "parentEmail1", "Parent Email 1"),
+      parentEmail2: getFieldValue(student, "parentEmail2", "Parent Email 2"),
+      testTypes: student.testTypes || (student as any)["Test Types"] || [],
+      upcomingTestDate:
+        student.upcomingTestDate ||
+        (student as any)["Upcoming Test Date"] ||
+        "",
       Rate: student.Rate || 0,
-      Frequency: student.Frequency || (student as any)['Frequency'] || '',
-      timeZone: student.timeZone || (student as any)['Time Zone'] || '',
-      profile: student.profile || (student as any)['Profile'] || '',
-      tutorId: (student as any).tutorId || '',
+      Frequency: student.Frequency || (student as any)["Frequency"] || "",
+      timeZone: student.timeZone || (student as any)["Time Zone"] || "",
+      profile: student.profile || (student as any)["Profile"] || "",
+      tutorId: (student as any).tutorId || "",
     },
   });
 
@@ -100,19 +126,22 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
   useEffect(() => {
     if (student && isOpen && (!isAdmin || !tutorsLoading)) {
       const formValues = {
-        name: getFieldValue(student, 'name', 'Student Name'),
-        email: getFieldValue(student, 'email', 'Student Email'),
-        parentEmail1: getFieldValue(student, 'parentEmail1', 'Parent Email 1'),
-        parentEmail2: getFieldValue(student, 'parentEmail2', 'Parent Email 2'),
-        testTypes: student.testTypes || (student as any)['Test Types'] || [],
-        upcomingTestDate: student.upcomingTestDate || (student as any)['Upcoming Test Date'] || '',
+        name: getFieldValue(student, "name", "Student Name"),
+        email: getFieldValue(student, "email", "Student Email"),
+        parentEmail1: getFieldValue(student, "parentEmail1", "Parent Email 1"),
+        parentEmail2: getFieldValue(student, "parentEmail2", "Parent Email 2"),
+        testTypes: student.testTypes || (student as any)["Test Types"] || [],
+        upcomingTestDate:
+          student.upcomingTestDate ||
+          (student as any)["Upcoming Test Date"] ||
+          "",
         Rate: student.Rate || 0,
-        Frequency: student.Frequency || (student as any)['Frequency'] || '',
-        timeZone: student.timeZone || (student as any)['Time Zone'] || '',
-        profile: student.profile || (student as any)['Profile'] || '',
-        tutorId: (student as any).tutorId || '',
+        Frequency: student.Frequency || (student as any)["Frequency"] || "",
+        timeZone: student.timeZone || (student as any)["Time Zone"] || "",
+        profile: student.profile || (student as any)["Profile"] || "",
+        tutorId: (student as any).tutorId || "",
       };
-      
+
       form.reset(formValues);
     }
   }, [student, isOpen, form, isAdmin, tutorsLoading]);
@@ -124,16 +153,16 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
         setTutorsLoading(false);
         return;
       }
-      
+
       try {
         const allTutors = await getAllTutors();
-        setTutors(allTutors.filter(tutor => tutor.isActive));
+        setTutors(allTutors.filter((tutor) => tutor.isActive));
       } catch (error) {
-        console.error('Error loading tutors:', error);
+        console.error("Error loading tutors:", error);
         toast({
-          title: 'Error',
-          description: 'Failed to load tutors for selection.',
-          variant: 'destructive',
+          title: "Error",
+          description: "Failed to load tutors for selection.",
+          variant: "destructive",
         });
       } finally {
         setTutorsLoading(false);
@@ -145,7 +174,11 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
 
   // Check if we should show parent email 2 field
   useEffect(() => {
-    const parentEmail2Value = getFieldValue(student, 'parentEmail2', 'Parent Email 2');
+    const parentEmail2Value = getFieldValue(
+      student,
+      "parentEmail2",
+      "Parent Email 2",
+    );
     setShowParentEmail2(!!parentEmail2Value);
   }, [student]);
 
@@ -155,7 +188,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
 
   const handleRemoveParentEmail2 = () => {
     setShowParentEmail2(false);
-    form.setValue('parentEmail2', '');
+    form.setValue("parentEmail2", "");
   };
 
   async function onSubmit(values: z.infer<typeof studentSchema>) {
@@ -177,7 +210,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
       };
 
       // Remove undefined keys to avoid Firestore issues
-      Object.keys(studentData).forEach(key => {
+      Object.keys(studentData).forEach((key) => {
         if (studentData[key as keyof typeof studentData] === undefined) {
           delete studentData[key as keyof typeof studentData];
         }
@@ -185,30 +218,33 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
 
       await updateStudent(student.id, studentData);
 
-      const selectedTutor = tutors.find(t => t.uid === values.tutorId);
-      const tutorName = selectedTutor ? selectedTutor.displayName : 'selected tutor';
+      const selectedTutor = tutors.find((t) => t.uid === values.tutorId);
+      const tutorName = selectedTutor
+        ? selectedTutor.displayName
+        : "selected tutor";
 
       toast({
-        title: 'Student Updated',
+        title: "Student Updated",
         description: `${values.name} has been successfully updated and assigned to ${tutorName}.`,
       });
-      
+
       // Close dialog first, then refresh - this helps with state management
       onOpenChange(false);
       router.refresh();
     } catch (error: any) {
-      console.error('Error updating student:', error);
+      console.error("Error updating student:", error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to update student. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description:
+          error.message || "Failed to update student. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  const currentTestTypes = form.watch('testTypes') || [];
+  const currentTestTypes = form.watch("testTypes") || [];
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -232,10 +268,20 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Assigned Tutor</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value} disabled={tutorsLoading}>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={tutorsLoading}
+                    >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder={tutorsLoading ? "Loading tutors..." : "Select a tutor"} />
+                          <SelectValue
+                            placeholder={
+                              tutorsLoading
+                                ? "Loading tutors..."
+                                : "Select a tutor"
+                            }
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -296,7 +342,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                     <Input
                       placeholder="e.g., jane.doe@example.com"
                       {...field}
-                      value={field.value ?? ''}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -313,10 +359,10 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                     <FormLabel>Parent's Email 2</FormLabel>
                     <div className="flex items-center gap-2">
                       <FormControl>
-                        <Input 
-                          placeholder="e.g., another.parent@example.com" 
-                          {...field} 
-                          value={field.value ?? ''}
+                        <Input
+                          placeholder="e.g., another.parent@example.com"
+                          {...field}
+                          value={field.value ?? ""}
                         />
                       </FormControl>
                       <Button
@@ -356,7 +402,7 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                       Select all the test types this student is preparing for.
                     </FormDescription>
                   </div>
-                  {['SAT', 'ACT', 'PSAT', 'AP', 'IB', 'Other'].map((item) => (
+                  {["SAT", "ACT", "PSAT", "AP", "IB", "Other"].map((item) => (
                     <FormField
                       key={item}
                       control={form.control}
@@ -375,8 +421,8 @@ export function EditStudentSheet({ student, isOpen, onOpenChange }: EditStudentS
                                     ? field.onChange([...field.value, item])
                                     : field.onChange(
                                         field.value?.filter(
-                                          (value) => value !== item
-                                        )
+                                          (value) => value !== item,
+                                        ),
                                       );
                                 }}
                               />

@@ -1,30 +1,58 @@
-// Tutor Profile - View and edit individual tutor profiles  
+// Tutor Profile - View and edit individual tutor profiles
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Edit, Save, X, Trash2, Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { useUserRole } from '@/hooks/use-user-role';
-import { getUserById, updateUserProfile, updateUserRole, archiveUser } from '@/lib/user-management';
-import { getRoleDisplayName, getRoleBadgeColor, UserRole } from '@/lib/user-roles';
-import type { User } from '@/lib/user-roles';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { ArrowLeft, Edit, Save, X, Trash2, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useUserRole } from "@/hooks/use-user-role";
+import {
+  getUserById,
+  updateUserProfile,
+  updateUserRole,
+  archiveUser,
+} from "@/lib/user-management";
+import {
+  getRoleDisplayName,
+  getRoleBadgeColor,
+  UserRole,
+} from "@/lib/user-roles";
+import type { User } from "@/lib/user-roles";
 
 const profileSchema = z.object({
-  displayName: z.string().min(1, 'Display name is required'),
-  role: z.enum(['tutor', 'manager_admin', 'super_admin']),
+  displayName: z.string().min(1, "Display name is required"),
+  role: z.enum(["tutor", "manager_admin", "super_admin"]),
   location: z.string().optional(),
   phone: z.string().optional(),
   subjects: z.string().optional(),
@@ -44,108 +72,110 @@ export default function AdminUserProfilePage() {
   const userId = params.userId as string;
   const { toast } = useToast();
   const { user: currentUser, isSuperAdmin } = useUserRole();
-  
+
   const [targetUser, setTargetUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
-  console.log('🐛 Component rendered with:', {
+  console.log("🐛 Component rendered with:", {
     userId,
     currentUser: currentUser?.uid,
     targetUser: targetUser?.displayName,
-    isLoading
+    isLoading,
   });
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      displayName: '',
-      role: 'tutor',
-      location: '',
-      phone: '',
-      subjects: '',
-      bio: '',
-      availability: '',
-      experience: '',
-      education: '',
-      hourlyRate: '',
-      adminNotes: '',
+      displayName: "",
+      role: "tutor",
+      location: "",
+      phone: "",
+      subjects: "",
+      bio: "",
+      availability: "",
+      experience: "",
+      education: "",
+      hourlyRate: "",
+      adminNotes: "",
     },
   });
 
   // Load target user's profile
-useEffect(() => {
-  async function loadUserProfile() {
-    console.log('🐛 loadUserProfile called:', { 
-      userId, 
-      currentUserExists: !!currentUser,
-      currentUserId: currentUser?.uid 
-    });
-    
-    if (!userId || !currentUser) {
-      console.log('🐛 Early return - missing data:', { 
-        hasUserId: !!userId, 
-        hasCurrentUser: !!currentUser 
+  useEffect(() => {
+    async function loadUserProfile() {
+      console.log("🐛 loadUserProfile called:", {
+        userId,
+        currentUserExists: !!currentUser,
+        currentUserId: currentUser?.uid,
       });
-      return;
-    }
-    
-    console.log('🐛 About to setIsLoading(true)');
-    setIsLoading(true);
-    
-    try {
-      console.log('🐛 Calling getUserById with:', userId);
-      const user = await getUserById(userId);
-      console.log('🐛 getUserById returned:', user ? 'User found' : 'No user found');
-      
-      if (!user) {
-        console.log('🐛 User not found, showing toast and redirecting');
-        toast({
-          title: 'User Not Found',
-          description: 'The requested user could not be found.',
-          variant: 'destructive',
+
+      if (!userId || !currentUser) {
+        console.log("🐛 Early return - missing data:", {
+          hasUserId: !!userId,
+          hasCurrentUser: !!currentUser,
         });
-        router.push('/admin/users');
         return;
       }
 
-      console.log('🐛 Setting target user and resetting form');
-      setTargetUser(user);
-      resetFormWithUserData(user);
-      console.log('🐛 User data set successfully');
+      console.log("🐛 About to setIsLoading(true)");
+      setIsLoading(true);
 
-    } catch (error) {
-      console.error('🐛 Error in loadUserProfile:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load user profile.',
-        variant: 'destructive',
-      });
-      router.push('/admin/users');
-    } finally {
-      console.log('🐛 Setting isLoading to false');
-      setIsLoading(false);
+      try {
+        console.log("🐛 Calling getUserById with:", userId);
+        const user = await getUserById(userId);
+        console.log(
+          "🐛 getUserById returned:",
+          user ? "User found" : "No user found",
+        );
+
+        if (!user) {
+          console.log("🐛 User not found, showing toast and redirecting");
+          toast({
+            title: "User Not Found",
+            description: "The requested user could not be found.",
+            variant: "destructive",
+          });
+          router.push("/admin/users");
+          return;
+        }
+
+        console.log("🐛 Setting target user and resetting form");
+        setTargetUser(user);
+        resetFormWithUserData(user);
+        console.log("🐛 User data set successfully");
+      } catch (error) {
+        console.error("🐛 Error in loadUserProfile:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load user profile.",
+          variant: "destructive",
+        });
+        router.push("/admin/users");
+      } finally {
+        console.log("🐛 Setting isLoading to false");
+        setIsLoading(false);
+      }
     }
-  }
 
-  console.log('🐛 useEffect triggered, calling loadUserProfile');
-  loadUserProfile();
-}, [userId, currentUser]);
+    console.log("🐛 useEffect triggered, calling loadUserProfile");
+    loadUserProfile();
+  }, [userId, currentUser]);
 
   const resetFormWithUserData = (user: User) => {
     form.reset({
-      displayName: user.displayName || '',
+      displayName: user.displayName || "",
       role: user.role,
-      location: user.location || '',
-      phone: user.phone || '',
-      subjects: user.subjects?.join(', ') || '',
-      bio: user.bio || '',
-      availability: user.availability || '',
-      experience: user.experience || '',
-      education: user.education || '',
-      hourlyRate: user.hourlyRate || '',
-      adminNotes: user.adminNotes || '',
+      location: user.location || "",
+      phone: user.phone || "",
+      subjects: user.subjects?.join(", ") || "",
+      bio: user.bio || "",
+      availability: user.availability || "",
+      experience: user.experience || "",
+      education: user.education || "",
+      hourlyRate: user.hourlyRate || "",
+      adminNotes: user.adminNotes || "",
     });
   };
 
@@ -165,21 +195,21 @@ useEffect(() => {
 
   const handleArchive = async () => {
     if (!targetUser) return;
-    
+
     setIsArchiving(true);
     try {
       await archiveUser(targetUser.uid);
       toast({
-        title: 'User Archived',
+        title: "User Archived",
         description: `${targetUser.displayName} has been archived successfully.`,
       });
-      router.push('/admin/users');
+      router.push("/admin/users");
     } catch (error) {
-      console.error('Error archiving user:', error);
+      console.error("Error archiving user:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to archive user. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to archive user. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsArchiving(false);
@@ -197,8 +227,11 @@ useEffect(() => {
       }
 
       // Parse subjects from comma-separated string to array
-      const subjects = data.subjects 
-        ? data.subjects.split(',').map(s => s.trim()).filter(Boolean)
+      const subjects = data.subjects
+        ? data.subjects
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
         : undefined;
 
       // Update profile
@@ -216,11 +249,11 @@ useEffect(() => {
           hourlyRate: data.hourlyRate,
           adminNotes: data.adminNotes,
         },
-        currentUser.uid
+        currentUser.uid,
       );
 
       toast({
-        title: 'Profile Updated',
+        title: "Profile Updated",
         description: `${data.displayName}'s profile has been updated successfully.`,
       });
 
@@ -230,15 +263,14 @@ useEffect(() => {
         setTargetUser(updatedUser);
         resetFormWithUserData(updatedUser);
       }
-      
-      setIsEditing(false);
 
+      setIsEditing(false);
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error("Error updating profile:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to update profile. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsSaving(false);
@@ -258,7 +290,7 @@ useEffect(() => {
       <div className="max-w-2xl mx-auto p-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">User Not Found</h1>
-          <Button onClick={() => router.push('/admin/users')}>
+          <Button onClick={() => router.push("/admin/users")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to User Management
           </Button>
@@ -271,7 +303,11 @@ useEffect(() => {
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.push('/admin/users')}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => router.push("/admin/users")}
+        >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1">
@@ -290,8 +326,8 @@ useEffect(() => {
             <Edit className="mr-2 h-4 w-4" />
             Edit Profile
           </Button>
-          <Button 
-            variant="destructive" 
+          <Button
+            variant="destructive"
             onClick={handleArchive}
             disabled={isArchiving}
           >
@@ -311,23 +347,37 @@ useEffect(() => {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Name:</dt>
-                <dd className="col-span-2 text-sm">{targetUser.displayName || 'Not set'}</dd>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Name:
+                </dt>
+                <dd className="col-span-2 text-sm">
+                  {targetUser.displayName || "Not set"}
+                </dd>
               </div>
               <Separator />
               <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Email:</dt>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Email:
+                </dt>
                 <dd className="col-span-2 text-sm">{targetUser.email}</dd>
               </div>
               <Separator />
               <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Location:</dt>
-                <dd className="col-span-2 text-sm">{targetUser.location || 'Not set'}</dd>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Location:
+                </dt>
+                <dd className="col-span-2 text-sm">
+                  {targetUser.location || "Not set"}
+                </dd>
               </div>
               <Separator />
               <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Phone:</dt>
-                <dd className="col-span-2 text-sm">{targetUser.phone || 'Not set'}</dd>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Phone:
+                </dt>
+                <dd className="col-span-2 text-sm">
+                  {targetUser.phone || "Not set"}
+                </dd>
               </div>
             </CardContent>
           </Card>
@@ -338,30 +388,50 @@ useEffect(() => {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Subjects:</dt>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Subjects:
+                </dt>
                 <dd className="col-span-2 text-sm">
-                  {targetUser.subjects?.length ? targetUser.subjects.join(', ') : 'Not set'}
+                  {targetUser.subjects?.length
+                    ? targetUser.subjects.join(", ")
+                    : "Not set"}
                 </dd>
               </div>
               <Separator />
               <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Bio:</dt>
-                <dd className="col-span-2 text-sm whitespace-pre-wrap">{targetUser.bio || 'Not set'}</dd>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Bio:
+                </dt>
+                <dd className="col-span-2 text-sm whitespace-pre-wrap">
+                  {targetUser.bio || "Not set"}
+                </dd>
               </div>
               <Separator />
               <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Experience:</dt>
-                <dd className="col-span-2 text-sm">{targetUser.experience || 'Not set'}</dd>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Experience:
+                </dt>
+                <dd className="col-span-2 text-sm">
+                  {targetUser.experience || "Not set"}
+                </dd>
               </div>
               <Separator />
               <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Education:</dt>
-                <dd className="col-span-2 text-sm">{targetUser.education || 'Not set'}</dd>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Education:
+                </dt>
+                <dd className="col-span-2 text-sm">
+                  {targetUser.education || "Not set"}
+                </dd>
               </div>
               <Separator />
               <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Availability:</dt>
-                <dd className="col-span-2 text-sm">{targetUser.availability || 'Not set'}</dd>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Availability:
+                </dt>
+                <dd className="col-span-2 text-sm">
+                  {targetUser.availability || "Not set"}
+                </dd>
               </div>
             </CardContent>
           </Card>
@@ -372,27 +442,42 @@ useEffect(() => {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Hourly Rate:</dt>
-                <dd className="col-span-2 text-sm">{targetUser.hourlyRate || 'Not set'}</dd>
-              </div>
-              <Separator />
-              <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Admin Notes:</dt>
-                <dd className="col-span-2 text-sm whitespace-pre-wrap">{targetUser.adminNotes || 'No notes'}</dd>
-              </div>
-              <Separator />
-              <div className="grid grid-cols-3 gap-1">
-                <dt className="text-sm font-medium text-muted-foreground">Created:</dt>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Hourly Rate:
+                </dt>
                 <dd className="col-span-2 text-sm">
-                  {targetUser.createdDate?.toLocaleDateString()} by {targetUser.createdBy === targetUser.uid ? 'Self' : 'Admin'}
+                  {targetUser.hourlyRate || "Not set"}
+                </dd>
+              </div>
+              <Separator />
+              <div className="grid grid-cols-3 gap-1">
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Admin Notes:
+                </dt>
+                <dd className="col-span-2 text-sm whitespace-pre-wrap">
+                  {targetUser.adminNotes || "No notes"}
+                </dd>
+              </div>
+              <Separator />
+              <div className="grid grid-cols-3 gap-1">
+                <dt className="text-sm font-medium text-muted-foreground">
+                  Created:
+                </dt>
+                <dd className="col-span-2 text-sm">
+                  {targetUser.createdDate?.toLocaleDateString()} by{" "}
+                  {targetUser.createdBy === targetUser.uid ? "Self" : "Admin"}
                 </dd>
               </div>
               {targetUser.profileLastUpdated && (
                 <>
                   <Separator />
                   <div className="grid grid-cols-3 gap-1">
-                    <dt className="text-sm font-medium text-muted-foreground">Last Updated:</dt>
-                    <dd className="col-span-2 text-sm">{targetUser.profileLastUpdated.toLocaleDateString()}</dd>
+                    <dt className="text-sm font-medium text-muted-foreground">
+                      Last Updated:
+                    </dt>
+                    <dd className="col-span-2 text-sm">
+                      {targetUser.profileLastUpdated.toLocaleDateString()}
+                    </dd>
                   </div>
                 </>
               )}
@@ -430,7 +515,10 @@ useEffect(() => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Role</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue />
@@ -438,9 +526,13 @@ useEffect(() => {
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="tutor">Tutor</SelectItem>
-                          <SelectItem value="manager_admin">Manager Admin</SelectItem>
+                          <SelectItem value="manager_admin">
+                            Manager Admin
+                          </SelectItem>
                           {isSuperAdmin && (
-                            <SelectItem value="super_admin">Super Admin</SelectItem>
+                            <SelectItem value="super_admin">
+                              Super Admin
+                            </SelectItem>
                           )}
                         </SelectContent>
                       </Select>
@@ -491,7 +583,10 @@ useEffect(() => {
                     <FormItem>
                       <FormLabel>Subjects</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="SAT Math, ACT English (comma-separated)" />
+                        <Input
+                          {...field}
+                          placeholder="SAT Math, ACT English (comma-separated)"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -547,7 +642,10 @@ useEffect(() => {
                     <FormItem>
                       <FormLabel>Availability</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="e.g., Weekdays evenings" />
+                        <Input
+                          {...field}
+                          placeholder="e.g., Weekdays evenings"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

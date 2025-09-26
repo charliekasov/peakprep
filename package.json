@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write . && npm run lint -- --fix",
     "typecheck": "tsc --noEmit",
     "import-data": "tsx ./scripts/import-data.ts"
   },
@@ -64,6 +67,7 @@
     "googleapis": "^140.0.0",
     "papaparse": "^5.4.1",
     "postcss": "^8",
+    "prettier": "^3.6.2",
     "tailwindcss": "^3.4.1",
     "tsx": "^4.15.5",
     "typescript": "^5"

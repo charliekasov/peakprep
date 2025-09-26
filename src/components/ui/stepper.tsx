@@ -1,11 +1,10 @@
+"use client";
 
-'use client';
-
-import * as React from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { MinusIcon, PlusIcon } from '@radix-ui/react-icons';
-import { cn } from '@/lib/utils';
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
+import { cn } from "@/lib/utils";
 
 interface StepperProps {
   value?: number;
@@ -15,7 +14,13 @@ interface StepperProps {
   step?: number;
 }
 
-export function Stepper({ value = 0, onValueChange, min = 0, max = 100, step = 1 }: StepperProps) {
+export function Stepper({
+  value = 0,
+  onValueChange,
+  min = 0,
+  max = 100,
+  step = 1,
+}: StepperProps) {
   const handleValueChange = (newValue: number) => {
     const clampedValue = Math.max(min, Math.min(max, newValue));
     onValueChange?.(clampedValue);
@@ -46,12 +51,12 @@ export function Stepper({ value = 0, onValueChange, min = 0, max = 100, step = 1
         value={value}
         onChange={handleInputChange}
         onBlur={(e) => {
-            const numberValue = e.target.valueAsNumber;
-            if (!isNaN(numberValue)) {
-              handleValueChange(numberValue);
-            } else {
-              handleValueChange(min); // or some other default
-            }
+          const numberValue = e.target.valueAsNumber;
+          if (!isNaN(numberValue)) {
+            handleValueChange(numberValue);
+          } else {
+            handleValueChange(min); // or some other default
+          }
         }}
         min={min}
         max={max}

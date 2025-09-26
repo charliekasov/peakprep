@@ -1,26 +1,32 @@
 // Admin Dashboard - Overview, stats, and quick actions
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Users, 
-  UserPlus, 
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Users,
+  UserPlus,
   Settings,
   Activity,
   BarChart3,
   BookOpen,
-} from 'lucide-react';
-import { useUserRole } from '@/hooks/use-user-role';
-import { useRouter } from 'next/navigation';
-import { getAllTutors } from '@/lib/user-management';
-import { getRoleDisplayName, getRoleBadgeColor } from '@/lib/user-roles';
-import type { User } from '@/lib/user-roles';
+} from "lucide-react";
+import { useUserRole } from "@/hooks/use-user-role";
+import { useRouter } from "next/navigation";
+import { getAllTutors } from "@/lib/user-management";
+import { getRoleDisplayName, getRoleBadgeColor } from "@/lib/user-roles";
+import type { User } from "@/lib/user-roles";
 
 export default function AdminDashboard() {
   const { isAdmin, isSuperAdmin, isLoading } = useUserRole();
@@ -31,7 +37,7 @@ export default function AdminDashboard() {
   // Redirect if not admin
   useEffect(() => {
     if (!isLoading && !isAdmin) {
-      router.push('/');
+      router.push("/");
     }
   }, [isAdmin, isLoading, router]);
 
@@ -42,7 +48,7 @@ export default function AdminDashboard() {
         const allTutors = await getAllTutors();
         setTutors(allTutors);
       } catch (error) {
-        console.error('Error loading tutors:', error);
+        console.error("Error loading tutors:", error);
       } finally {
         setTutorsLoading(false);
       }
@@ -67,17 +73,21 @@ export default function AdminDashboard() {
 
   const getInitials = (displayName: string) => {
     return displayName
-      .split(' ')
-      .map(name => name.charAt(0))
-      .join('')
+      .split(" ")
+      .map((name) => name.charAt(0))
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
 
-  const activeTutors = tutors.filter(tutor => tutor.isActive);
-  const superAdmins = activeTutors.filter(tutor => tutor.role === 'super_admin');
-  const managerAdmins = activeTutors.filter(tutor => tutor.role === 'manager_admin');
-  const regularTutors = activeTutors.filter(tutor => tutor.role === 'tutor');
+  const activeTutors = tutors.filter((tutor) => tutor.isActive);
+  const superAdmins = activeTutors.filter(
+    (tutor) => tutor.role === "super_admin",
+  );
+  const managerAdmins = activeTutors.filter(
+    (tutor) => tutor.role === "manager_admin",
+  );
+  const regularTutors = activeTutors.filter((tutor) => tutor.role === "tutor");
 
   return (
     <div className="p-6 space-y-6">
@@ -88,7 +98,7 @@ export default function AdminDashboard() {
             Manage tutors, monitor system health, and oversee operations
           </p>
         </div>
-        <Button onClick={() => router.push('/admin/users')}>
+        <Button onClick={() => router.push("/admin/users")}>
           <UserPlus className="mr-2 h-4 w-4" />
           Add New Tutor
         </Button>
@@ -116,9 +126,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{superAdmins.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Full system access
-            </p>
+            <p className="text-xs text-muted-foreground">Full system access</p>
           </CardContent>
         </Card>
 
@@ -129,9 +137,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{managerAdmins.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Manager admins
-            </p>
+            <p className="text-xs text-muted-foreground">Manager admins</p>
           </CardContent>
         </Card>
 
@@ -161,15 +167,13 @@ export default function AdminDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>
-                Common administrative tasks
-              </CardDescription>
+              <CardDescription>Common administrative tasks</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="justify-start h-auto p-4"
-                onClick={() => router.push('/admin/users')}
+                onClick={() => router.push("/admin/users")}
               >
                 <div className="text-left">
                   <div className="font-medium flex items-center">
@@ -182,10 +186,10 @@ export default function AdminDashboard() {
                 </div>
               </Button>
 
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="justify-start h-auto p-4"
-                onClick={() => router.push('/students')}
+                onClick={() => router.push("/students")}
               >
                 <div className="text-left">
                   <div className="font-medium flex items-center">
@@ -224,7 +228,7 @@ export default function AdminDashboard() {
                   Manage tutor accounts and permissions
                 </CardDescription>
               </div>
-              <Button onClick={() => router.push('/admin/users')}>
+              <Button onClick={() => router.push("/admin/users")}>
                 <UserPlus className="mr-2 h-4 w-4" />
                 Add Tutor
               </Button>
@@ -242,7 +246,7 @@ export default function AdminDashboard() {
                   <p className="text-muted-foreground mb-4">
                     Add your first tutor to get started
                   </p>
-                  <Button onClick={() => router.push('/admin/users')}>
+                  <Button onClick={() => router.push("/admin/users")}>
                     <UserPlus className="mr-2 h-4 w-4" />
                     Add First Tutor
                   </Button>
@@ -256,12 +260,18 @@ export default function AdminDashboard() {
                     >
                       <div className="flex items-center space-x-4">
                         <Avatar>
-                          <AvatarImage src={`https://picsum.photos/seed/${tutor.uid}/40/40`} />
-                          <AvatarFallback>{getInitials(tutor.displayName)}</AvatarFallback>
+                          <AvatarImage
+                            src={`https://picsum.photos/seed/${tutor.uid}/40/40`}
+                          />
+                          <AvatarFallback>
+                            {getInitials(tutor.displayName)}
+                          </AvatarFallback>
                         </Avatar>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-medium">{tutor.displayName}</span>
+                            <span className="font-medium">
+                              {tutor.displayName}
+                            </span>
                             <Badge className={getRoleBadgeColor(tutor.role)}>
                               {getRoleDisplayName(tutor.role)}
                             </Badge>
@@ -304,32 +314,44 @@ export default function AdminDashboard() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Database Status</span>
-                    <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    <Badge
+                      variant="secondary"
+                      className="bg-green-100 text-green-800"
+                    >
                       ✓ Connected
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Authentication</span>
-                    <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    <Badge
+                      variant="secondary"
+                      className="bg-green-100 text-green-800"
+                    >
                       ✓ Active
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Email Service</span>
-                    <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    <Badge
+                      variant="secondary"
+                      className="bg-green-100 text-green-800"
+                    >
                       ✓ Ready
                     </Badge>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="text-sm">
-                    <span className="font-medium">Total Users:</span> {tutors.length}
+                    <span className="font-medium">Total Users:</span>{" "}
+                    {tutors.length}
                   </div>
                   <div className="text-sm">
-                    <span className="font-medium">Active Sessions:</span> {activeTutors.length}
+                    <span className="font-medium">Active Sessions:</span>{" "}
+                    {activeTutors.length}
                   </div>
                   <div className="text-sm">
-                    <span className="font-medium">Last Updated:</span> {new Date().toLocaleString()}
+                    <span className="font-medium">Last Updated:</span>{" "}
+                    {new Date().toLocaleString()}
                   </div>
                 </div>
               </div>

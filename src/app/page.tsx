@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { Suspense } from 'react';
+import { Suspense } from "react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -15,24 +15,27 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
-  FileText,
-  Users,
-} from 'lucide-react';
-import type { Submission, Student, Assignment } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useStudents } from '@/hooks/use-students';
-import { useAssignments } from '@/hooks/use-assignments';
-import { useSubmissions } from '@/hooks/use-submissions';
-import Link from 'next/link';
+} from "@/components/ui/table";
+import { FileText, Users } from "lucide-react";
+import type { Submission, Student, Assignment } from "@/lib/types";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useStudents } from "@/hooks/use-students";
+import { useAssignments } from "@/hooks/use-assignments";
+import { useSubmissions } from "@/hooks/use-submissions";
+import Link from "next/link";
 
-function StatCard({ title, value, icon: Icon, isLoading, href }: { 
-  title: string, 
-  value: number, 
-  icon: React.ElementType, 
-  isLoading?: boolean,
-  href: string 
+function StatCard({
+  title,
+  value,
+  icon: Icon,
+  isLoading,
+  href,
+}: {
+  title: string;
+  value: number;
+  icon: React.ElementType;
+  isLoading?: boolean;
+  href: string;
 }) {
   if (isLoading) {
     return (
@@ -64,58 +67,58 @@ function StatCard({ title, value, icon: Icon, isLoading, href }: {
 }
 
 function NeedsReviewTable() {
-    const { submissions, loading: submissionsLoading } = useSubmissions();
-    const { students, loading: studentsLoading } = useStudents();
-    const { assignments, loading: assignmentsLoading } = useAssignments();
+  const { submissions, loading: submissionsLoading } = useSubmissions();
+  const { students, loading: studentsLoading } = useStudents();
+  const { assignments, loading: assignmentsLoading } = useAssignments();
 
-    if (submissionsLoading || studentsLoading || assignmentsLoading) {
-        return <NeedsReviewTableSkeleton/>
-    }
+  if (submissionsLoading || studentsLoading || assignmentsLoading) {
+    return <NeedsReviewTableSkeleton />;
+  }
 
-    const needsReview = submissions
-        .filter(s => ['Assigned', 'Incomplete'].includes(s.status))
-        .sort((a,b) => a.submittedAt.getTime() - b.submittedAt.getTime());
+  const needsReview = submissions
+    .filter((s) => ["Assigned", "Incomplete"].includes(s.status))
+    .sort((a, b) => a.submittedAt.getTime() - b.submittedAt.getTime());
 
-    return (
-         <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Student</TableHead>
-                <TableHead>Assignment</TableHead>
-                <TableHead className="text-right">Submitted</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {needsReview.slice(0, 5).map((submission) => {
-                const student = students.find(
-                  (s: Student) => s.id === submission.studentId
-                );
-                const assignment = assignments.find(
-                  (a: Assignment) => a.id === submission.assignmentId
-                );
-                return (
-                  <TableRow key={submission.id}>
-                    <TableCell>{student?.name}</TableCell>
-                    <TableCell>{assignment?.['Full Assignment Name']}</TableCell>
-                    <TableCell className="text-right">
-                      {submission.submittedAt.toLocaleDateString()}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-    )
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Student</TableHead>
+          <TableHead>Assignment</TableHead>
+          <TableHead className="text-right">Submitted</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {needsReview.slice(0, 5).map((submission) => {
+          const student = students.find(
+            (s: Student) => s.id === submission.studentId,
+          );
+          const assignment = assignments.find(
+            (a: Assignment) => a.id === submission.assignmentId,
+          );
+          return (
+            <TableRow key={submission.id}>
+              <TableCell>{student?.name}</TableCell>
+              <TableCell>{assignment?.["Full Assignment Name"]}</TableCell>
+              <TableCell className="text-right">
+                {submission.submittedAt.toLocaleDateString()}
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
+  );
 }
 
 function NeedsReviewTableSkeleton() {
-    return (
-        <div className="space-y-4">
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-8 w-full" />
-        </div>
-    )
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-8 w-full" />
+      <Skeleton className="h-8 w-full" />
+      <Skeleton className="h-8 w-full" />
+    </div>
+  );
 }
 
 export default function Dashboard() {
@@ -124,8 +127,10 @@ export default function Dashboard() {
   const { submissions, loading: submissionsLoading } = useSubmissions();
 
   const isLoading = studentsLoading || assignmentsLoading || submissionsLoading;
-  
-  const activeStudents = students.filter(s => (s.status || 'active') === 'active');
+
+  const activeStudents = students.filter(
+    (s) => (s.status || "active") === "active",
+  );
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -133,17 +138,17 @@ export default function Dashboard() {
         Welcome Back, Charlie!
       </h1>
       <div className="grid gap-4 md:grid-cols-2">
-        <StatCard 
-          title="Total Students" 
-          value={activeStudents.length} 
-          icon={Users} 
+        <StatCard
+          title="Total Students"
+          value={activeStudents.length}
+          icon={Users}
           isLoading={isLoading}
           href="/students"
         />
-        <StatCard 
-          title="Total Assignments" 
-          value={assignments.length} 
-          icon={FileText} 
+        <StatCard
+          title="Total Assignments"
+          value={assignments.length}
+          icon={FileText}
           isLoading={isLoading}
           href="/assignments"
         />

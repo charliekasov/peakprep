@@ -22,33 +22,33 @@ To get started, take a look at the various pages in `src/app/`. The main dashboa
 To populate the application with your existing student, assignment, and submission data from a spreadsheet (like Google Sheets), you can use the provided import script.
 
 1.  **Export to CSV**:
-    *   Open your spreadsheet.
-    *   Export the data for your students, assignments, and submissions into three separate CSV files: `students.csv`, `assignments.csv`, and `submissions.csv`.
-    *   Ensure the column headers in your CSV files match the data fields expected by the application (e.g., `name`, `email`, `title`, `subject`, `studentId`, `assignmentId`, etc.).
+    - Open your spreadsheet.
+    - Export the data for your students, assignments, and submissions into three separate CSV files: `students.csv`, `assignments.csv`, and `submissions.csv`.
+    - Ensure the column headers in your CSV files match the data fields expected by the application (e.g., `name`, `email`, `title`, `subject`, `studentId`, `assignmentId`, etc.).
 
 2.  **Set Up Service Account**:
-    *   To run the script, you need to authenticate with Firebase using a **Service Account**. This is a secure way to give the script admin access to your database.
-    *   In the Firebase Console, go to **Project Settings** > **Service Accounts**.
-    *   Click **Generate new private key** and save the downloaded JSON file.
-    *   Place this key file in the root directory of your project.
+    - To run the script, you need to authenticate with Firebase using a **Service Account**. This is a secure way to give the script admin access to your database.
+    - In the Firebase Console, go to **Project Settings** > **Service Accounts**.
+    - Click **Generate new private key** and save the downloaded JSON file.
+    - Place this key file in the root directory of your project.
 
 3.  **Configure Environment**:
-    *   In the `.env` file at the root of your project, add a line pointing to your key file:
-        ```
-        GOOGLE_APPLICATION_CREDENTIALS="your-service-account-key-file-name.json"
-        ```
+    - In the `.env` file at the root of your project, add a line pointing to your key file:
+      ```
+      GOOGLE_APPLICATION_CREDENTIALS="your-service-account-key-file-name.json"
+      ```
 
 4.  **Prepare Files for Import**:
-    *   Create a new folder named `data` in the root directory of your project.
-    *   Place your `students.csv`, `assignments.csv`, and `submissions.csv` files inside this `data` folder.
+    - Create a new folder named `data` in the root directory of your project.
+    - Place your `students.csv`, `assignments.csv`, and `submissions.csv` files inside this `data` folder.
 
 5.  **Run the Script**:
-    *   Open a terminal in your project's root directory.
-    *   Run the following command:
-        ```bash
-        npm run import-data
-        ```
-    *   The script will log its progress in the terminal and let you know when the import is complete.
+    - Open a terminal in your project's root directory.
+    - Run the following command:
+      ```bash
+      npm run import-data
+      ```
+    - The script will log its progress in the terminal and let you know when the import is complete.
 
 ---
 
@@ -57,6 +57,7 @@ To populate the application with your existing student, assignment, and submissi
 This application uses **Resend** to send emails. It does **not** send emails directly from your personal Gmail account for critical security and deliverability reasons.
 
 ### Why Not Use Gmail Directly?
+
 - **Security**: It would require storing your email password or sensitive credentials on the server, which is a major security risk.
 - **Deliverability**: Email providers like Gmail are designed for person-to-person communication. Automated sending from a personal account can trigger spam filters, preventing your homework assignments from reaching students.
 
