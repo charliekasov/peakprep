@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from 'next/link';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
@@ -139,6 +140,14 @@ export default function LoginPage() {
                 </Button>
               </form>
             </Form>
+            <div className="mt-4 text-center">
+  <Link 
+    href="/forgotpassword"
+    className="text-sm text-muted-foreground hover:text-primary"
+  >
+    Forgot your password?
+  </Link>
+</div>
           </CardContent>
         </Card>
       </div>

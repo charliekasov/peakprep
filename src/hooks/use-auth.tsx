@@ -29,10 +29,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('Auth state changed:', { user: !!user, pathname }); // Add this line
       setUser(user);
       setLoading(false);
-      if (!user && pathname !== "/login") {
-        router.push("/login");
+      if (!user && pathname !== '/login' && pathname !== '/forgotpassword') {
+        console.log('Redirecting to login from:', pathname); // Add this line
+        router.push('/login');
       }
     });
     return () => unsubscribe();

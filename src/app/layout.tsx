@@ -28,7 +28,7 @@ function AppLayout({
   const pathname = usePathname();
   const { user, loading } = useAuth();
 
-  const isLoginPage = pathname === "/login";
+  const isAuthPage = pathname === "/login" || pathname === "/forgotpassword";
 
   const LayoutSkeleton = () => (
     <div className="flex min-h-screen">
@@ -83,13 +83,13 @@ function AppLayout({
     if (loading) {
       return <LayoutSkeleton />;
     }
-    if (isLoginPage) {
+    if (isAuthPage) {
       return children;
     }
     if (user) {
       return <AppContent />;
     }
-    // If not loading, not on login page, and no user, we show the skeleton while redirecting.
+    // If not loading, not on auth page, and no user, we show the skeleton while redirecting.
     return <LayoutSkeleton />;
   };
 
