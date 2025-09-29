@@ -289,7 +289,7 @@ export default function AdminUserProfilePage() {
     return (
       <div className="max-w-2xl mx-auto p-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">User Not Found</h1>
+          <h1 className="font-headline text-2xl font-bold mb-4">User Not Found</h1>
           <Button onClick={() => router.push("/admin/users")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to User Management
@@ -311,7 +311,7 @@ export default function AdminUserProfilePage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">{targetUser.displayName}</h1>
+          <h1 className="font-headline text-2xl font-bold">{targetUser.displayName}</h1>
           <p className="text-muted-foreground">{targetUser.email}</p>
         </div>
         <Badge className={getRoleBadgeColor(targetUser.role)}>

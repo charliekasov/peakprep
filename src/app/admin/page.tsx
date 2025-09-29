@@ -93,7 +93,7 @@ export default function AdminDashboard() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+          <h1 className="font-headline text-3xl font-bold tracking-tight">Admin Dashboard</h1>
           <p className="text-muted-foreground">
             Manage tutors, monitor system health, and oversee operations
           </p>
@@ -242,7 +242,7 @@ export default function AdminDashboard() {
               ) : activeTutors.length === 0 ? (
                 <div className="text-center py-8">
                   <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No tutors yet</h3>
+                  <h3 className="font-headline text-lg font-medium mb-2">No tutors yet</h3>
                   <p className="text-muted-foreground mb-4">
                     Add your first tutor to get started
                   </p>

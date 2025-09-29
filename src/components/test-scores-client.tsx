@@ -401,7 +401,7 @@ function TestTypeDisplay({
                     <CardContent className="p-4">
                       <div className="space-y-3">
                         <div className="flex justify-between items-start">
-                          <h3 className="font-semibold text-sm">
+                          <h3 className="font-headline font-semibold text-sm">
                             {submission.isOfficial
                               ? submission.officialTestName
                               : assignment?.["Full Assignment Name"] ||
@@ -716,7 +716,7 @@ export function TestScoresClient({
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+        <h1 className="font-headline text-2xl font-bold tracking-tight md:text-3xl">
           Test Scores
         </h1>
         <div className="flex items-center gap-2">

@@ -178,7 +178,7 @@ export default function ProfilePage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Create Your Profile</h1>
+            <h1 className="font-headline text-2xl font-bold">Create Your Profile</h1>
             <p className="text-muted-foreground">
               Set up your admin profile to get started
             </p>
@@ -196,7 +196,7 @@ export default function ProfilePage() {
           <CardContent>
             <div className="space-y-4">
               <div className="rounded-lg border p-4 space-y-2">
-                <h3 className="font-semibold">Profile Details</h3>
+                <h3 className="font-headline font-semibold">Profile Details</h3>
                 <p className="text-sm text-muted-foreground">
                   <strong>Email:</strong> {firebaseUser?.email}
                 </p>
@@ -234,7 +234,7 @@ export default function ProfilePage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">Profile Settings</h1>
+          <h1 className="font-headline text-2xl font-bold">Profile Settings</h1>
           <p className="text-muted-foreground">
             Manage your account information and preferences
           </p>

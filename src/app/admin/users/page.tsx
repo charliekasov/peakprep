@@ -54,6 +54,8 @@ import {
   RotateCcw,
   Save,
   Users,
+  Eye,       
+  EyeOff,
 } from "lucide-react";
 import {
   createTutorAccount,
@@ -99,6 +101,7 @@ export default function AdminUsersPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [editingTutor, setEditingTutor] = useState<User | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<TutorFormData>({
     resolver: zodResolver(tutorSchema),
@@ -284,7 +287,7 @@ export default function AdminUsersPage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1">
-          <h1 className="text-3xl font-bold tracking-tight">Manage Tutors</h1>
+          <h1 className="font-headline text-3xl font-bold tracking-tight">Manage Tutors</h1>
           <p className="text-muted-foreground">
             Add new tutors, edit profiles, and manage access permissions
           </p>
@@ -347,22 +350,37 @@ export default function AdminUsersPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Temporary Password</FormLabel>
-                        <FormControl>
-                          <Input {...field} type="password" />
-                        </FormControl>
-                        <FormDescription>
-                          They can change this after first login
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+  control={form.control}
+  name="password"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Temporary Password</FormLabel>
+      <FormControl>
+        <div className="relative">
+          <Input {...field} type={showPassword ? "text" : "password"} />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      </FormControl>
+      <FormDescription>
+        They can change this after first login
+      </FormDescription>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
                   <FormField
                     control={form.control}
@@ -627,7 +645,7 @@ export default function AdminUsersPage() {
           ) : tutors.length === 0 ? (
             <div className="text-center py-8">
               <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">No tutors yet</h3>
+              <h3 className="font-headline text-lg font-medium mb-2">No tutors yet</h3>
               <p className="text-muted-foreground mb-4">
                 Create your first tutor account to get started
               </p>
@@ -678,16 +696,14 @@ export default function AdminUsersPage() {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            router.push(`/admin/users/${tutor.uid}`)
-                          }
-                        >
-                          <Edit className="h-4 w-4 mr-1" />
-                          Edit
-                        </Button>
+                      <Button
+  variant="outline"
+  size="sm"
+  onClick={() => router.push(`/admin/users/${tutor.uid}`)}
+>
+  <Eye className="h-4 w-4 mr-1" />
+  View Profile
+</Button>
                         {currentUser?.uid !== tutor.uid && (
                           <Button
                             variant="outline"

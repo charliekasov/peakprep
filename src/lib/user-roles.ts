@@ -6,6 +6,7 @@ export interface User {
   email: string;
   displayName: string;
   role: UserRole;
+  sendingEmail?: string;
   createdBy: string; // Admin who created this account
   createdDate: Date;
   isActive: boolean;

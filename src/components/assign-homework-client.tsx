@@ -383,17 +383,23 @@ ${tutorName}`;
         throw new Error("Student not found.");
       }
 
-      // Call our email-only server action
-      await sendHomeworkEmail({
-        studentEmail: student.email,
-        parentEmails: {
-          parentEmail1: student.parentEmail1,
-          parentEmail2: student.parentEmail2,
-        },
-        emailSubject,
-        emailMessage: convertToHTML(emailMessage),
-        ccParents,
-      });
+     // Extract first name and generate sending email
+const firstName = user?.displayName?.split(' ')[0]?.toLowerCase() || 'tutor';
+const generatedSendingEmail = `${firstName}@peakprep.tech`;
+
+await sendHomeworkEmail({
+  studentEmail: student.email,
+  parentEmails: {
+    parentEmail1: student.parentEmail1,
+    parentEmail2: student.parentEmail2,
+  },
+  emailSubject,
+  emailMessage: convertToHTML(emailMessage),
+  ccParents,
+  senderName: user?.displayName,
+  senderEmail: generatedSendingEmail,
+  replyToEmail: user?.email,  // Their login email from profile
+});
 
       const assignmentsPayload = Array.from(selectedAssignments.entries()).map(
         ([id, options]) => ({
@@ -783,7 +789,7 @@ ${tutorName}`;
 
   return (
     <div className="mx-auto w-full max-w-6xl">
-      <h1 className="text-2xl font-bold tracking-tight md:text-3xl mb-6">
+      <h1 className="font-headline text-2xl font-bold tracking-tight md:text-3xl mb-6">
         Assign Homework
       </h1>
       {renderConfigurationDialog()}

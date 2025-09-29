@@ -198,7 +198,7 @@ export function StudentListClient({
         <TableRow className="bg-muted/20 hover:bg-muted/20">
           <TableCell colSpan={4} className="p-0">
             <div className="p-6">
-              <h3 className="font-semibold text-lg mb-4">
+              <h3 className="font-headline font-semibold text-lg mb-4">
                 {selectedStudent.name}'s Details
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-4">
@@ -267,7 +267,7 @@ export function StudentListClient({
     <div key={student.id} className="border rounded-lg p-4 space-y-3">
       <div className="flex justify-between items-start">
         <div className="space-y-1 flex-1">
-          <h3 className="font-semibold">{student.name}</h3>
+          <h3 className="font-headline font-semibold">{student.name}</h3>
           <p className="text-sm text-muted-foreground">
             {student.testTypes?.join(", ") || "N/A"}
           </p>
@@ -367,7 +367,7 @@ export function StudentListClient({
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+        <h1 className="font-headline text-2xl font-bold tracking-tight md:text-3xl">
           Student Management
         </h1>
         <AddStudentSheet />
@@ -439,7 +439,7 @@ export function StudentListClient({
                         <CollapsibleTrigger asChild>
   <Button variant="ghost" className="w-full justify-between p-4 h-auto">
     <div className="text-left">
-      <h3 className="font-semibold">{tutor.displayName}</h3>
+      <h3 className="font-headline font-semibold">{tutor.displayName}</h3>
       <p className="text-sm text-muted-foreground">
         {filteredTutorStudents.length} student{filteredTutorStudents.length !== 1 ? 's' : ''}
       </p>
@@ -499,7 +499,7 @@ export function StudentListClient({
                         <CollapsibleTrigger asChild>
   <Button variant="ghost" className="w-full justify-between p-4 h-auto mb-2">
     <div className="text-left">
-      <h3 className="font-semibold text-lg">{tutor.displayName}</h3>
+      <h3 className="font-headline font-semibold text-lg">{tutor.displayName}</h3>
       <p className="text-sm text-muted-foreground">
         {filteredTutorStudents.length} student{filteredTutorStudents.length !== 1 ? 's' : ''}
       </p>

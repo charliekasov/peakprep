@@ -134,7 +134,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-      <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+      <h1 className="font-headline text-2xl font-bold tracking-tight md:text-3xl">
         Welcome Back, Charlie!
       </h1>
       <div className="grid gap-4 md:grid-cols-2">

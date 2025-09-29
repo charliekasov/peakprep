@@ -5,7 +5,7 @@ export function Logo({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <Mountain className="h-6 w-6 text-primary" />
-      <h2 className="text-lg font-bold tracking-tight text-foreground">
+      <h2 className="font-headline text-lg font-bold tracking-tight text-foreground">
         Peak Prep
       </h2>
     </div>
