@@ -319,6 +319,13 @@ export async function updateUserProfile(
       firestoreUpdates.startDate = Timestamp.fromDate(profileUpdates.startDate);
     }
 
+    // Remove undefined and empty string values
+    Object.keys(firestoreUpdates).forEach(key => {
+      if (firestoreUpdates[key] === undefined || firestoreUpdates[key] === '') {
+        delete firestoreUpdates[key];
+      }
+    });
+
     // Add metadata
     firestoreUpdates.profileLastUpdated = Timestamp.now();
     firestoreUpdates.profileUpdatedBy = updatedBy;

@@ -148,6 +148,12 @@ export function AssignHomeworkClient({
     return Array.from(sources);
   }, [selectedStudent, assignments]);
 
+  // Filter to only show students assigned to current user (not supervised students)
+const myStudents = useMemo(() => {
+  if (!user) return [];
+  return students.filter(student => student.tutorId === user.uid);
+}, [students, user]);
+
   const [selectedWorksheetSources, setSelectedWorksheetSources] = useState<
     Set<string>
   >(new Set(worksheetSources));
@@ -824,12 +830,14 @@ await sendHomeworkEmail({
                   <SelectValue placeholder="Select a student..." />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
-                  {activeStudents.map((student) => (
-                    <SelectItem key={student.id} value={student.id}>
-                      {student.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+  {myStudents
+    .filter((s) => (s.status || "active") === "active")
+    .map((student) => (
+      <SelectItem key={student.id} value={student.id}>
+        {student.name}
+      </SelectItem>
+    ))}
+</SelectContent>
               </Select>
             </div>
           </CardHeader>

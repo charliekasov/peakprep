@@ -58,11 +58,6 @@ const navItems = [
 
 const adminNavItems = [
   {
-    href: "/admin",
-    icon: Settings,
-    label: "Admin Dashboard",
-  },
-  {
     href: "/admin/users",
     icon: UserCog,
     label: "Manage Tutors",

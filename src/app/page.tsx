@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense } from "react";
+import Link from "next/link";
+import { Users, FileText } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -8,35 +9,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { FileText, Users } from "lucide-react";
-import type { Submission, Student, Assignment } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useStudents } from "@/hooks/use-students";
 import { useAssignments } from "@/hooks/use-assignments";
 import { useSubmissions } from "@/hooks/use-submissions";
-import Link from "next/link";
+import { useUserRole } from "@/hooks/use-user-role";
+import type { Student, Assignment, Submission } from "@/lib/types";
 
-function StatCard({
-  title,
-  value,
-  icon: Icon,
-  isLoading,
-  href,
-}: {
+interface StatCardProps {
   title: string;
   value: number;
   icon: React.ElementType;
-  isLoading?: boolean;
+  isLoading: boolean;
   href: string;
-}) {
+}
+
+function StatCard({ title, value, icon: Icon, isLoading, href }: StatCardProps) {
   if (isLoading) {
     return (
       <Card>
@@ -66,58 +54,67 @@ function StatCard({
   );
 }
 
-function NeedsReviewTable() {
+function NeedsReviewCard() {
   const { submissions, loading: submissionsLoading } = useSubmissions();
   const { students, loading: studentsLoading } = useStudents();
-  const { assignments, loading: assignmentsLoading } = useAssignments();
+  const { isAdmin } = useUserRole();
 
-  if (submissionsLoading || studentsLoading || assignmentsLoading) {
-    return <NeedsReviewTableSkeleton />;
+  if (submissionsLoading || studentsLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Needs Review</CardTitle>
+          <CardDescription>
+            A prioritized list of assignments that require your feedback.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-16 w-full" />
+        </CardContent>
+      </Card>
+    );
   }
+
+  const studentMap = new Map(students.map((s) => [s.id, s]));
 
   const needsReview = submissions
     .filter((s) => ["Assigned", "Incomplete"].includes(s.status))
-    .sort((a, b) => a.submittedAt.getTime() - b.submittedAt.getTime());
+    .filter((s) => studentMap.has(s.studentId));
+
+  // Count unique students with pending work
+  const studentsWithWork = new Set(needsReview.map((s) => s.studentId));
+  
+  // For admins, count unique tutors
+  let tutorCount = 0;
+  if (isAdmin) {
+    const tutorsWithWork = new Set(
+      Array.from(studentsWithWork)
+        .map(studentId => studentMap.get(studentId)?.tutorId)
+        .filter(Boolean)
+    );
+    tutorCount = tutorsWithWork.size;
+  }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Student</TableHead>
-          <TableHead>Assignment</TableHead>
-          <TableHead className="text-right">Submitted</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {needsReview.slice(0, 5).map((submission) => {
-          const student = students.find(
-            (s: Student) => s.id === submission.studentId,
-          );
-          const assignment = assignments.find(
-            (a: Assignment) => a.id === submission.assignmentId,
-          );
-          return (
-            <TableRow key={submission.id}>
-              <TableCell>{student?.name}</TableCell>
-              <TableCell>{assignment?.["Full Assignment Name"]}</TableCell>
-              <TableCell className="text-right">
-                {submission.submittedAt.toLocaleDateString()}
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
-  );
-}
-
-function NeedsReviewTableSkeleton() {
-  return (
-    <div className="space-y-4">
-      <Skeleton className="h-8 w-full" />
-      <Skeleton className="h-8 w-full" />
-      <Skeleton className="h-8 w-full" />
-    </div>
+    <Link href="/needs-review" className="block">
+      <Card className="cursor-pointer hover:shadow-md transition-shadow duration-200">
+        <CardHeader>
+          <CardTitle>Needs Review</CardTitle>
+          <CardDescription>
+            A prioritized list of assignments that require your feedback.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-1">
+            <p className="text-2xl font-bold">{needsReview.length}</p>
+            <p className="text-sm text-muted-foreground">
+              {needsReview.length === 1 ? 'assignment' : 'assignments'} across {studentsWithWork.size} {studentsWithWork.size === 1 ? 'student' : 'students'}
+              {isAdmin && tutorCount > 0 && ` (from ${tutorCount} ${tutorCount === 1 ? 'tutor' : 'tutors'})`}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
 
@@ -125,17 +122,18 @@ export default function Dashboard() {
   const { students, loading: studentsLoading } = useStudents();
   const { assignments, loading: assignmentsLoading } = useAssignments();
   const { submissions, loading: submissionsLoading } = useSubmissions();
+  const { user } = useUserRole();
 
   const isLoading = studentsLoading || assignmentsLoading || submissionsLoading;
 
   const activeStudents = students.filter(
-    (s) => (s.status || "active") === "active",
+    (s) => (s.status || "active") === "active"
   );
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <h1 className="font-headline text-2xl font-bold tracking-tight md:text-3xl">
-        Welcome Back, Charlie!
+        Oh hey{user?.displayName?.split(' ')[0] ? `, ${user.displayName.split(' ')[0]}` : ''}.
       </h1>
       <div className="grid gap-4 md:grid-cols-2">
         <StatCard
@@ -154,19 +152,7 @@ export default function Dashboard() {
         />
       </div>
       <div className="grid gap-4 md:gap-8 lg:grid-cols-1">
-        <Link href="/needs-review" className="block">
-          <Card className="cursor-pointer hover:shadow-md transition-shadow duration-200">
-            <CardHeader>
-              <CardTitle>Needs Review</CardTitle>
-              <CardDescription>
-                A prioritized list of assignments that require your feedback.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <NeedsReviewTable />
-            </CardContent>
-          </Card>
-        </Link>
+        <NeedsReviewCard />
       </div>
     </div>
   );
