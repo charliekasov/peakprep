@@ -56,13 +56,13 @@ import {
   EyeOff,
 } from "lucide-react";
 import {
-  createTutorAccount,
   getAllTutors,
   updateUserProfile,
   updateUserRole,
   archiveUser,
   reactivateUser,
 } from "@/lib/user-management";
+import { createTutorWithFunction } from '@/lib/user-management-functions';
 import {
   getRoleDisplayName,
   getRoleBadgeColor,
@@ -129,24 +129,32 @@ export default function ManageTutorsPage() {
   };
 
   const onSubmit = async (data: TutorFormData) => {
+    if (!user) return;
     try {
       const subjectsArray = data.subjects
         ? data.subjects.split(",").map((s) => s.trim())
         : [];
   
-      await createTutorAccount(
-        data.email,
-        data.password,
-        data.displayName,
-        data.role,
-        user!.uid,  // createdBy - current admin's UID
-        {
+        const profileData = {
           location: data.location,
           phone: data.phone,
-          subjects: subjectsArray,
+          subjects: subjectsArray, // Note: using subjectsArray, not data.subjects
           bio: data.bio,
-        }
-      );
+        };
+    
+        // Filter out undefined values
+        const cleanProfileData = Object.fromEntries(
+          Object.entries(profileData).filter(([_, value]) => value !== undefined && value !== "")
+        );
+
+        await createTutorWithFunction({
+          email: data.email,
+          password: data.password,
+          displayName: data.displayName,
+          role: data.role as UserRole,
+          createdBy: user.uid,
+          profileData: cleanProfileData,
+        });
   
       toast({
         title: "Success",

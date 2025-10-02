@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, Fragment } from "react";
 import type { Student, Assignment, Submission } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import {
   Card,
   CardHeader,
@@ -24,6 +25,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -40,6 +54,7 @@ import {
 import { AddOfficialScoreDialog } from "./add-official-score-dialog";
 import { EditScoreDialog } from "./edit-score-dialog";
 import { MoreHorizontal, Loader2 } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,6 +73,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useUserRole } from "@/hooks/use-user-role";
 import { handleDeleteTestScore } from "@/app/test-scores/actions";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -563,6 +579,8 @@ export function TestScoresClient({
   const [deletingSubmission, setDeletingSubmission] =
     useState<Submission | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [open, setOpen] = useState(false);
+const { user, isAdmin } = useUserRole();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -601,6 +619,26 @@ export function TestScoresClient({
     () => students.filter((s) => (s.status || "active") === "active"),
     [students],
   );
+
+// Replace the big filtering useMemo with this simpler version:
+const { myStudents, supervisedStudents, filteredActiveStudents } = useMemo(() => {
+  if (!user) return { myStudents: [], supervisedStudents: [], filteredActiveStudents: [] };
+  
+  const allActive = students.filter(s => s.status !== 'archived');
+  
+  const myStudents = allActive.filter(student => student.tutorId === user.uid);
+  const supervisedStudents = isAdmin 
+    ? allActive.filter(student => student.tutorId && student.tutorId !== user.uid)
+    : [];
+
+  const filteredActiveStudents = [...myStudents, ...supervisedStudents];
+
+  return {
+    myStudents,
+    supervisedStudents,
+    filteredActiveStudents
+  };
+}, [students, user, isAdmin]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -714,39 +752,130 @@ export function TestScoresClient({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="font-headline text-2xl font-bold tracking-tight md:text-3xl">
+    <div className="space-y-8">
+      {/* Header with Test Scores title and Add Test Score button on same row */}
+      <div className="flex justify-between items-center">
+        <h1 className="font-headline text-3xl font-bold tracking-tight md:text-4xl">
           Test Scores
         </h1>
-        <div className="flex items-center gap-2">
-          <div className="w-full sm:w-64">
-            <Select
-              onValueChange={setSelectedStudentId}
-              value={selectedStudentId || ""}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a student..." />
-              </SelectTrigger>
-              <SelectContent>
-                {activeStudents.map((student) => (
-                  <SelectItem key={student.id} value={student.id}>
-                    {student.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <AddOfficialScoreDialog
-            students={activeStudents}
-            assignments={assignments}
-            onScoreAdd={handleScoreAdd}
-          />
-        </div>
+        <AddOfficialScoreDialog
+          students={filteredActiveStudents}
+          assignments={assignments}
+          onScoreAdd={handleScoreAdd}
+        />
       </div>
-
+      
+      {/* Filter Controls */}
+      <div className="space-y-4">
+  <h2 className="text-lg font-medium text-muted-foreground">
+    Find Student
+  </h2>
+  
+  {/* Combobox - no external search needed */}
+  <div className="w-full max-w-md">
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between"
+        >
+          {selectedStudent
+            ? selectedStudent.name
+            : "Search and select a student..."}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[400px] p-0">
+        <Command>
+          <CommandInput 
+            placeholder="Search students..." 
+            className="h-9"
+          />
+          <CommandList>
+            <CommandEmpty>No student found.</CommandEmpty>
+            
+            {/* My Students Group */}
+            {myStudents.length > 0 && (
+              <CommandGroup heading={`My Students (${myStudents.length})`}>
+                {myStudents.map((student) => (
+                  <CommandItem
+                    key={student.id}
+                    value={student.name}
+                    onSelect={() => {
+                      setSelectedStudentId(student.id);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        selectedStudentId === student.id ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    <div className="flex flex-col">
+                      <span>{student.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {student.testTypes?.join(", ") || "No test types"}
+                      </span>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+            
+            {/* Supervised Students Group */}
+            {isAdmin && supervisedStudents.length > 0 && (
+              <CommandGroup heading={`Supervised Students (${supervisedStudents.length})`}>
+                {supervisedStudents.map((student) => (
+                  <CommandItem
+                    key={student.id}
+                    value={student.name}
+                    onSelect={() => {
+                      setSelectedStudentId(student.id);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        selectedStudentId === student.id ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    <div className="flex flex-col">
+                      <span>{student.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {student.testTypes?.join(", ") || "No test types"}
+                      </span>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  </div>
+</div>
+  
+      {/* Selected Student Info */}
+      {selectedStudent && (
+        <div className="pt-4 border-t">
+          <div className="space-y-1">
+            <h3 className="text-sm font-medium">
+              Viewing {selectedStudent.name}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {selectedStudent.testTypes?.join(', ') || 'No test types set'}
+            </p>
+          </div>
+        </div>
+      )}
+  
       {renderContent()}
-
+  
       {/* Edit Dialog */}
       {editingSubmission && selectedStudent && (
         <EditScoreDialog
@@ -761,7 +890,7 @@ export function TestScoresClient({
           onScoreUpdate={handleScoreUpdate}
         />
       )}
-
+  
       {/* Delete Confirmation Dialog */}
       <AlertDialog
         open={!!deletingSubmission}
