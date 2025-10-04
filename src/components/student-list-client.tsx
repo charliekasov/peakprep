@@ -555,12 +555,16 @@ export function StudentListClient({
       </Card>
 
       {editingStudent && (
-        <EditStudentSheet
-          student={editingStudent}
-          isOpen={!!editingStudent}
-          onOpenChange={(isOpen) => !isOpen && setEditingStudent(null)}
-        />
-      )}
+  <EditStudentSheet
+    student={editingStudent}
+    isOpen={!!editingStudent}
+    onOpenChange={(isOpen) => {
+      if (!isOpen) {
+        setEditingStudent(null);
+      }
+    }}
+  />
+)}
     </>
   );
 }

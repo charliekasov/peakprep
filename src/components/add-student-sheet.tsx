@@ -184,7 +184,7 @@ export function AddStudentSheet() {
   }
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet key={open ? 'add-open' : 'add-closed'} open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button>
           <PlusCircle className="mr-2 h-4 w-4" />

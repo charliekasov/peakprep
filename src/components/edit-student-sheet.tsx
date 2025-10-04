@@ -7,10 +7,8 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
@@ -33,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, PlusCircle, XCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { updateStudent } from "@/lib/students";
 import type { Student } from "@/lib/types";
@@ -77,25 +75,12 @@ const studentSchema = z.object({
   tutorId: z.string().min(1, { message: "Please select a tutor." }),
 });
 
-// Helper function to get field value with backward compatibility
-function getFieldValue(
-  student: Student,
-  cleanName: string,
-  legacyName: string,
-): string {
-  // Try clean name first, then legacy name, then empty string
-  const cleanValue = (student as any)[cleanName];
-  const legacyValue = (student as any)[legacyName];
-  return cleanValue || legacyValue || "";
-}
-
 export function EditStudentSheet({
   student,
   isOpen,
   onOpenChange,
 }: EditStudentSheetProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showParentEmail2, setShowParentEmail2] = useState(false);
   const [tutors, setTutors] = useState<User[]>([]);
   const [tutorsLoading, setTutorsLoading] = useState(true);
   const { toast } = useToast();
@@ -105,46 +90,19 @@ export function EditStudentSheet({
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
-      name: getFieldValue(student, "name", "Student Name"),
-      email: getFieldValue(student, "email", "Student Email"),
-      parentEmail1: getFieldValue(student, "parentEmail1", "Parent Email 1"),
-      parentEmail2: getFieldValue(student, "parentEmail2", "Parent Email 2"),
-      testTypes: student.testTypes || (student as any)["Test Types"] || [],
-      upcomingTestDate:
-        student.upcomingTestDate ||
-        (student as any)["Upcoming Test Date"] ||
-        "",
-      Rate: student.Rate || 0,
-      Frequency: student.Frequency || (student as any)["Frequency"] || "",
-      timeZone: student.timeZone || (student as any)["Time Zone"] || "",
-      profile: student.profile || (student as any)["Profile"] || "",
-      tutorId: (student as any).tutorId || "",
+      name: "",
+      email: "",
+      parentEmail1: "",
+      parentEmail2: "",
+      testTypes: [],
+      upcomingTestDate: "",
+      Rate: undefined,
+      Frequency: "",
+      timeZone: "",
+      profile: "",
+      tutorId: "",
     },
   });
-
-  // Reset form when student changes OR when tutors finish loading
-  useEffect(() => {
-    if (student && isOpen && (!isAdmin || !tutorsLoading)) {
-      const formValues = {
-        name: getFieldValue(student, "name", "Student Name"),
-        email: getFieldValue(student, "email", "Student Email"),
-        parentEmail1: getFieldValue(student, "parentEmail1", "Parent Email 1"),
-        parentEmail2: getFieldValue(student, "parentEmail2", "Parent Email 2"),
-        testTypes: student.testTypes || (student as any)["Test Types"] || [],
-        upcomingTestDate:
-          student.upcomingTestDate ||
-          (student as any)["Upcoming Test Date"] ||
-          "",
-        Rate: student.Rate || 0,
-        Frequency: student.Frequency || (student as any)["Frequency"] || "",
-        timeZone: student.timeZone || (student as any)["Time Zone"] || "",
-        profile: student.profile || (student as any)["Profile"] || "",
-        tutorId: (student as any).tutorId || "",
-      };
-
-      form.reset(formValues);
-    }
-  }, [student, isOpen, form, isAdmin, tutorsLoading]);
 
   // Load tutors for admin dropdown
   useEffect(() => {
@@ -172,71 +130,51 @@ export function EditStudentSheet({
     loadTutors();
   }, [isAdmin, toast]);
 
-  // Check if we should show parent email 2 field
+  // Reset form when student changes
   useEffect(() => {
-    const parentEmail2Value = getFieldValue(
-      student,
-      "parentEmail2",
-      "Parent Email 2",
-    );
-    setShowParentEmail2(!!parentEmail2Value);
-  }, [student]);
-
-  const handleAddParentEmail2 = () => {
-    setShowParentEmail2(true);
-  };
-
-  const handleRemoveParentEmail2 = () => {
-    setShowParentEmail2(false);
-    form.setValue("parentEmail2", "");
-  };
+    if (student && isOpen) {
+      form.reset({
+        name: student.name || "",
+        email: student.email || "",
+        parentEmail1: student.parentEmail1 || "",
+        parentEmail2: student.parentEmail2 || "", // Always visible, always optional
+        testTypes: student.testTypes || [],
+        upcomingTestDate: student.upcomingTestDate || "",
+        Rate: student.Rate || undefined,
+        Frequency: student.Frequency || "",
+        timeZone: student.timeZone || "",
+        profile: student.profile || "",
+        tutorId: student.tutorId || "", // Critical: preserves tutor selection
+      });
+    }
+  }, [student, isOpen, form]);
 
   async function onSubmit(values: z.infer<typeof studentSchema>) {
     setIsSubmitting(true);
     try {
-      // Map form fields to clean Firestore field names
-      const studentData = {
-        name: values.name,
-        email: values.email,
-        parentEmail1: values.parentEmail1 || undefined,
-        parentEmail2: values.parentEmail2 || undefined,
-        testTypes: values.testTypes,
-        upcomingTestDate: values.upcomingTestDate || undefined,
-        Rate: values.Rate,
-        Frequency: values.Frequency || undefined,
-        timeZone: values.timeZone || undefined,
-        profile: values.profile || undefined,
-        tutorId: values.tutorId,
-      };
+      const studentData: Partial<Student> = { ...values };
 
-      // Remove undefined keys to avoid Firestore issues
-      Object.keys(studentData).forEach((key) => {
-        if (studentData[key as keyof typeof studentData] === undefined) {
-          delete studentData[key as keyof typeof studentData];
-        }
-      });
+      // Clean up optional fields
+      if (!studentData.parentEmail1) delete studentData.parentEmail1;
+      if (!studentData.parentEmail2) delete studentData.parentEmail2;
+      if (!studentData.upcomingTestDate) delete studentData.upcomingTestDate;
+      if (studentData.Rate === undefined || studentData.Rate === null) delete studentData.Rate;
+      if (!studentData.Frequency) delete studentData.Frequency;
+      if (!studentData.timeZone) delete studentData.timeZone;
+      if (!studentData.profile) delete studentData.profile;
 
       await updateStudent(student.id, studentData);
 
-      const selectedTutor = tutors.find((t) => t.uid === values.tutorId);
-      const tutorName = selectedTutor
-        ? selectedTutor.displayName
-        : "selected tutor";
-
       toast({
         title: "Student Updated",
-        description: `${values.name} has been successfully updated and assigned to ${tutorName}.`,
+        description: `${values.name} has been successfully updated.`,
       });
-
-      // Close dialog first, then refresh - this helps with state management
-      onOpenChange(false);
       router.refresh();
+      onOpenChange(false);
     } catch (error: any) {
-      console.error("Error updating student:", error);
       toast({
         title: "Error",
-        description:
-          error.message || "Failed to update student. Please try again.",
+        description: error.message || "Failed to update student. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -244,10 +182,8 @@ export function EditStudentSheet({
     }
   }
 
-  const currentTestTypes = form.watch("testTypes") || [];
-
   return (
-    <Sheet open={isOpen} onOpenChange={onOpenChange}>
+    <Sheet key={student?.id || 'edit'} open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Edit Student</SheetTitle>
@@ -268,20 +204,10 @@ export function EditStudentSheet({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Assigned Tutor</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      disabled={tutorsLoading}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value} disabled={tutorsLoading}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue
-                            placeholder={
-                              tutorsLoading
-                                ? "Loading tutors..."
-                                : "Select a tutor"
-                            }
-                          />
+                          <SelectValue placeholder={tutorsLoading ? "Loading tutors..." : "Select a tutor"} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -314,7 +240,7 @@ export function EditStudentSheet({
                 </FormItem>
               )}
             />
-
+            
             <FormField
               control={form.control}
               name="email"
@@ -331,18 +257,18 @@ export function EditStudentSheet({
                 </FormItem>
               )}
             />
-
+            
             <FormField
               control={form.control}
               name="parentEmail1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Parent's Email</FormLabel>
+                  <FormLabel>Parent's Email (Optional)</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="e.g., jane.doe@example.com"
                       {...field}
-                      value={field.value ?? ""}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -350,46 +276,23 @@ export function EditStudentSheet({
               )}
             />
 
-            {showParentEmail2 ? (
-              <FormField
-                control={form.control}
-                name="parentEmail2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Parent's Email 2</FormLabel>
-                    <div className="flex items-center gap-2">
-                      <FormControl>
-                        <Input
-                          placeholder="e.g., another.parent@example.com"
-                          {...field}
-                          value={field.value ?? ""}
-                        />
-                      </FormControl>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleRemoveParentEmail2}
-                      >
-                        <XCircle className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ) : (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddParentEmail2}
-                className="flex items-center gap-2"
-              >
-                <PlusCircle className="h-4 w-4" />
-                Add Second Parent Email
-              </Button>
-            )}
+            <FormField
+              control={form.control}
+              name="parentEmail2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Parent's Email 2 (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g., another.parent@example.com"
+                      {...field}
+                      value={field.value ?? ''}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -399,36 +302,36 @@ export function EditStudentSheet({
                   <div className="mb-4">
                     <FormLabel className="text-base">Test Types</FormLabel>
                     <FormDescription>
-                      Select all the test types this student is preparing for.
+                      Select all test types this student will be preparing for.
                     </FormDescription>
                   </div>
-                  {["SAT", "ACT", "PSAT", "AP", "IB", "Other"].map((item) => (
+                  {["SAT", "ACT", "SSAT", "Upper Level ISEE", "Middle Level ISEE", "Lower Level ISEE"].map((testType) => (
                     <FormField
-                      key={item}
+                      key={testType}
                       control={form.control}
                       name="testTypes"
                       render={({ field }) => {
                         return (
                           <FormItem
-                            key={item}
+                            key={testType}
                             className="flex flex-row items-start space-x-3 space-y-0"
                           >
                             <FormControl>
                               <Checkbox
-                                checked={field.value?.includes(item)}
+                                checked={field.value?.includes(testType)}
                                 onCheckedChange={(checked) => {
                                   return checked
-                                    ? field.onChange([...field.value, item])
+                                    ? field.onChange([...field.value, testType])
                                     : field.onChange(
                                         field.value?.filter(
-                                          (value) => value !== item,
+                                          (value) => value !== testType,
                                         ),
                                       );
                                 }}
                               />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              {item}
+                              {testType}
                             </FormLabel>
                           </FormItem>
                         );
@@ -445,9 +348,13 @@ export function EditStudentSheet({
               name="upcomingTestDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Upcoming Test Date</FormLabel>
+                  <FormLabel>Upcoming Test Date (Optional)</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input
+                      placeholder="e.g., August 24, 2024"
+                      {...field}
+                      value={field.value ?? ''}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -461,11 +368,11 @@ export function EditStudentSheet({
                 <FormItem>
                   <FormLabel>Hourly Rate ($)</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="e.g., 75"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    <Input 
+                      type="number" 
+                      placeholder="e.g., 100" 
+                      {...field} 
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -478,20 +385,14 @@ export function EditStudentSheet({
               name="Frequency"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Session Frequency</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select frequency" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Weekly">Weekly</SelectItem>
-                      <SelectItem value="Bi-weekly">Bi-weekly</SelectItem>
-                      <SelectItem value="Monthly">Monthly</SelectItem>
-                      <SelectItem value="As needed">As needed</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Session Frequency (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g., 2x per week"
+                      {...field}
+                      value={field.value ?? ''}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -502,9 +403,13 @@ export function EditStudentSheet({
               name="timeZone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Time Zone</FormLabel>
+                  <FormLabel>Time Zone (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., EST, PST, GMT+1" {...field} />
+                    <Input
+                      placeholder="e.g., EST, PST, GMT"
+                      {...field}
+                      value={field.value ?? ''}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -516,12 +421,13 @@ export function EditStudentSheet({
               name="profile"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Student Profile</FormLabel>
+                  <FormLabel>Notes/Profile (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Add any notes about the student's learning style, goals, or preferences..."
+                      placeholder="Any additional notes about this student..."
                       className="resize-none"
                       {...field}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -529,19 +435,15 @@ export function EditStudentSheet({
               )}
             />
 
-            <SheetFooter className="flex gap-2 pt-6">
-              <SheetClose asChild>
-                <Button type="button" variant="outline">
-                  Cancel
-                </Button>
-              </SheetClose>
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Update Student
               </Button>
-            </SheetFooter>
+            </div>
           </form>
         </Form>
       </SheetContent>
